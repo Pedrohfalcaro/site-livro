@@ -148,7 +148,10 @@
   });
 
 
-      if (response.ok && resultado.sucesso) {
+      const resultado = await response.json();
+
+if (response.ok && resultado.sucesso) {
+
     document.getElementById("alertaSucesso").classList.remove("hidden");
     document.getElementById("mensagemSucesso").classList.remove("hidden");
     localStorage.removeItem("estante");
