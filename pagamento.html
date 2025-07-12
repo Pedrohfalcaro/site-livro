@@ -141,25 +141,25 @@
       formData.append("resumo", resumo);
       formData.append("comprovante", comprovante);
 
-      try {
-        await fetch("https://site-livro-backend.onrender.com/enviar-pagamento", {
-           method: "POST",
-           body: formData
-      });
+     try {
+  const response = await fetch("https://site-livro-backend.onrender.com/enviar-pagamento", {
+    method: "POST",
+    body: formData
+  });
 
 
-        if (response.ok) {
-          document.getElementById("alertaSucesso").classList.remove("hidden");
-          document.getElementById("mensagemSucesso").classList.remove("hidden");
-          localStorage.removeItem("estante");
-          setTimeout(() => window.location.href = "index.html", 5000);
-        } else {
-          alert("Erro ao enviar. Tente novamente.");
-        }
-      } catch (error) {
-        console.error(error);
-        alert("Erro de conexão.");
-      }
+      if (response.ok && resultado.sucesso) {
+    document.getElementById("alertaSucesso").classList.remove("hidden");
+    document.getElementById("mensagemSucesso").classList.remove("hidden");
+    localStorage.removeItem("estante");
+    setTimeout(() => window.location.href = "index.html", 5000);
+  } else {
+    alert("Erro ao enviar. Tente novamente.");
+  }
+     } catch (error) {
+  console.error(error);
+  alert("Erro de conexão.");
+}
     }
 
     // Resumo na tela
