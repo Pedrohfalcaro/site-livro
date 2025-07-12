@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Estante de histórias</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          animation: {
+            fade: 'fadeIn 1s ease-in-out'
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: 0 },
+              '100%': { opacity: 1 }
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-100 text-gray-900 font-sans relative overflow-x-hidden">
+
+  <!-- Alerta flutuante -->
+  <div id="mensagemSucesso" class="hidden fixed top-20 right-6 z-50 bg-green-100 border border-green-400 text-green-800 px-6 py-3 rounded shadow-lg animate-fade">
+    ✅ Livro adicionado à estante!
+  </div>
+
+  <!-- Barra superior -->
+  <div class="flex justify-between items-center px-4 sm:px-6 py-4 bg-white shadow sticky top-0 z-40">
+    <h1 class="text-xl sm:text-2xl font-bold text-purple-700">📘 Estante de histórias</h1>
+    <button onclick="toggleEstante()" class="text-purple-700 text-xl hover:text-purple-900 transition-all">
+      🧺 Estante
+    </button>
+  </div>
+
+  <!-- POPUP ESTANTE -->
+  <div id="popupEstante" class="fixed top-0 right-0 w-full sm:w-96 h-full bg-white shadow-2xl p-6 z-50 transform translate-x-full transition-transform duration-300 overflow-y-auto">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-2xl font-bold text-purple-700">🧺 Sua Estante</h2>
+      <button onclick="toggleEstante()" class="text-gray-500 hover:text-red-600 text-xl font-bold">&times;</button>
+    </div>
+    <div id="listaEstante" class="space-y-4"></div>
+    <div class="mt-6 border-t pt-4 text-right">
+      <p class="text-xl font-bold mb-4">Total: <span id="totalValor">R$ 0,00</span></p>
+      <a href="pagamento.html" class="inline-block bg-green-600 text-white px-6 py-2 rounded-full hover:bg-green-700 transition-all">Finalizar Compra</a>
+    </div>
+  </div>
+
+  <!-- Overlay -->
+  <div id="overlayEstante" onclick="toggleEstante()" class="hidden fixed inset-0 bg-black bg-opacity-30 z-40 cursor-pointer"></div>
+
+  <!-- Hero -->
+  <section class="bg-gradient-to-br from-purple-700 to-indigo-700 text-white py-6 px-4 md:px-8">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 items-center gap-8">
+      <div class="animate-fade text-center md:text-left">
+        <h2 class="text-3xl sm:text-4xl font-bold mb-2">📖 Pré-venda Exclusiva (Até 30/09/2025)</h2>
+        <p class="text-md md:text-lg mb-4">"A Lenda do Caos - Tríplice Caótica" já está disponível!</p>
+        <button 
+          onclick="adicionarLivro('A Lenda do Caos - Tríplice Caótica', 52.9, 'LdC1.png')" 
+          class="bg-white text-purple-700 px-6 py-2 rounded-full font-semibold hover:bg-gray-100 transition-all shadow-md">
+          ➕ Adicionar à Estante
+        </button>
+      </div>
+      <div class="flex justify-center md:justify-end">
+        <img src="LdC1.png" alt="Capa do Livro" class="w-48 sm:w-56 md:w-72 rounded-xl shadow-2xl transform hover:scale-105 transition-all duration-300" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Projetos -->
+  <section class="max-w-6xl mx-auto py-16 px-4">
+    <h2 class="text-3xl font-extrabold text-center mb-10 text-purple-700">📂 Obras & Projetos</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+      <!-- Livro -->
+      <div class="bg-white rounded-3xl shadow-lg p-5 flex flex-col items-center hover:shadow-xl transition-all group relative">
+        <div class="absolute top-3 left-3 z-10 bg-green-100 text-green-700 px-3 py-1 text-xs font-bold rounded-full shadow-sm">
+          📖 Livro
+        </div>
+        <div class="relative w-full h-64 mb-4">
+          <img src="LdC1.png" class="w-full h-full object-cover rounded-2xl transform group-hover:scale-105 transition-all" />
+        </div>
+        <h3 class="text-xl font-bold text-center mb-1">A Lenda do Caos - Tríplice Caótica</h3>
+        <p class="text-lg mt-2 text-center">
+          <del class="text-red-500 text-base mr-2">R$ 57,90</del>
+          <strong class="text-green-600 text-xl font-bold">R$ 52,90</strong>
+        </p>
+        <button 
+          onclick="adicionarLivro('A Lenda do Caos - Tríplice Caótica', 52.9, 'LdC1.png')" 
+          class="w-full bg-purple-600 text-white py-2 rounded-full hover:bg-purple-700 transition-all mt-4">
+          ➕ Adicionar à Estante
+        </button>
+      </div>
+
+      <!-- Áudio-série -->
+      <div class="bg-white rounded-3xl shadow-lg p-5 flex flex-col items-center hover:shadow-xl transition-all group relative">
+        <div class="absolute top-3 left-3 z-10 bg-purple-100 text-purple-700 px-3 py-1 text-xs font-bold rounded-full shadow-sm">
+          🎧 Áudio-série
+        </div>
+        <div class="relative w-full h-64 mb-4">
+          <img src="AdC1.jpg" class="w-full h-full object-cover rounded-2xl transform group-hover:scale-105 transition-all" />
+        </div>
+        <h3 class="text-xl font-bold text-center mb-1">Além dos Céus – T1: Desbravadores</h3>
+        <p class="text-gray-600 text-sm mb-3 text-center">Uma jornada espacial e sentimental através do universo.</p>
+        <a 
+          href="https://youtube.com/playlist?list=PLVQe8695upyjlnarF121CIlis7cCW6-n1" 
+          target="_blank" 
+          class="w-full bg-red-600 text-white py-2 rounded-full hover:bg-red-700 transition-all text-center font-semibold">
+          ▶️ Ouvir no YouTube
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sobre o Autor -->
+  <section class="bg-gradient-to-br from-indigo-600 to-purple-800 text-white py-16 px-4 sm:px-6">
+    <div class="max-w-4xl mx-auto text-center">
+      <h2 class="text-3xl font-extrabold mb-4">✍️ Sobre o Autor</h2>
+      <p class="text-lg leading-relaxed">Pedro Henrique é um autor brasileiro apaixonado por mundos fantásticos e histórias emocionais...</p>
+      <p class="mt-4 text-md opacity-90">Também atua como roteirista e narrador de histórias...</p>
+    </div>
+  </section>
+
+  <!-- Linha do Tempo -->
+  <section class="bg-white py-16 px-4 sm:px-6">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-3xl font-extrabold text-center text-purple-700 mb-10">📅 Linha do Tempo do Universo</h2>
+      <div class="relative border-l-4 border-purple-600 pl-6 space-y-10">
+        <div class="relative">
+          <div class="absolute -left-4 top-1.5 w-3 h-3 bg-purple-600 rounded-full"></div>
+          <h3 class="text-xl font-bold text-purple-700">02 de novembro de 2024</h3>
+          <p class="text-gray-700">Estreia da áudio-série <strong>Além dos Céus – T1: Desbravadores</strong>.</p>
+        </div>
+        <div class="relative">
+          <div class="absolute -left-4 top-1.5 w-3 h-3 bg-indigo-600 rounded-full"></div>
+          <h3 class="text-xl font-bold text-indigo-700">Setembro de 2025 (previsão)</h3>
+          <p class="text-gray-700">Lançamento do livro <strong>A Lenda do Caos – Tríplice Caótica</strong>.</p>
+        </div>
+        <div class="relative">
+          <div class="absolute -left-4 top-1.5 w-3 h-3 bg-gray-400 rounded-full animate-pulse"></div>
+          <h3 class="text-xl font-bold text-gray-600">Março de 2026 <span class="italic">(?)</span></h3>
+          <p class="text-gray-600 italic">Algo novo está vindo...</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Scripts -->
+  <script>
+    function adicionarLivro(nome, preco, imagem) {
+      const estante = JSON.parse(localStorage.getItem("estante")) || [];
+      const index = estante.findIndex(l => l.nome === nome);
+      if (index !== -1) {
+        estante[index].quantidade++;
+      } else {
+        estante.push({ nome, preco, imagem, quantidade: 1 });
+      }
+      localStorage.setItem("estante", JSON.stringify(estante));
+      mostrarMensagem();
+      atualizarPopupEstante();
+    }
+
+    function mostrarMensagem() {
+      const msg = document.getElementById("mensagemSucesso");
+      msg.classList.remove("hidden");
+      setTimeout(() => {
+        msg.classList.add("hidden");
+      }, 2000);
+    }
+
+    function removerLivro(index) {
+      const estante = JSON.parse(localStorage.getItem("estante")) || [];
+      estante.splice(index, 1);
+      localStorage.setItem("estante", JSON.stringify(estante));
+      atualizarPopupEstante();
+    }
+
+    function atualizarPopupEstante() {
+      const lista = document.getElementById("listaEstante");
+      const totalSpan = document.getElementById("totalValor");
+      const estante = JSON.parse(localStorage.getItem("estante")) || [];
+      lista.innerHTML = "";
+      let total = 0;
+
+      if (estante.length === 0) {
+        lista.innerHTML = `<div class="text-center text-gray-500">
+            <div class="text-5xl mb-2">📭</div>
+            <p class="text-lg">Sua estante está vazia... por enquanto!</p>
+          </div>`;
+        totalSpan.textContent = "R$ 0,00";
+        return;
+      }
+
+      estante.forEach((livro, index) => {
+        total += livro.preco * livro.quantidade;
+        lista.innerHTML += `
+          <div class="flex items-center gap-4 border-b pb-4">
+            <img src="${livro.imagem}" class="w-16 h-24 object-cover rounded shadow" />
+            <div class="flex-1">
+              <h3 class="font-semibold">${livro.nome}</h3>
+              <p class="text-sm text-gray-600">R$ ${livro.preco.toFixed(2)} x ${livro.quantidade}</p>
+              <p class="text-sm font-bold">Total: R$ ${(livro.preco * livro.quantidade).toFixed(2)}</p>
+            </div>
+            <button onclick="removerLivro(${index})" class="text-red-500 hover:text-red-700 font-bold text-xl rounded-full px-2 py-0.5 transition-all">&times;</button>
+          </div>
+        `;
+      });
+
+      totalSpan.textContent = "R$ " + total.toFixed(2);
+    }
+
+    function toggleEstante() {
+      const popup = document.getElementById("popupEstante");
+      const overlay = document.getElementById("overlayEstante");
+      const isOpen = !popup.classList.contains("translate-x-full");
+
+      if (isOpen) {
+        popup.classList.add("translate-x-full");
+        overlay.classList.add("hidden");
+      } else {
+        popup.classList.remove("translate-x-full");
+        overlay.classList.remove("hidden");
+        atualizarPopupEstante();
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", atualizarPopupEstante);
+  </script>
+</body>
+</html>
