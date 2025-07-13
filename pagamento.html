@@ -33,6 +33,10 @@
   <div id="alertaSucesso" class="hidden fixed top-6 right-6 bg-sucessoDark text-white px-6 py-3 rounded shadow-lg z-50 animate-fade">
     ✅ Pagamento enviado com sucesso!
   </div>
+  <!-- Mensagem de aguarde -->
+    <p id="mensagemAguarde" class="hidden fixed top-6 left-6 bg-yellow-200 text-yellow-900 px-6 py-3 rounded shadow-lg z-50 animate-fade">
+  ⏳ Enviando... Isso pode levar até 1 minuto se o servidor estiver inativo.
+    </p>
 
   <!-- Container -->
   <div class="max-w-2xl mx-auto bg-white rounded-3xl shadow-xl p-6 sm:p-8 mt-10 animate-fade">
@@ -103,67 +107,73 @@
     }
 
     async function enviarPagamento() {
-      const nome = document.getElementById("nome").value;
-      const email = document.getElementById("email").value;
-      const rua = document.getElementById("rua").value;
-      const numero = document.getElementById("numero").value;
-      const bairro = document.getElementById("bairro").value;
-      const cidade = document.getElementById("cidade").value;
-      const estado = document.getElementById("estado").value;
-      const cep = document.getElementById("cep").value;
-      const comprovante = document.querySelector('input[type="file"]').files[0];
+  const nome = document.getElementById("nome").value;
+  const email = document.getElementById("email").value;
+  const rua = document.getElementById("rua").value;
+  const numero = document.getElementById("numero").value;
+  const bairro = document.getElementById("bairro").value;
+  const cidade = document.getElementById("cidade").value;
+  const estado = document.getElementById("estado").value;
+  const cep = document.getElementById("cep").value;
+  const comprovante = document.querySelector('input[type="file"]').files[0];
 
-      if (!nome || !email || !comprovante) {
-        alert("Preencha nome, email e selecione o comprovante.");
-        return;
-      }
+  if (!nome || !email || !comprovante) {
+    alert("Preencha nome, email e selecione o comprovante.");
+    return;
+  }
 
-      const estante = JSON.parse(localStorage.getItem("estante")) || [];
-      let resumo = "";
-      let total = 0;
+  const estante = JSON.parse(localStorage.getItem("estante")) || [];
+  let resumo = "";
+  let total = 0;
 
-      estante.forEach(l => {
-        resumo += `• ${l.nome} - ${l.quantidade}x - R$ ${(l.preco * l.quantidade).toFixed(2)}\n`;
-        total += l.preco * l.quantidade;
-      });
-
-      resumo += `\nTOTAL: R$ ${total.toFixed(2)}`;
-
-      const formData = new FormData();
-      formData.append("nome", nome);
-      formData.append("email", email);
-      formData.append("rua", rua);
-      formData.append("numero", numero);
-      formData.append("bairro", bairro);
-      formData.append("cidade", cidade);
-      formData.append("estado", estado);
-      formData.append("cep", cep);
-      formData.append("resumo", resumo);
-      formData.append("comprovante", comprovante);
-
-     try {
-  const response = await fetch("https://site-livro-backend.onrender.com/enviar-pagamento", {
-    method: "POST",
-    body: formData
+  estante.forEach(l => {
+    resumo += `• ${l.nome} - ${l.quantidade}x - R$ ${(l.preco * l.quantidade).toFixed(2)}\n`;
+    total += l.preco * l.quantidade;
   });
 
+  resumo += `\nTOTAL: R$ ${total.toFixed(2)}`;
 
-      const resultado = await response.json();
+  const formData = new FormData();
+  formData.append("nome", nome);
+  formData.append("email", email);
+  formData.append("rua", rua);
+  formData.append("numero", numero);
+  formData.append("bairro", bairro);
+  formData.append("cidade", cidade);
+  formData.append("estado", estado);
+  formData.append("cep", cep);
+  formData.append("resumo", resumo);
+  formData.append("comprovante", comprovante);
 
-if (response.ok && resultado.sucesso) {
+  // Mostra mensagem de aguarde
+  const aguarde = document.getElementById("mensagemAguarde");
+  aguarde.classList.remove("hidden");
 
-    document.getElementById("alertaSucesso").classList.remove("hidden");
-    document.getElementById("mensagemSucesso").classList.remove("hidden");
-    localStorage.removeItem("estante");
-    setTimeout(() => window.location.href = "index.html", 5000);
-  } else {
-    alert("Erro ao enviar. Tente novamente.");
-  }
-     } catch (error) {
-  console.error(error);
-  alert("Erro de conexão.");
-}
+  try {
+    const response = await fetch("https://site-livro-backend.onrender.com/enviar-pagamento", {
+      method: "POST",
+      body: formData
+    });
+
+    const resultado = await response.json();
+
+    if (response.ok && resultado.sucesso) {
+      document.getElementById("alertaSucesso").classList.remove("hidden");
+      document.getElementById("mensagemSucesso").classList.remove("hidden");
+      localStorage.removeItem("estante");
+      setTimeout(() => window.location.href = "index.html", 5000);
+    } else {
+      alert("Erro ao enviar. Tente novamente.");
     }
+  } catch (error) {
+    console.error(error);
+    alert("Erro de conexão.");
+  } finally {
+    // Oculta mensagem de aguarde
+    aguarde.classList.add("hidden");
+  }
+}
+
 
     // Resumo na tela
     const resumo = document.getElementById("resumo");
