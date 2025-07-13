@@ -325,7 +325,7 @@
   </div>
 </div>
 
-  <!-- POPUP DE DETALHES -->
+<!-- POPUP DE DETALHES -->
 <div id="popupDetalhes" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
   <div class="bg-white rounded-3xl shadow-2xl w-full max-w-5xl h-[90vh] flex flex-col sm:flex-row overflow-hidden animate-fade relative border-t-4 border-purple-700">
     
@@ -333,48 +333,24 @@
     <button onclick="fecharDetalhes()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-3xl font-bold z-10 transition">&times;</button>
 
     <!-- Área de texto -->
-<div class="flex-1 p-6 sm:p-10 overflow-y-auto flex flex-col">
-  <h2 id="detalheTitulo" class="text-3xl font-bold text-purple-700 mb-4"></h2>
-  <p id="detalhePreco" class="text-xl font-bold text-green-700 mb-4 hidden"></p>
-  <div id="detalheDescricao" class="text-gray-800 leading-relaxed whitespace-pre-line max-h-[50vh] overflow-y-auto mb-6"></div>
+    <div class="flex-1 p-6 sm:p-10 overflow-y-auto flex flex-col">
+      <h2 id="detalheTitulo" class="text-3xl font-bold text-purple-700 mb-4"></h2>
+      <p id="detalhePreco" class="text-xl font-bold text-green-700 mb-4 hidden"></p>
+      <div id="detalheDescricao" class="text-gray-800 leading-relaxed whitespace-pre-line max-h-[50vh] overflow-y-auto mb-6"></div>
 
-  <!-- Botões fixos ao rodapé -->
-  <div id="botoesDetalhes" class="mt-auto flex flex-col sm:flex-row gap-4 justify-center pt-6 border-t border-gray-200">
-    <!-- Botões inseridos via JS -->
-  </div>
-</div>
-
-    <!-- Capa do livro -->
-      <!-- POPUP DE DETALHES -->
-<div id="popupDetalhes" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
-  <div class="bg-white rounded-3xl shadow-2xl w-full max-w-5xl h-[90vh] flex flex-col sm:flex-row overflow-hidden animate-fade relative border-t-4 border-purple-700">
-    
-    <!-- Botão fechar -->
-    <button onclick="fecharDetalhes()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-3xl font-bold z-10 transition">&times;</button>
-
-    <!-- Área de texto -->
-<div class="flex-1 p-6 sm:p-10 overflow-y-auto flex flex-col">
-  <h2 id="detalheTitulo" class="text-3xl font-bold text-purple-700 mb-4"></h2>
-  <p id="detalhePreco" class="text-xl font-bold text-green-700 mb-4 hidden"></p>
-  <div id="detalheDescricao" class="text-gray-800 leading-relaxed whitespace-pre-line max-h-[50vh] overflow-y-auto mb-6"></div>
-
-  <!-- Botões fixos ao rodapé -->
-  <div id="botoesDetalhes" class="mt-auto flex flex-col sm:flex-row gap-4 justify-center pt-6 border-t border-gray-200">
-    <!-- Botões inseridos via JS -->
-  </div>
-</div>
+      <!-- Botões fixos ao rodapé -->
+      <div id="botoesDetalhes" class="mt-auto flex flex-col sm:flex-row gap-4 justify-center pt-6 border-t border-gray-200">
+        <!-- Botões inseridos via JS -->
+      </div>
+    </div>
 
     <!-- Capa do livro -->
     <div class="w-full sm:w-1/3 bg-gray-100 p-6 flex items-center justify-center border-l border-gray-200">
-      <img id="detalheImagem" src="" alt="Capa da Obra" class="w-full h-auto max-h-[80vh] object-contain rounded-2xl shadow-lg" />
+      <img id="detalheImagem" src="" alt="Capa da Obra" class="w-full h-auto max-h-[60vh] sm:max-h-[80vh] object-contain rounded-2xl shadow-lg" />
     </div>
 
   </div>
 </div>
-
-  </div>
-</div>
-
 
   <!-- Scripts -->
   <script>
@@ -502,47 +478,54 @@
   }
 </script>
 <script>
-function abrirDetalhes({ nome, descricao, preco, imagem, youtube }) {
-  document.getElementById("detalheImagem").src = imagem;
+function abrirDetalhes(detalhes) {
+  const { nome, descricao, preco, imagem, youtube } = detalhes;
+
   document.getElementById("detalheTitulo").textContent = nome;
   document.getElementById("detalheDescricao").textContent = descricao;
-
   const precoEl = document.getElementById("detalhePreco");
-  if (preco) {
-    precoEl.textContent = ` R$ ${preco.toFixed(2)}`;
+  const imagemEl = document.getElementById("detalheImagem");
+  const botoesEl = document.getElementById("botoesDetalhes");
+
+  if (preco !== null && preco !== undefined) {
+    precoEl.textContent = `R$ ${preco.toFixed(2)}`;
     precoEl.classList.remove("hidden");
   } else {
     precoEl.classList.add("hidden");
   }
 
-  const botoes = document.getElementById("botoesDetalhes");
-  botoes.innerHTML = "";
+  imagemEl.src = imagem;
+  imagemEl.alt = `Capa de ${nome}`;
 
+  botoesEl.innerHTML = "";
   if (preco) {
-    botoes.innerHTML += `
-      <button 
-        onclick="adicionarLivro('${nome}', ${preco}, '${imagem}')" 
-        class="flex-1 bg-purple-600 text-white py-3 rounded-full font-semibold hover:bg-purple-700 transition">
+    botoesEl.innerHTML += `
+      <button onclick="adicionarLivro('${nome}', ${preco}, '${imagem}')" class="bg-purple-600 text-white px-6 py-2 rounded-full hover:bg-purple-700 transition-all">
          Adicionar à Sacola
       </button>`;
   }
-
   if (youtube) {
-    botoes.innerHTML += `
-      <a href="${youtube}" 
-        target="_blank" 
-        class="flex-1 bg-red-600 text-white py-3 rounded-full font-semibold text-center hover:bg-red-700 transition">
-         Ver no YouTube
+    botoesEl.innerHTML += `
+      <a href="${youtube}" target="_blank" class="bg-red-600 text-white px-6 py-2 rounded-full hover:bg-red-700 transition-all text-center">
+         Assistir no YouTube
       </a>`;
   }
 
   document.getElementById("popupDetalhes").classList.remove("hidden");
+  document.body.classList.add("overflow-hidden");
 }
 
-function fecharDetalhes() {
-  document.getElementById("popupDetalhes").classList.add("hidden");
-}
+
 
 </script>
+<script>
+function fecharDetalhes() {
+  document.getElementById("popupDetalhes").classList.add("hidden");
+
+  // Reativa o scroll da página
+  document.body.classList.remove("overflow-hidden");
+}
+</script>
+
 </body>
 </html>
