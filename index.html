@@ -10,38 +10,74 @@
       theme: {
         extend: {
           animation: {
-            fade: 'fadeIn 1s ease-in-out'
+            fade: 'fadeIn 0.4s ease-in-out',
           },
           keyframes: {
             fadeIn: {
-              '0%': { opacity: 0 },
-              '100%': { opacity: 1 }
+              '0%': { opacity: 0, transform: 'scale(0.95)' },
+              '100%': { opacity: 1, transform: 'scale(1)' }
             }
           }
         }
       }
     }
   </script>
+
+  <script>
+    function toggleLogin() {
+      const popup = document.getElementById("popupLogin");
+      popup.classList.toggle("hidden");
+    }
+  </script>
+
+  <style>
+    .tag-btn.selected {
+      box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.7); /* Roxo suave */
+      transform: scale(1.05);
+    }
+  </style>
 </head>
+
 <body class="bg-gray-100 text-gray-900 font-sans relative overflow-x-hidden">
 
   <!-- Alerta flutuante -->
   <div id="mensagemSucesso" class="hidden fixed top-20 right-6 z-50 bg-green-100 border border-green-400 text-green-800 px-6 py-3 rounded shadow-lg animate-fade">
-    ✅ Livro adicionado à estante!
+    ✅ Livro adicionado à Sacola!
   </div>
 
-  <!-- Barra superior -->
-  <div class="flex justify-between items-center px-4 sm:px-6 py-4 bg-white shadow sticky top-0 z-40">
-    <h1 class="text-xl sm:text-2xl font-bold text-purple-700">📘 Estante de histórias</h1>
-    <button onclick="toggleEstante()" class="text-purple-700 text-xl hover:text-purple-900 transition-all">
-      🧺 Estante
-    </button>
-  </div>
+<!-- Barra de Navegação Topo -->
+<nav class="bg-purple-700 text-white py-4 px-6 shadow-md sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto flex justify-between items-center flex-wrap gap-4">
+    
+    <!-- Título Centralizado (em telas pequenas fica acima) -->
+    <h1 class="text-2xl font-bold w-full text-center mb-2 sm:mb-0 sm:w-auto">Estante de Histórias</h1>
 
-  <!-- POPUP ESTANTE -->
+    <!-- Menu -->
+<div class="flex flex-wrap justify-center sm:justify-end gap-x-6 text-sm sm:text-base font-medium w-full sm:w-auto">
+  <button onclick="scrollToSection('obrasProjetos')" class="hover:underline underline-offset-4 transition duration-200">Obras & Projetos</button>
+  <span class="hidden sm:inline">|</span>
+  
+  <button onclick="scrollToSection('sobreAutor')" class="hover:underline underline-offset-4 transition duration-200">Sobre o Autor</button>
+  <span class="hidden sm:inline">|</span>
+
+  <button onclick="scrollToSection('linhaTempo')" class="hover:underline underline-offset-4 transition duration-200">Linha do Tempo</button>
+  <span class="hidden sm:inline">|</span>
+
+  <button onclick="toggleLogin()" class="hover:underline underline-offset-4 transition duration-200">Login</button>
+  <span class="hidden sm:inline">|</span>
+
+  <button onclick="toggleEstante()" class="hover:underline underline-offset-4 transition duration-200">Sacola</button>
+</div>
+
+
+  </div>
+</nav>
+
+
+  <!-- POPUP Sacola -->
   <div id="popupEstante" class="fixed top-0 right-0 w-full sm:w-96 h-full bg-white shadow-2xl p-6 z-50 transform translate-x-full transition-transform duration-300 overflow-y-auto">
     <div class="flex justify-between items-center mb-4">
-      <h2 class="text-2xl font-bold text-purple-700">🧺 Sua Estante</h2>
+      <h2 class="text-2xl font-bold text-purple-700"> Sua Sacola</h2>
       <button onclick="toggleEstante()" class="text-gray-500 hover:text-red-600 text-xl font-bold">&times;</button>
     </div>
     <div id="listaEstante" class="space-y-4"></div>
@@ -58,12 +94,12 @@
   <section class="bg-gradient-to-br from-purple-700 to-indigo-700 text-white py-6 px-4 md:px-8">
     <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 items-center gap-8">
       <div class="animate-fade text-center md:text-left">
-        <h2 class="text-3xl sm:text-4xl font-bold mb-2">📖 Pré-venda Exclusiva (Até 30/09/2025)</h2>
+        <h2 class="text-3xl sm:text-4xl font-bold mb-2"> Pré-venda Exclusiva (Até 30/09/2025)</h2>
         <p class="text-md md:text-lg mb-4">"A Lenda do Caos - Tríplice Caótica" já está disponível! Comprando na pré venda você recebe um marca páginas e um conto exclusivo dentro do universo do livro!</p>
         <button 
           onclick="adicionarLivro('A Lenda do Caos - Tríplice Caótica', 52.9, 'LdC1.png')" 
           class="bg-white text-purple-700 px-6 py-2 rounded-full font-semibold hover:bg-gray-100 transition-all shadow-md">
-          ➕ Adicionar à Estante
+           Adicionar à Sacola
         </button>
       </div>
       <div class="flex justify-center md:justify-end">
@@ -72,63 +108,152 @@
     </div>
   </section>
 
-  <!-- Projetos -->
+  <!-- Obras -->
+  <section id="obrasProjetos" class="max-w-6xl mx-auto py-16 px-4">
   <section class="max-w-6xl mx-auto py-16 px-4">
-    <h2 class="text-3xl font-extrabold text-center mb-10 text-purple-700">📂 Obras & Projetos</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-      <!-- Livro -->
-      <div class="bg-white rounded-3xl shadow-lg p-5 flex flex-col items-center hover:shadow-xl transition-all group relative">
-        <div class="absolute top-3 left-3 z-10 bg-green-100 text-green-700 px-3 py-1 text-xs font-bold rounded-full shadow-sm">
-          📖 Livro
-        </div>
-        <div class="relative w-full h-64 mb-4">
-          <img src="LdC1.png" class="w-full h-full object-cover rounded-2xl transform group-hover:scale-105 transition-all" />
-        </div>
+  <h2 class="text-3xl font-extrabold text-center mb-6 text-purple-700"> Obras & Projetos</h2>
+
+  <!-- Filtros -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
+    <input 
+      type="text" 
+      id="buscaObra" 
+      placeholder="🔍 Procurar título..." 
+      class="w-full sm:w-1/2 px-4 py-3 rounded-full border border-purple-300 shadow focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all bg-white"
+      oninput="filtrarObras()"
+    />
+    <div class="flex gap-2 flex-wrap justify-center sm:justify-start">
+      <!-- Todos -->
+<button 
+  onclick="filtrarTag('todos')" 
+  data-tag="todos" 
+  class="tag-btn bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm font-semibold hover:bg-purple-200 transition-all">
+  Todos
+</button>
+
+<!-- Livro -->
+<button 
+  onclick="filtrarTag('Livro')" 
+  data-tag="Livro" 
+  class="tag-btn bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold hover:bg-green-200 transition-all">
+  📖 Livro
+</button>
+
+<!-- Áudio-série -->
+<button 
+  onclick="filtrarTag('Áudio-série')" 
+  data-tag="Áudio-série" 
+  class="tag-btn bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm font-semibold hover:bg-purple-200 transition-all">
+  🎧 Áudio-série
+</button>
+
+<!-- WebLivro -->
+<button 
+  onclick="filtrarTag('WebLivro')" 
+  data-tag="WebLivro" 
+  class="tag-btn bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-sm font-semibold hover:bg-indigo-200 transition-all">
+  🌐 WebLivro
+</button>
+
+    </div>
+  </div>
+
+  <!-- Obras -->
+  <div id="obrasContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+    
+    <!-- Livro -->
+    <div class="obra" data-tags="Livro">
+      <div class="bg-white rounded-3xl shadow-lg flex flex-col p-5 h-full hover:shadow-xl transition-all group relative">
+        <div class="absolute top-3 left-3 z-10 bg-green-100 text-green-700 px-3 py-1 text-xs font-bold rounded-full shadow-sm">📖 Livro</div>
+        <img src="LdC1.png" class="w-full h-64 object-cover rounded-2xl mb-4 transform group-hover:scale-105 transition-all" />
         <h3 class="text-xl font-bold text-center mb-1">A Lenda do Caos - Tríplice Caótica + Marca-páginas + Conto exclusivo</h3>
         <p class="text-lg mt-2 text-center">
           <del class="text-red-500 text-base mr-2">R$ 57,90</del>
           <strong class="text-green-600 text-xl font-bold">R$ 52,90</strong>
         </p>
-        <button 
-          onclick="adicionarLivro('A Lenda do Caos - Tríplice Caótica', 52.9, 'LdC1.png')" 
-          class="w-full bg-purple-600 text-white py-2 rounded-full hover:bg-purple-700 transition-all mt-4">
-          ➕ Adicionar à Estante
-        </button>
-      </div>
+        <div class="mt-auto pt-4">
+          <button 
+  onclick="abrirDetalhes({
+    nome: 'A Lenda do Caos - Tríplice Caótica + Marca-páginas + Conto exclusivo',
+    descricao: 'E se cada história que já foi contada existisse de verdade, em um universo próprio, moldado pela mente de quem a criou? Arthur, um garoto comum de 14 anos, sempre acreditou que histórias eram apenas... histórias. Mas tudo muda quando uma simples narrativa contada pelo seu pai se transforma em algo maior — muito maior. Ele começa a ver coisas que ninguém mais vê. Ouvir vozes que ninguém mais ouve. Sentir um chamado vindo de um lugar que ele nem sabia existir. O que Arthur não sabe é que sua mente se conectou a uma porta — uma ligação entre mundos. Uma passagem entre a realidade que vivemos e outra, nascida do caos primordial: a realidade da história que escutou. Arthur se vê no centro de uma guerra entre mundos, onde criação e destruição são apenas duas faces da mesma força: o Caos.',
+    preco: 52.9, // ou remova essa linha se for gratuito
+    imagem: 'LdC1.png',
+    youtube: null // ou 'https://youtube.com/...'
+  })"
+  class="w-full bg-purple-600 text-white py-2 rounded-full hover:bg-purple-700 transition mt-4">
+   Ver Detalhes
+</button>
 
-      <!-- Áudio-série -->
-      <div class="bg-white rounded-3xl shadow-lg p-5 flex flex-col items-center hover:shadow-xl transition-all group relative">
-        <div class="absolute top-3 left-3 z-10 bg-purple-100 text-purple-700 px-3 py-1 text-xs font-bold rounded-full shadow-sm">
-          🎧 Áudio-série
         </div>
-        <div class="relative w-full h-64 mb-4">
-          <img src="AdC1.jpg" class="w-full h-full object-cover rounded-2xl transform group-hover:scale-105 transition-all" />
-        </div>
-        <h3 class="text-xl font-bold text-center mb-1">Além dos Céus – T1: Desbravadores</h3>
-        <p class="text-gray-600 text-sm mb-3 text-center">Uma jornada espacial e sentimental através do universo.</p>
-        <a 
-          href="https://youtube.com/playlist?list=PLVQe8695upyjlnarF121CIlis7cCW6-n1" 
-          target="_blank" 
-          class="w-full bg-red-600 text-white py-2 rounded-full hover:bg-red-700 transition-all text-center font-semibold">
-          ▶️ Ouvir no YouTube
-        </a>
       </div>
     </div>
-  </section>
+
+    <!-- Áudio-série -->
+    <div class="obra" data-tags="Áudio-série">
+      <div class="bg-white rounded-3xl shadow-lg flex flex-col p-5 h-full hover:shadow-xl transition-all group relative">
+        <div class="absolute top-3 left-3 z-10 bg-purple-100 text-purple-700 px-3 py-1 text-xs font-bold rounded-full shadow-sm">🎧 Áudio-série</div>
+        <img src="AdC1.jpg" class="w-full h-64 object-cover rounded-2xl mb-4 transform group-hover:scale-105 transition-all" />
+        <h3 class="text-xl font-bold text-center mb-1">Além dos Céus – T1: Desbravadores</h3>
+        <p class="text-gray-600 text-sm mb-3 text-center">Uma jornada espacial e sentimental através do universo.</p>
+        <div class="mt-auto pt-4">
+        <button 
+  onclick="abrirDetalhes({
+    nome: 'Além dos Céus – Temporada 1: Desbravadores',
+    descricao: 'Além dos Céus é uma áudio série focada em aventuras e viagens espaciais. Leonardo é o protagonista desta história, onde sua tarefa é liderar uma equipe em uma missão rumo a um sistema solar longínquo. Ele irá lidar, com sentimentos, conflitos internos e decisões difíceis a tomar, além de muita ação e determinação. Como será a aventura desta tripulação? Isso você só descobrirá em Além dos Céus',
+    imagem: 'AdC1.jpg',
+    youtube: 'https://youtube.com/playlist?list=PLVQe8695upyjlnarF121CIlis7cCW6-n1&si=Ly59Vjxq5-M0a6tf'
+  })"
+  class="w-full bg-purple-600 text-white py-2 rounded-full hover:bg-purple-700 transition mt-4">
+   Ver Detalhes
+</button>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- WebLivro -->
+    <div class="obra" data-tags="WebLivro">
+      <div class="bg-white rounded-3xl shadow-lg flex flex-col p-5 h-full hover:shadow-xl transition-all group relative">
+        <div class="absolute top-3 left-3 z-10 bg-indigo-100 text-indigo-700 px-3 py-1 text-xs font-bold rounded-full shadow-sm">🌐 WebLivro</div>
+        <img src="IdW.jpg" class="w-full h-64 object-cover rounded-2xl mb-4 transform group-hover:scale-105 transition-all" />
+        <h3 class="text-xl font-bold text-center mb-1">O incidente de Willowbrook</h3>
+        <p class="text-lg mt-2 text-center text-gray-800">
+          <strong class="text-indigo-600 text-xl font-bold">R$ 7,50</strong>
+        </p>
+        <div class="mt-auto pt-4">
+                    <button 
+  onclick="abrirDetalhes({
+    nome: 'O Incidente de Willowbrook',
+    descricao: 'Em um Reino Unido envolto em mistérios e segredos, Emily Holwes, uma investigadora surda, recebe uma carta de um antigo amigo propondo um trabalho intrigante: investigar o misterioso vilarejo de Willowbrook, onde todos os habitantes morreram repentinamente. Determinada a desvendar o que aconteceu, Emily embarca em uma jornada que a leva por caminhos obscuros e inesperados. Enquanto ela explora as ruas desertas e os edifícios abandonados de Willowbrook, Emily descobre pistas que a levam a confrontar seu próprio passado doloroso e a enfrentar segredos há muito enterrados. Cada descoberta traz novas perguntas, e a verdade se revela mais sinistra do que ela jamais poderia imaginar.O Incidente de Willowbrook é uma história de suspense e investigação que prende o leitor desde a primeira página, mergulhando-o em um enredo repleto de mistério, intriga e revelações chocantes. Acompanhe Emily enquanto ela luta para descobrir a verdade por trás das mortes no vilarejo e enfrenta seus próprios demônios ao longo do caminho.',
+    preco: 7.5, // ou remova essa linha se for gratuito
+    imagem: 'IdW.jpg',
+    youtube: null // ou 'https://youtube.com/...'
+  })"
+  class="w-full bg-purple-600 text-white py-2 rounded-full hover:bg-purple-700 transition mt-4">
+   Ver Detalhes
+</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
 
   <!-- Sobre o Autor -->
+  <section id="sobreAutor" class="bg-gradient-to-br from-indigo-600 to-purple-800 text-white py-16 px-4 sm:px-6">
   <section class="bg-gradient-to-br from-indigo-600 to-purple-800 text-white py-16 px-4 sm:px-6">
     <div class="max-w-4xl mx-auto text-center">
-      <h2 class="text-3xl font-extrabold mb-4">✍️ Sobre o Autor</h2>
+      <h2 class="text-3xl font-extrabold mb-4"> Sobre o Autor</h2>
       <p class="text-lg leading-relaxed">Pedro Henrique é um autor brasileiro apaixonado por mundos fantásticos, suspense e histórias que exploram o lado mais profundo da mente humana. Com um estilo marcante, ele combina emoções reais com mistérios sobrenaturais, criando tramas envolventes que prendem o leitor da primeira à última página.</p>
       <p class="mt-4 text-md opacity-90"> Além da literatura, Pedro também atua como roteirista, e contador de histórias. Seu universo expandido começa com "A Lenda do Caos", mas está longe de terminar.</p>
     </div>
   </section>
 
   <!-- Linha do Tempo -->
+  <section id="linhaTempo" class="bg-white py-16 px-4 sm:px-6">
   <section class="bg-white py-16 px-4 sm:px-6">
     <div class="max-w-4xl mx-auto">
-      <h2 class="text-3xl font-extrabold text-center text-purple-700 mb-10">📅 Linha do Tempo do Universo</h2>
+      <h2 class="text-3xl font-extrabold text-center text-purple-700 mb-10"> Linha do Tempo do Universo</h2>
       <div class="relative border-l-4 border-purple-600 pl-6 space-y-10">
         <div class="relative">
           <div class="absolute -left-4 top-1.5 w-3 h-3 bg-purple-600 rounded-full"></div>
@@ -148,6 +273,85 @@
       </div>
     </div>
   </section>
+
+<!-- POPUP LOGIN -->
+<div id="popupLogin" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+  <div class="bg-white rounded-3xl shadow-2xl p-8 w-96 max-w-full animate-fade relative border-t-4 border-purple-700">
+    <!-- Botão Fechar -->
+    <button onclick="toggleLogin()" class="absolute top-3 right-3 text-gray-400 hover:text-red-500 text-2xl font-bold transition">&times;</button>
+
+    <!-- Título -->
+    <h2 class="text-2xl font-extrabold text-purple-700 mb-1 text-center"> Bem-vindo(a)!</h2>
+    <p class="text-sm text-gray-500 text-center mb-6">Faça login para acessar suas histórias</p>
+
+    <!-- Formulário -->
+    <form class="space-y-4">
+      <!-- Email -->
+      <div>
+        <label class="block text-sm font-medium mb-1 text-gray-700"> E-mail</label>
+        <input 
+          type="email" 
+          placeholder="exemplo@dominio.com"
+          class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-purple-400 transition"
+          required
+        />
+      </div>
+
+      <!-- Senha -->
+      <div>
+        <label class="block text-sm font-medium mb-1 text-gray-700"> Senha</label>
+        <input 
+          type="password" 
+          placeholder="Digite sua senha"
+          class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-purple-400 transition"
+          required
+        />
+      </div>
+
+      <!-- Botão -->
+      <button 
+        type="submit"
+        class="w-full bg-purple-600 text-white py-3 rounded-full font-semibold hover:bg-purple-700 transition-all shadow-md"
+      >
+        Entrar
+      </button>
+    </form>
+
+    <!-- Link de Cadastro -->
+    <p class="mt-4 text-sm text-center text-gray-600">
+      Ainda não tem conta?
+      <a href="#" class="text-purple-600 font-semibold hover:underline">Cadastre-se</a>
+    </p>
+  </div>
+</div>
+
+  <!-- POPUP DE DETALHES -->
+<div id="popupDetalhes" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl shadow-2xl w-full max-w-5xl h-[90vh] flex flex-col sm:flex-row overflow-hidden animate-fade relative border-t-4 border-purple-700">
+    
+    <!-- Botão fechar -->
+    <button onclick="fecharDetalhes()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-3xl font-bold z-10 transition">&times;</button>
+
+    <!-- Área de texto -->
+<div class="flex-1 p-6 sm:p-10 overflow-y-auto flex flex-col">
+  <h2 id="detalheTitulo" class="text-3xl font-bold text-purple-700 mb-4"></h2>
+  <p id="detalhePreco" class="text-xl font-bold text-green-700 mb-4 hidden"></p>
+  <div id="detalheDescricao" class="text-gray-800 leading-relaxed whitespace-pre-line max-h-[50vh] overflow-y-auto mb-6"></div>
+
+  <!-- Botões fixos ao rodapé -->
+  <div id="botoesDetalhes" class="mt-auto flex flex-col sm:flex-row gap-4 justify-center pt-6 border-t border-gray-200">
+    <!-- Botões inseridos via JS -->
+  </div>
+</div>
+
+    <!-- Capa do livro -->
+    <div class="w-full sm:w-1/3 bg-gray-100 p-6 flex items-center justify-center border-l border-gray-200">
+      <img id="detalheImagem" src="" alt="Capa da Obra" class="w-full h-auto max-h-[80vh] object-contain rounded-2xl shadow-lg" />
+    </div>
+
+  </div>
+</div>
+
 
   <!-- Scripts -->
   <script>
@@ -189,7 +393,7 @@
       if (estante.length === 0) {
         lista.innerHTML = `<div class="text-center text-gray-500">
             <div class="text-5xl mb-2">📭</div>
-            <p class="text-lg">Sua estante está vazia... por enquanto!</p>
+            <p class="text-lg">Sua sacola está vazia... por enquanto!</p>
           </div>`;
         totalSpan.textContent = "R$ 0,00";
         return;
@@ -230,5 +434,92 @@
 
     document.addEventListener("DOMContentLoaded", atualizarPopupEstante);
   </script>
+  <script>
+  function filtrarObras() {
+    const textoBusca = document.getElementById("buscaObra").value.toLowerCase();
+    const obras = document.querySelectorAll(".obra");
+
+    obras.forEach(obra => {
+      const titulo = obra.querySelector("h3").innerText.toLowerCase();
+      const tags = obra.getAttribute("data-tags");
+      const tagAtiva = document.querySelector(".tag-btn.selected")?.dataset?.tag || "todos";
+
+      const correspondeTexto = titulo.includes(textoBusca);
+      const correspondeTag = tagAtiva === "todos" || tags === tagAtiva;
+
+      obra.style.display = (correspondeTexto && correspondeTag) ? "block" : "none";
+    });
+  }
+
+  function filtrarTag(tag) {
+  const botoes = document.querySelectorAll(".tag-btn");
+  botoes.forEach(btn => btn.classList.remove("selected"));
+
+  const botaoSelecionado = [...botoes].find(b => b.dataset.tag === tag);
+  if (botaoSelecionado) botaoSelecionado.classList.add("selected");
+
+  document.querySelectorAll(".obra").forEach(obra => {
+    const tags = obra.getAttribute("data-tags");
+    if (tag === "todos" || tags === tag) {
+      obra.style.display = "block";
+    } else {
+      obra.style.display = "none";
+    }
+  });
+
+  filtrarObras();
+}
+</script>
+<script>
+  function scrollToSection(id) {
+    const section = document.getElementById(id);
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+</script>
+<script>
+function abrirDetalhes({ nome, descricao, preco, imagem, youtube }) {
+  document.getElementById("detalheImagem").src = imagem;
+  document.getElementById("detalheTitulo").textContent = nome;
+  document.getElementById("detalheDescricao").textContent = descricao;
+
+  const precoEl = document.getElementById("detalhePreco");
+  if (preco) {
+    precoEl.textContent = ` R$ ${preco.toFixed(2)}`;
+    precoEl.classList.remove("hidden");
+  } else {
+    precoEl.classList.add("hidden");
+  }
+
+  const botoes = document.getElementById("botoesDetalhes");
+  botoes.innerHTML = "";
+
+  if (preco) {
+    botoes.innerHTML += `
+      <button 
+        onclick="adicionarLivro('${nome}', ${preco}, '${imagem}')" 
+        class="flex-1 bg-purple-600 text-white py-3 rounded-full font-semibold hover:bg-purple-700 transition">
+         Adicionar à Sacola
+      </button>`;
+  }
+
+  if (youtube) {
+    botoes.innerHTML += `
+      <a href="${youtube}" 
+        target="_blank" 
+        class="flex-1 bg-red-600 text-white py-3 rounded-full font-semibold text-center hover:bg-red-700 transition">
+         Ver no YouTube
+      </a>`;
+  }
+
+  document.getElementById("popupDetalhes").classList.remove("hidden");
+}
+
+function fecharDetalhes() {
+  document.getElementById("popupDetalhes").classList.add("hidden");
+}
+
+</script>
 </body>
 </html>
