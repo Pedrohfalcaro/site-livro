@@ -9,9 +9,7 @@
     tailwind.config = {
       theme: {
         extend: {
-          animation: {
-            fade: 'fadeIn 0.4s ease-in-out',
-          },
+          animation: { fade: 'fadeIn 0.4s ease-in-out' },
           keyframes: {
             fadeIn: {
               '0%': { opacity: 0, transform: 'scale(0.95)' },
@@ -23,20 +21,173 @@
     }
   </script>
 
-  <script>
-    function toggleLogin() {
-      const popup = document.getElementById("popupLogin");
-      popup.classList.toggle("hidden");
-    }
-  </script>
-
   <style>
-    .tag-btn.selected {
-      box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.7); /* Roxo suave */
-      transform: scale(1.05);
-    }
+    .tag-btn.selected { box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.7); transform: scale(1.05); }
+
+    /* ====== Carrossel ====== */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+   /* Obras + Contos com o mesmo layout de carrossel */
+#obrasContainer, #contosContainer { gap: 2rem; } /* igual ao gap-8 */
+#obrasContainer .obra, #contosContainer .obra { flex: 0 0 calc(33.333% - 1.333rem); } /* 3 por vez no desktop */
+
+@media (max-width: 1024px) {
+  #obrasContainer .obra, #contosContainer .obra { flex: 0 0 calc(50% - 1rem); } /* 2 por vez */
+}
+@media (max-width: 640px) {
+  #obrasContainer .obra, #contosContainer .obra { flex: 0 0 100%; } /* 1 por vez */
+}
+
+    .carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.95);
+  border-radius: 9999px;
+  padding: 0.9rem 1rem; /* botão maior */
+  font-size: 1.6rem;    /* seta maior */
+  font-weight: bold;
+  color: #7e22ce;       /* roxo */
+  box-shadow: 0 4px 12px rgba(0,0,0,.25);
+  transition: background 0.2s ease, transform 0.2s ease, color 0.2s ease;
+  z-index: 10;
+}
+.carousel-btn:hover {
+  background: #fff;
+  color: #9333ea; /* roxo mais claro no hover */
+  transform: translateY(-50%) scale(1.05);
+}
+/* afastamento maior dos cards */
+.carousel-btn-left { left: -2.5rem; }
+.carousel-btn-right { right: -2.5rem; }
+
+   /* ====== Tema escuro ====== */
+.theme-dot { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #fff; cursor: pointer; }
+#temaClaro { background: linear-gradient(90deg, #ffffff 50%, #7e22ce 50%); }
+#temaEscuro { background: linear-gradient(90deg, #1f2937 50%, #a78bfa 50%); }
+
+/* A classe dark-mode fica no BODY */
+body.dark-mode { background-color: #0b1220; color: #e5e7eb; }
+
+/* Top bar e hero */
+body.dark-mode nav.bg-purple-700 { background-color: #6d28d9 !important; }
+body.dark-mode .bg-gradient-to-br.from-purple-700.to-indigo-700 {
+  background-image: linear-gradient(to bottom right, #6d28d9, #4338ca) !important;
+}
+
+/* Áreas claras e cartões */
+body.dark-mode .bg-white,
+body.dark-mode .obra,
+body.dark-mode .card,
+body.dark-mode .tag-btn,
+body.dark-mode input,
+body.dark-mode textarea {
+  background-color: #1f2937 !important;
+  color: #e5e7eb !important;
+  border-color: #374151 !important;
+}
+
+/* Fundo dos cards de Contos */
+#contos .obra {
+  background-color: #ffffff; /* claro */
+  color: #1f2937; /* texto escuro */
+}
+
+body.dark-mode #contos .obra {
+  background-color: #1e1e1e !important; /* escuro */
+  color: #e5e7eb !important; /* texto claro */
+}
+
+/* Contos — garante texto visível no modo claro */
+#contos .obra h3 {
+  color: #1f2937 !important; /* slate-800 */
+}
+#contos .obra p {
+  color: #4b5563 !important; /* slate-600 */
+}
+
+/* (continua igual no dark) */
+body.dark-mode #contos .obra h3 { color: #e5e7eb !important; }
+body.dark-mode #contos .obra p  { color: #d1d5db !important; }
+
+/* Fundo da seção Contos: branco no claro, escuro no dark-mode */
+#contos { background-color: #ffffff; }
+body.dark-mode #contos { background-color: #0b1220 !important; }
+
+/* Textos utilitários */
+body.dark-mode .text-gray-800 { color: #e5e7eb !important; }
+body.dark-mode .text-gray-700 { color: #d1d5db !important; }
+body.dark-mode .text-gray-600 { color: #9ca3af !important; }
+
+/* Roxos no dark */
+body.dark-mode .bg-purple-600 { background-color: #8b5cf6 !important; }
+body.dark-mode .hover\:bg-purple-700:hover { background-color: #7c3aed !important; }
+body.dark-mode .text-purple-700 { color: #c4b5fd !important; }
+
+/* Bordas e fundos cinza */
+body.dark-mode .border-gray-200 { border-color: #374151 !important; }
+body.dark-mode .bg-gray-100,
+body.dark-mode .bg-gray-50 {
+  background-color: #0b1220 !important;
+  color: #e5e7eb !important;
+}
+  /* Links do menu com sublinhado animado mais “jovial” */
+.nav-link {
+  position: relative;
+  padding-bottom: 4px;
+  transition: opacity .2s ease;
+}
+.nav-link:hover { opacity: .95; }
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  width: 0%;
+  height: 3px;
+  background: rgba(255,255,255,.9);
+  border-radius: 9999px;
+  transition: width .25s ease;
+}
+.nav-link:hover::after { width: 100%; }
+
+/* Melhor contraste dos dots no topo roxo */
+.theme-dot { box-shadow: 0 0 0 2px rgba(255,255,255,.35) inset; }
+.theme-dot:hover { box-shadow: 0 0 0 2px rgba(255,255,255,.75) inset; }
+
+/* Dark mode: leve ajuste no menu hover */
+body.dark-mode .nav-link::after { background: #e9d5ff; }
+body.dark-mode nav { box-shadow: 0 2px 12px rgba(0,0,0,.35); }
+
   </style>
 </head>
+<script>
+  (function () {
+    const BODY = document.body;
+    const KEY = 'theme';
+    const btnClaro = document.getElementById('temaClaro');
+    const btnEscuro = document.getElementById('temaEscuro');
+
+    function apply(theme) {
+      if (theme === 'dark') {
+        BODY.classList.add('dark-mode');
+        btnEscuro?.classList.add('ring-2','ring-white');
+        btnClaro?.classList.remove('ring-2','ring-white');
+      } else {
+        BODY.classList.remove('dark-mode');
+        btnClaro?.classList.add('ring-2','ring-white');
+        btnEscuro?.classList.remove('ring-2','ring-white');
+      }
+    }
+
+    // estado inicial
+    apply(localStorage.getItem(KEY) || 'light');
+
+    // listeners
+    btnClaro?.addEventListener('click', () => { localStorage.setItem(KEY, 'light'); apply('light'); });
+    btnEscuro?.addEventListener('click', () => { localStorage.setItem(KEY, 'dark');  apply('dark');  });
+  })();
+</script>
 
 <body class="bg-gray-100 text-gray-900 font-sans relative overflow-x-hidden">
 
@@ -44,35 +195,6 @@
   <div id="mensagemSucesso" class="hidden fixed top-20 right-6 z-50 bg-green-100 border border-green-400 text-green-800 px-6 py-3 rounded shadow-lg animate-fade">
     ✅ Livro adicionado à Sacola!
   </div>
-
-<!-- Barra de Navegação Topo -->
-<nav class="bg-purple-700 text-white py-4 px-6 shadow-md sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto flex justify-between items-center flex-wrap gap-4">
-    
-    <!-- Título Centralizado (em telas pequenas fica acima) -->
-    <h1 class="text-2xl font-bold w-full text-center mb-2 sm:mb-0 sm:w-auto">Estante de Histórias</h1>
-
-    <!-- Menu -->
-<div class="flex flex-wrap justify-center sm:justify-end gap-x-6 text-sm sm:text-base font-medium w-full sm:w-auto">
-  <button onclick="scrollToSection('obrasProjetos')" class="hover:underline underline-offset-4 transition duration-200">Obras & Projetos</button>
-  <span class="hidden sm:inline">|</span>
-  
-  <button onclick="scrollToSection('sobreAutor')" class="hover:underline underline-offset-4 transition duration-200">Sobre o Autor</button>
-  <span class="hidden sm:inline">|</span>
-
-  <button onclick="scrollToSection('linhaTempo')" class="hover:underline underline-offset-4 transition duration-200">Linha do Tempo</button>
-  <span class="hidden sm:inline">|</span>
-
-  <button onclick="toggleLogin()" class="hover:underline underline-offset-4 transition duration-200">Login</button>
-  <span class="hidden sm:inline">|</span>
-
-  <button onclick="toggleEstante()" class="hover:underline underline-offset-4 transition duration-200">Sacola</button>
-</div>
-
-
-  </div>
-</nav>
-
 
   <!-- POPUP Sacola -->
   <div id="popupEstante" class="fixed top-0 right-0 w-full sm:w-96 h-full bg-white shadow-2xl p-6 z-50 transform translate-x-full transition-transform duration-300 overflow-y-auto">
@@ -89,6 +211,41 @@
 
   <!-- Overlay -->
   <div id="overlayEstante" onclick="toggleEstante()" class="hidden fixed inset-0 bg-black bg-opacity-30 z-40 cursor-pointer"></div>
+
+  <!-- Barra de Navegação Topo (NOVA) -->
+<nav class="bg-purple-700 text-white py-5 px-6 shadow-md sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto flex items-center gap-6">
+    <!-- Botões de tema, colados à esquerda -->
+    <div class="flex items-center gap-2 shrink-0">
+      <button id="temaClaro" class="theme-dot" title="Tema claro"></button>
+      <button id="temaEscuro" class="theme-dot" title="Tema escuro"></button>
+    </div>
+
+    <!-- Título centralizado visualmente (cresce, mas não empurra o menu) -->
+    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+      Estante de Histórias
+    </h1>
+
+    <!-- Menu alinhado à direita, mais espaçado e maior -->
+    <div class="ml-auto flex items-center gap-6 sm:gap-8 md:gap-10 text-base sm:text-lg font-medium">
+      <button onclick="scrollToSection('obrasProjetos')" class="nav-link">Obras & Projetos</button>
+      <button onclick="scrollToSection('sobreAutor')" class="nav-link">Sobre o Autor</button>
+      <button onclick="scrollToSection('linhaTempo')" class="nav-link">Linha do Tempo</button>
+      <!-- Botão Contos -->
+<button onclick="document.getElementById('contos').scrollIntoView({ behavior: 'smooth' })" 
+  class="ml-4 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-full shadow-md transition">
+  Contos
+</button>
+
+
+      <!-- Botão da sacola com estilo “pill” -->
+      <button onclick="toggleEstante()" class="px-4 py-2 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-sm border border-white/20 transition">
+        Sacola
+      </button>
+    </div>
+  </div>
+</nav>
+
 
   <!-- Hero -->
   <section class="bg-gradient-to-br from-purple-700 to-indigo-700 text-white py-6 px-4 md:px-8">
@@ -110,251 +267,220 @@
 
   <!-- Obras -->
   <section id="obrasProjetos" class="max-w-6xl mx-auto py-16 px-4">
-  <section class="max-w-6xl mx-auto py-16 px-4">
-  <h2 class="text-3xl font-extrabold text-center mb-6 text-purple-700"> Obras & Projetos</h2>
+    <section class="max-w-6xl mx-auto py-16 px-4">
+      <h2 class="text-3xl font-extrabold text-center mb-6 text-purple-700"> Obras & Projetos</h2>
 
-  <!-- Filtros -->
-  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
-    <input 
-      type="text" 
-      id="buscaObra" 
-      placeholder="🔍 Procurar título..." 
-      class="w-full sm:w-1/2 px-4 py-3 rounded-full border border-purple-300 shadow focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all bg-white"
-      oninput="filtrarObras()"
-    />
-    <div class="flex gap-2 flex-wrap justify-center sm:justify-start">
-      <!-- Todos -->
-<button 
-  onclick="filtrarTag('todos')" 
-  data-tag="todos" 
-  class="tag-btn bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm font-semibold hover:bg-purple-200 transition-all">
-  Todos
-</button>
-
-<!-- Livro -->
-<button 
-  onclick="filtrarTag('Livro')" 
-  data-tag="Livro" 
-  class="tag-btn bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold hover:bg-green-200 transition-all">
-  📖 Livro
-</button>
-
-<!-- Áudio-série -->
-<button 
-  onclick="filtrarTag('Áudio-série')" 
-  data-tag="Áudio-série" 
-  class="tag-btn bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm font-semibold hover:bg-purple-200 transition-all">
-  🎧 Áudio-série
-</button>
-
-<!-- WebLivro -->
-<button 
-  onclick="filtrarTag('WebLivro')" 
-  data-tag="WebLivro" 
-  class="tag-btn bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-sm font-semibold hover:bg-indigo-200 transition-all">
-  🌐 WebLivro
-</button>
-
-    </div>
-  </div>
-
-  <!-- Obras -->
-  <div id="obrasContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-    
-    <!-- Livro -->
-    <div class="obra" data-tags="Livro">
-      <div class="bg-white rounded-3xl shadow-lg flex flex-col p-5 h-full hover:shadow-xl transition-all group relative">
-        <div class="absolute top-3 left-3 z-10 bg-green-100 text-green-700 px-3 py-1 text-xs font-bold rounded-full shadow-sm">📖 Livro</div>
-        <img src="LdC1.png" class="w-full h-64 object-cover rounded-2xl mb-4 transform group-hover:scale-105 transition-all" />
-        <h3 class="text-xl font-bold text-center mb-1">A Lenda do Caos - Tríplice Caótica + Marca-páginas + Conto exclusivo</h3>
-        <p class="text-lg mt-2 text-center">
-          <del class="text-red-500 text-base mr-2">R$ 57,90</del>
-          <strong class="text-green-600 text-xl font-bold">R$ 52,90</strong>
-        </p>
-        <div class="mt-auto pt-4">
-          <button 
-  onclick="abrirDetalhes({
-    nome: 'A Lenda do Caos - Tríplice Caótica + Marca-páginas + Conto exclusivo',
-    descricao: 'E se cada história que já foi contada existisse de verdade, em um universo próprio, moldado pela mente de quem a criou? Arthur, um garoto comum de 14 anos, sempre acreditou que histórias eram apenas... histórias. Mas tudo muda quando uma simples narrativa contada pelo seu pai se transforma em algo maior — muito maior. Ele começa a ver coisas que ninguém mais vê. Ouvir vozes que ninguém mais ouve. Sentir um chamado vindo de um lugar que ele nem sabia existir. O que Arthur não sabe é que sua mente se conectou a uma porta — uma ligação entre mundos. Uma passagem entre a realidade que vivemos e outra, nascida do caos primordial: a realidade da história que escutou. Arthur se vê no centro de uma guerra entre mundos, onde criação e destruição são apenas duas faces da mesma força: o Caos.',
-    preco: 52.9, // ou remova essa linha se for gratuito
-    imagem: 'LdC1.png',
-    youtube: null // ou 'https://youtube.com/...'
-  })"
-  class="w-full bg-purple-600 text-white py-2 rounded-full hover:bg-purple-700 transition mt-4">
-   Ver Detalhes
-</button>
-
+      <!-- Filtros -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
+        <input 
+          type="text" id="buscaObra" placeholder="🔍 Procurar título..."
+          class="w-full sm:w-1/2 px-4 py-3 rounded-full border border-purple-300 shadow focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all bg-white"
+          oninput="filtrarObras()"
+        />
+        <div class="flex gap-2 flex-wrap justify-center sm:justify-start">
+          <button onclick="filtrarTag('todos')" data-tag="todos" class="tag-btn bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm font-semibold hover:bg-purple-200 transition-all">Todos</button>
+          <button onclick="filtrarTag('Livro')" data-tag="Livro" class="tag-btn bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold hover:bg-green-200 transition-all">📖 Livro</button>
+          <button onclick="filtrarTag('Áudio-série')" data-tag="Áudio-série" class="tag-btn bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm font-semibold hover:bg-purple-200 transition-all">🎧 Áudio-série</button>
+          <button onclick="filtrarTag('WebLivro')" data-tag="WebLivro" class="tag-btn bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-sm font-semibold hover:bg-indigo-200 transition-all">🌐 WebLivro</button>
         </div>
       </div>
-    </div>
 
-    <!-- Áudio-série -->
-    <div class="obra" data-tags="Áudio-série">
-      <div class="bg-white rounded-3xl shadow-lg flex flex-col p-5 h-full hover:shadow-xl transition-all group relative">
-        <div class="absolute top-3 left-3 z-10 bg-purple-100 text-purple-700 px-3 py-1 text-xs font-bold rounded-full shadow-sm">🎧 Áudio-série</div>
-        <img src="AdC1.jpg" class="w-full h-64 object-cover rounded-2xl mb-4 transform group-hover:scale-105 transition-all" />
-        <h3 class="text-xl font-bold text-center mb-1">Além dos Céus – T1: Desbravadores</h3>
-        <p class="text-gray-600 text-sm mb-3 text-center">Uma jornada espacial e sentimental através do universo.</p>
-        <div class="mt-auto pt-4">
-        <button 
-  onclick="abrirDetalhes({
-    nome: 'Além dos Céus – Temporada 1: Desbravadores',
-    descricao: 'Além dos Céus é uma áudio série focada em aventuras e viagens espaciais. Leonardo é o protagonista desta história, onde sua tarefa é liderar uma equipe em uma missão rumo a um sistema solar longínquo. Ele irá lidar, com sentimentos, conflitos internos e decisões difíceis a tomar, além de muita ação e determinação. Como será a aventura desta tripulação? Isso você só descobrirá em Além dos Céus',
-    imagem: 'AdC1.jpg',
-    youtube: 'https://youtube.com/playlist?list=PLVQe8695upyjlnarF121CIlis7cCW6-n1&si=Ly59Vjxq5-M0a6tf'
-  })"
-  class="w-full bg-purple-600 text-white py-2 rounded-full hover:bg-purple-700 transition mt-4">
-   Ver Detalhes
-</button>
+      <!-- Carrossel (substitui o grid) -->
+      <div class="relative">
+        <button id="prevObras" class="carousel-btn carousel-btn-left" aria-label="Anterior">&lt;</button>
+
+
+        <div id="obrasContainer" class="flex overflow-x-auto no-scrollbar scroll-smooth">
+          
+          <!-- Livro -->
+          <div class="obra" data-tags="Livro">
+            <div class="bg-white rounded-3xl shadow-lg flex flex-col p-5 h-full hover:shadow-xl transition-all group relative">
+              <div class="absolute top-3 left-3 z-10 bg-green-100 text-green-700 px-3 py-1 text-xs font-bold rounded-full shadow-sm">📖 Livro</div>
+              <img src="LdC1.png" class="w-full h-64 object-cover rounded-2xl mb-4 transform group-hover:scale-105 transition-all" />
+              <h3 class="text-xl font-bold text-center mb-1">A Lenda do Caos - Tríplice Caótica + Marca-páginas + Conto exclusivo</h3>
+              <p class="text-lg mt-2 text-center">
+                <del class="text-red-500 text-base mr-2">R$ 57,90</del>
+                <strong class="text-green-600 text-xl font-bold">R$ 52,90</strong>
+              </p>
+              <div class="mt-auto pt-4">
+                <button 
+                  onclick="abrirDetalhes({
+                    nome: 'A Lenda do Caos - Tríplice Caótica + Marca-páginas + Conto exclusivo',
+                    descricao: 'E se cada história que já foi contada existisse de verdade, em um universo próprio, moldado pela mente de quem a criou? Arthur, um garoto comum de 14 anos, sempre acreditou que histórias eram apenas... histórias. Mas tudo muda quando uma simples narrativa contada pelo seu pai se transforma em algo maior — muito maior. Ele começa a ver coisas que ninguém mais vê. Ouvir vozes que ninguém mais ouve. Sentir um chamado vindo de um lugar que ele nem sabia existir. O que Arthur não sabe é que sua mente se conectou a uma porta — uma ligação entre mundos. Uma passagem entre a realidade que vivemos e outra, nascida do caos primordial: a realidade da história que escutou. Arthur se vê no centro de uma guerra entre mundos, onde criação e destruição são apenas duas faces da mesma força: o Caos.',
+                    preco: 52.9,
+                    imagem: 'LdC1.png',
+                    youtube: null,
+                    tipo: 'livro'
+                  })"
+                  class="w-full bg-purple-600 text-white py-2 rounded-full hover:bg-purple-700 transition mt-4">
+                  Ver Detalhes
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Áudio-série -->
+          <div class="obra" data-tags="Áudio-série">
+            <div class="bg-white rounded-3xl shadow-lg flex flex-col p-5 h-full hover:shadow-xl transition-all group relative">
+              <div class="absolute top-3 left-3 z-10 bg-purple-100 text-purple-700 px-3 py-1 text-xs font-bold rounded-full shadow-sm">🎧 Áudio-série</div>
+              <img src="AdC1.jpg" class="w-full h-64 object-cover rounded-2xl mb-4 transform group-hover:scale-105 transition-all" />
+              <h3 class="text-xl font-bold text-center mb-1">Além dos Céus – T1: Desbravadores</h3>
+              <p class="text-gray-600 text-sm mb-3 text-center">Uma jornada espacial e sentimental através do universo.</p>
+              <div class="mt-auto pt-4">
+                <button 
+                  onclick="abrirDetalhes({
+                    nome: 'Além dos Céus – Temporada 1: Desbravadores',
+                    descricao: 'Além dos Céus é uma áudio série focada em aventuras e viagens espaciais. Leonardo é o protagonista desta história, onde sua tarefa é liderar uma equipe em uma missão rumo a um sistema solar longínquo. Ele irá lidar, com sentimentos, conflitos internos e decisões difíceis a tomar, além de muita ação e determinação. Como será a aventura desta tripulação? Isso você só descobrirá em Além dos Céus',
+                    imagem: 'AdC1.jpg',
+                    youtube: 'https://youtube.com/playlist?list=PLVQe8695upyjlnarF121CIlis7cCW6-n1&si=Ly59Vjxq5-M0a6tf',
+                    tipo: 'audio'
+                  })"
+                  class="w-full bg-purple-600 text-white py-2 rounded-full hover:bg-purple-700 transition mt-4">
+                  Ver Detalhes
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- WebLivro -->
+          <div class="obra" data-tags="WebLivro">
+            <div class="bg-white rounded-3xl shadow-lg flex flex-col p-5 h-full hover:shadow-xl transition-all group relative">
+              <div class="absolute top-3 left-3 z-10 bg-indigo-100 text-indigo-700 px-3 py-1 text-xs font-bold rounded-full shadow-sm">🌐 WebLivro</div>
+              <img src="IdW.jpg" class="w-full h-64 object-cover rounded-2xl mb-4 transform group-hover:scale-105 transition-all" />
+              <h3 class="text-xl font-bold text-center mb-1">O incidente de Willowbrook</h3>
+              <p class="text-lg mt-2 text-center text-gray-800"><strong class="text-indigo-600 text-xl font-bold">R$ 7,50</strong></p>
+              <div class="mt-auto pt-4">
+                <button 
+                  onclick="abrirDetalhes({
+                    nome: 'O Incidente de Willowbrook',
+                    descricao: 'Em um Reino Unido envolto em mistérios e segredos, Emily Holwes, uma investigadora surda, recebe uma carta de um antigo amigo propondo um trabalho intrigante: investigar o misterioso vilarejo de Willowbrook, onde todos os habitantes morreram repentinamente. Determinada a desvendar o que aconteceu, Emily embarca em uma jornada que a leva por caminhos obscuros e inesperados...',
+                    preco: 7.5,
+                    imagem: 'IdW.jpg',
+                    youtube: null,
+                    tipo: 'weblivro',
+                    hotmartLink: 'https://pay.hotmart.com/SEU_HOTLINK_WILLOWBROOK'
+                  })"
+                  class="w-full bg-purple-600 text-white py-2 rounded-full hover:bg-purple-700 transition mt-4">
+                  Ver Detalhes
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- WebLivro 2 -->
+          <div class="obra" data-tags="WebLivro">
+            <div class="bg-white rounded-3xl shadow-lg flex flex-col p-5 h-full hover:shadow-xl transition-all group relative">
+              <div class="absolute top-3 left-3 z-10 bg-indigo-100 text-indigo-700 px-3 py-1 text-xs font-bold rounded-full shadow-sm">🌐 WebLivro</div>
+              <img src="LdC1.png" class="w-full h-64 object-cover rounded-2xl mb-4 transform group-hover:scale-105 transition-all" />
+              <h3 class="text-xl font-bold text-center mb-1">A Lenda do Caos: Tríplice Caótica (Versão Web)</h3>
+              <p class="text-lg mt-2 text-center">
+                <del class="text-red-500 text-base mr-2">R$ 25,90</del>
+                <strong class="text-green-600 text-xl font-bold">R$ 19,90</strong>
+              </p>
+              <div class="mt-auto pt-4">
+                <button 
+                  onclick="abrirDetalhes({
+                    nome: 'A Lenda do Caos: Tríplice Caótica (Versão Web)',
+                    descricao: 'E se cada história que já foi contada existisse de verdade, em um universo próprio, moldado pela mente de quem a criou?...',
+                    preco: 24.9,
+                    imagem: 'LdC1.png',
+                    youtube: null,
+                    tipo: 'weblivro',
+                    hotmartLink: 'https://pay.hotmart.com/SEU_HOTLINK_LDC_WEB'
+                  })"
+                  class="w-full bg-purple-600 text-white py-2 rounded-full hover:bg-purple-700 transition mt-4">
+                  Ver Detalhes
+                </button>
+              </div>
+            </div>
+          </div>
 
         </div>
-      </div>
-    </div>
 
-    <!-- WebLivro -->
-    <div class="obra" data-tags="WebLivro">
-      <div class="bg-white rounded-3xl shadow-lg flex flex-col p-5 h-full hover:shadow-xl transition-all group relative">
-        <div class="absolute top-3 left-3 z-10 bg-indigo-100 text-indigo-700 px-3 py-1 text-xs font-bold rounded-full shadow-sm">🌐 WebLivro</div>
-        <img src="IdW.jpg" class="w-full h-64 object-cover rounded-2xl mb-4 transform group-hover:scale-105 transition-all" />
-        <h3 class="text-xl font-bold text-center mb-1">O incidente de Willowbrook</h3>
-        <p class="text-lg mt-2 text-center text-gray-800">
-          <strong class="text-indigo-600 text-xl font-bold">R$ 7,50</strong>
-        </p>
-        <div class="mt-auto pt-4">
-                    <button 
-  onclick="abrirDetalhes({
-    nome: 'O Incidente de Willowbrook',
-    descricao: 'Em um Reino Unido envolto em mistérios e segredos, Emily Holwes, uma investigadora surda, recebe uma carta de um antigo amigo propondo um trabalho intrigante: investigar o misterioso vilarejo de Willowbrook, onde todos os habitantes morreram repentinamente. Determinada a desvendar o que aconteceu, Emily embarca em uma jornada que a leva por caminhos obscuros e inesperados. Enquanto ela explora as ruas desertas e os edifícios abandonados de Willowbrook, Emily descobre pistas que a levam a confrontar seu próprio passado doloroso e a enfrentar segredos há muito enterrados. Cada descoberta traz novas perguntas, e a verdade se revela mais sinistra do que ela jamais poderia imaginar.O Incidente de Willowbrook é uma história de suspense e investigação que prende o leitor desde a primeira página, mergulhando-o em um enredo repleto de mistério, intriga e revelações chocantes. Acompanhe Emily enquanto ela luta para descobrir a verdade por trás das mortes no vilarejo e enfrenta seus próprios demônios ao longo do caminho.',
-    preco: 7.5, // ou remova essa linha se for gratuito
-    imagem: 'IdW.jpg',
-    youtube: null // ou 'https://youtube.com/...'
-  })"
-  class="w-full bg-purple-600 text-white py-2 rounded-full hover:bg-purple-700 transition mt-4">
-   Ver Detalhes
-</button>
-        </div>
+        <button id="nextObras" class="carousel-btn carousel-btn-right" aria-label="Próximo">&gt;</button>
       </div>
-    </div>
-
-  </div>
-</section>
+    </section>
+  </section>
 
   <!-- Sobre o Autor -->
   <section id="sobreAutor" class="bg-gradient-to-br from-indigo-600 to-purple-800 text-white py-16 px-4 sm:px-6">
-  <section class="bg-gradient-to-br from-indigo-600 to-purple-800 text-white py-16 px-4 sm:px-6">
-    <div class="max-w-4xl mx-auto text-center">
-      <h2 class="text-3xl font-extrabold mb-4"> Sobre o Autor</h2>
-      <p class="text-lg leading-relaxed">Pedro Henrique é um autor brasileiro apaixonado por mundos fantásticos, suspense e histórias que exploram o lado mais profundo da mente humana. Com um estilo marcante, ele combina emoções reais com mistérios sobrenaturais, criando tramas envolventes que prendem o leitor da primeira à última página.</p>
-      <p class="mt-4 text-md opacity-90"> Além da literatura, Pedro também atua como roteirista, e contador de histórias. Seu universo expandido começa com "A Lenda do Caos", mas está longe de terminar.</p>
-    </div>
-  </section>
+    <section class="bg-gradient-to-br from-indigo-600 to-purple-800 text-white py-16 px-4 sm:px-6">
+      <div class="max-w-4xl mx-auto text-center">
+        <h2 class="text-3xl font-extrabold mb-4"> Sobre o Autor</h2>
+        <p class="text-lg leading-relaxed">Pedro Henrique é um autor brasileiro apaixonado por mundos fantásticos...</p>
+        <p class="mt-4 text-md opacity-90"> Além da literatura, Pedro também atua como roteirista, e contador de histórias...</p>
+      </div>
+    </section>
 
   <!-- Linha do Tempo -->
   <section id="linhaTempo" class="bg-white py-16 px-4 sm:px-6">
-  <section class="bg-white py-16 px-4 sm:px-6">
-    <div class="max-w-4xl mx-auto">
-      <h2 class="text-3xl font-extrabold text-center text-purple-700 mb-10"> Linha do Tempo do Universo</h2>
-      <div class="relative border-l-4 border-purple-600 pl-6 space-y-10">
-        <div class="relative">
-          <div class="absolute -left-4 top-1.5 w-3 h-3 bg-purple-600 rounded-full"></div>
-          <h3 class="text-xl font-bold text-purple-700">02 de novembro de 2024</h3>
-          <p class="text-gray-700">Estreia da áudio-série <strong>Além dos Céus – T1: Desbravadores</strong>.</p>
-        </div>
-        <div class="relative">
-          <div class="absolute -left-4 top-1.5 w-3 h-3 bg-indigo-600 rounded-full"></div>
-          <h3 class="text-xl font-bold text-indigo-700">Setembro de 2025 (previsão)</h3>
-          <p class="text-gray-700">Lançamento do livro <strong>A Lenda do Caos – Tríplice Caótica</strong>.</p>
-        </div>
-        <div class="relative">
-          <div class="absolute -left-4 top-1.5 w-3 h-3 bg-gray-400 rounded-full animate-pulse"></div>
-          <h3 class="text-xl font-bold text-gray-600">Março de 2026 <span class="italic">(?)</span></h3>
-          <p class="text-gray-600 italic">Algo novo está vindo...</p>
+    <section class="bg-white py-16 px-4 sm:px-6">
+      <div class="max-w-4xl mx-auto">
+        <h2 class="text-3xl font-extrabold text-center text-purple-700 mb-10"> Linha do Tempo do Universo</h2>
+        <div class="relative border-l-4 border-purple-600 pl-6 space-y-10">
+          <div class="relative">
+            <div class="absolute -left-4 top-1.5 w-3 h-3 bg-purple-600 rounded-full"></div>
+            <h3 class="text-xl font-bold text-purple-700">02 de novembro de 2024</h3>
+            <p class="text-gray-700">Estreia da áudio-série <strong>Além dos Céus – T1: Desbravadores</strong>.</p>
+          </div>
+          <div class="relative">
+            <div class="absolute -left-4 top-1.5 w-3 h-3 bg-indigo-600 rounded-full"></div>
+            <h3 class="text-xl font-bold text-indigo-700">Setembro de 2025 (previsão)</h3>
+            <p class="text-gray-700">Lançamento do livro <strong>A Lenda do Caos – Tríplice Caótica</strong>.</p>
+          </div>
+          <div class="relative">
+            <div class="absolute -left-4 top-1.5 w-3 h-3 bg-gray-400 rounded-full animate-pulse"></div>
+            <h3 class="text-xl font-bold text-gray-600">Março de 2026 <span class="italic">(?)</span></h3>
+            <p class="text-gray-600 italic">Algo novo está vindo...</p>
+          </div>
         </div>
       </div>
+    </section>
+
+    <!-- ================= Seção Contos ================= -->
+<section id="contos" class="py-10">
+  <div class="max-w-7xl mx-auto px-4">
+    <h2 class="text-3xl font-bold text-purple-700 dark:text-purple-300 mb-6">Contos</h2>
+
+    <!-- Carrossel de contos (igual ao de obras) -->
+    <div class="relative">
+      <button id="prevContos" class="carousel-btn carousel-btn-left" aria-label="Anterior">&lt;</button>
+
+      <div id="contosContainer" class="flex overflow-x-auto no-scrollbar scroll-smooth">
+        <!-- Card exemplo -->
+        <div class="obra bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
+          <img src="ContoMUcapa.png" alt="Capa conto" class="w-full h-48 object-cover">
+          <div class="p-4">
+            <h3 class="font-bold text-lg text-gray-800 dark:text-white">Meu Universo</h3>
+            <p class="text-gray-600 dark:text-gray-300 text-sm mt-1">Um conto ambientado entre estrelas, silêncio e decisões que mudam rotas.</p>
+            <a href="ContosMeuUniverso.html" 
+   class="mt-3 block w-full bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg text-center transition">
+   Ler conto
+</a>
+
+        </div>
+        <!-- /Card exemplo -->
+      </div>
+
+     <button id="nextContos" class="carousel-btn carousel-btn-right" aria-label="Próximo">&gt;</button>
     </div>
-  </section>
-
-<!-- POPUP LOGIN -->
-<div id="popupLogin" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
-  <div class="bg-white rounded-3xl shadow-2xl p-8 w-96 max-w-full animate-fade relative border-t-4 border-purple-700">
-    <!-- Botão Fechar -->
-    <button onclick="toggleLogin()" class="absolute top-3 right-3 text-gray-400 hover:text-red-500 text-2xl font-bold transition">&times;</button>
-
-    <!-- Título -->
-    <h2 class="text-2xl font-extrabold text-purple-700 mb-1 text-center"> Bem-vindo(a)!</h2>
-    <p class="text-sm text-gray-500 text-center mb-6">Faça login para acessar suas histórias</p>
-
-    <!-- Formulário -->
-    <form class="space-y-4">
-      <!-- Email -->
-      <div>
-        <label class="block text-sm font-medium mb-1 text-gray-700"> E-mail</label>
-        <input 
-          type="email" 
-          placeholder="exemplo@dominio.com"
-          class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-purple-400 transition"
-          required
-        />
-      </div>
-
-      <!-- Senha -->
-      <div>
-        <label class="block text-sm font-medium mb-1 text-gray-700"> Senha</label>
-        <input 
-          type="password" 
-          placeholder="Digite sua senha"
-          class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-purple-400 transition"
-          required
-        />
-      </div>
-
-      <!-- Botão -->
-      <button 
-        type="submit"
-        class="w-full bg-purple-600 text-white py-3 rounded-full font-semibold hover:bg-purple-700 transition-all shadow-md"
-      >
-        Entrar
-      </button>
-    </form>
-
-    <!-- Link de Cadastro -->
-    <p class="mt-4 text-sm text-center text-gray-600">
-      Ainda não tem conta?
-      <a href="#" class="text-purple-600 font-semibold hover:underline">Cadastre-se</a>
-    </p>
   </div>
-</div>
+</section>
+
 
 <!-- POPUP DE DETALHES -->
 <div id="popupDetalhes" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
   <div class="bg-white rounded-3xl shadow-2xl w-full max-w-5xl h-[90vh] flex flex-col-reverse sm:flex-row overflow-hidden animate-fade relative border-t-4 border-purple-700">
-
-    
-    <!-- Botão fechar -->
     <button onclick="fecharDetalhes()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-3xl font-bold z-10 transition">&times;</button>
-
-    <!-- Área de texto -->
     <div class="flex-1 p-6 sm:p-10 overflow-y-auto flex flex-col">
       <h2 id="detalheTitulo" class="text-3xl font-bold text-purple-700 mb-4"></h2>
       <p id="detalhePreco" class="text-xl font-bold text-green-700 mb-4 hidden"></p>
       <div id="detalheDescricao" class="text-gray-800 leading-relaxed whitespace-pre-line max-h-[50vh] overflow-y-auto mb-6"></div>
-
-      <!-- Botões fixos ao rodapé -->
-      <div id="botoesDetalhes" class="mt-auto flex flex-col sm:flex-row gap-4 justify-center pt-6 border-t border-gray-200">
-        <!-- Botões inseridos via JS -->
-      </div>
+      <div id="botoesDetalhes" class="mt-auto flex flex-col sm:flex-row gap-4 justify-center pt-6 border-t border-gray-200"></div>
     </div>
-
-   <div class="w-full sm:w-1/3 bg-gray-100 p-4 sm:p-6 flex items-center justify-center border-t sm:border-t-0 sm:border-l border-gray-200">
-  <img 
-    id="detalheImagem" 
-    src="" 
-    alt="Capa da Obra" 
-    class="w-40 sm:w-full h-auto max-h-52 sm:max-h-[80vh] object-contain rounded-2xl shadow-lg"
-  />
-</div>
-
-
+    <div class="w-full sm:w-1/3 bg-gray-100 p-4 sm:p-6 flex items-center justify-center border-t sm:border-t-0 sm:border-l border-gray-200">
+      <img id="detalheImagem" src="" alt="Capa da Obra" class="w-40 sm:w-full h-auto max-h-52 sm:max-h-[80vh] object-contain rounded-2xl shadow-lg"/>
+    </div>
   </div>
 </div>
 
@@ -363,11 +489,8 @@
     function adicionarLivro(nome, preco, imagem) {
       const estante = JSON.parse(localStorage.getItem("estante")) || [];
       const index = estante.findIndex(l => l.nome === nome);
-      if (index !== -1) {
-        estante[index].quantidade++;
-      } else {
-        estante.push({ nome, preco, imagem, quantidade: 1 });
-      }
+      if (index !== -1) estante[index].quantidade++;
+      else estante.push({ nome, preco, imagem, quantidade: 1 });
       localStorage.setItem("estante", JSON.stringify(estante));
       mostrarMensagem();
       atualizarPopupEstante();
@@ -376,9 +499,7 @@
     function mostrarMensagem() {
       const msg = document.getElementById("mensagemSucesso");
       msg.classList.remove("hidden");
-      setTimeout(() => {
-        msg.classList.add("hidden");
-      }, 2000);
+      setTimeout(() => msg.classList.add("hidden"), 2000);
     }
 
     function removerLivro(index) {
@@ -439,99 +560,160 @@
 
     document.addEventListener("DOMContentLoaded", atualizarPopupEstante);
   </script>
+
   <script>
-  function filtrarObras() {
-    const textoBusca = document.getElementById("buscaObra").value.toLowerCase();
-    const obras = document.querySelectorAll(".obra");
+    function filtrarObras() {
+      const textoBusca = document.getElementById("buscaObra").value.toLowerCase();
+      const obras = document.querySelectorAll(".obra");
 
-    obras.forEach(obra => {
-      const titulo = obra.querySelector("h3").innerText.toLowerCase();
-      const tags = obra.getAttribute("data-tags");
-      const tagAtiva = document.querySelector(".tag-btn.selected")?.dataset?.tag || "todos";
+      obras.forEach(obra => {
+        const titulo = obra.querySelector("h3").innerText.toLowerCase();
+        const tags = obra.getAttribute("data-tags");
+        const tagAtiva = document.querySelector(".tag-btn.selected")?.dataset?.tag || "todos";
 
-      const correspondeTexto = titulo.includes(textoBusca);
-      const correspondeTag = tagAtiva === "todos" || tags === tagAtiva;
+        const correspondeTexto = titulo.includes(textoBusca);
+        const correspondeTag = tagAtiva === "todos" || tags === tagAtiva;
 
-      obra.style.display = (correspondeTexto && correspondeTag) ? "block" : "none";
-    });
-  }
-
-  function filtrarTag(tag) {
-  const botoes = document.querySelectorAll(".tag-btn");
-  botoes.forEach(btn => btn.classList.remove("selected"));
-
-  const botaoSelecionado = [...botoes].find(b => b.dataset.tag === tag);
-  if (botaoSelecionado) botaoSelecionado.classList.add("selected");
-
-  document.querySelectorAll(".obra").forEach(obra => {
-    const tags = obra.getAttribute("data-tags");
-    if (tag === "todos" || tags === tag) {
-      obra.style.display = "block";
-    } else {
-      obra.style.display = "none";
+        obra.style.display = (correspondeTexto && correspondeTag) ? "block" : "none";
+      });
     }
-  });
 
-  filtrarObras();
-}
-</script>
-<script>
-  function scrollToSection(id) {
-    const section = document.getElementById(id);
-    if (section) {
-      section.scrollIntoView({ behavior: 'smooth' });
+    function filtrarTag(tag) {
+      const botoes = document.querySelectorAll(".tag-btn");
+      botoes.forEach(btn => btn.classList.remove("selected"));
+
+      const botaoSelecionado = [...botoes].find(b => b.dataset.tag === tag);
+      if (botaoSelecionado) botaoSelecionado.classList.add("selected");
+
+      document.querySelectorAll(".obra").forEach(obra => {
+        const tags = obra.getAttribute("data-tags");
+        obra.style.display = (tag === "todos" || tags === tag) ? "block" : "none";
+      });
+
+      filtrarObras();
     }
+  </script>
+
+  <script>
+    function scrollToSection(id) {
+      const section = document.getElementById(id);
+      if (section) section.scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
+
+  <!-- >>>>>>>>>>>>>>>>> ABRIR DETALHES (mantido com tipos) <<<<<<<<<<<<<<<<< -->
+  <script>
+    function abrirDetalhes(detalhes) {
+      const { nome, descricao, preco, imagem, youtube, tipo, hotmartLink } = detalhes;
+
+      document.getElementById("detalheTitulo").textContent = nome;
+      document.getElementById("detalheDescricao").textContent = descricao;
+      const precoEl = document.getElementById("detalhePreco");
+      const imagemEl = document.getElementById("detalheImagem");
+      const botoesEl = document.getElementById("botoesDetalhes");
+
+      if (preco !== null && preco !== undefined && tipo === "livro") {
+        precoEl.textContent = `R$ ${preco.toFixed(2)}`;
+        precoEl.classList.remove("hidden");
+      } else {
+        precoEl.classList.add("hidden");
+        precoEl.textContent = "";
+      }
+
+      imagemEl.src = imagem;
+      imagemEl.alt = `Capa de ${nome}`;
+
+      botoesEl.innerHTML = "";
+
+      if (tipo === "livro" && preco) {
+        botoesEl.innerHTML += `
+          <button onclick="adicionarLivro('${nome.replace(/'/g,"\\'")}', ${preco}, '${imagem}')" 
+            class="bg-purple-600 text-white px-6 py-2 rounded-full hover:bg-purple-700 transition-all">
+             Adicionar à Sacola
+          </button>`;
+      }
+
+      if (tipo === "weblivro" && hotmartLink) {
+        botoesEl.innerHTML += `
+          <a href="${hotmartLink}" target="_blank" rel="noopener"
+            class="bg-indigo-600 text-white px-6 py-2 rounded-full hover:bg-indigo-700 transition-all text-center">
+             Acessar Hotmart
+          </a>`;
+      }
+
+      if (youtube) {
+        botoesEl.innerHTML += `
+          <a href="${youtube}" target="_blank" rel="noopener"
+            class="bg-red-600 text-white px-6 py-2 rounded-full hover:bg-red-700 transition-all text-center">
+             Assistir no YouTube
+          </a>`;
+      }
+
+      document.getElementById("popupDetalhes").classList.remove("hidden");
+      document.body.classList.add("overflow-hidden");
+    }
+  </script>
+
+  <script>
+    function fecharDetalhes() {
+      document.getElementById("popupDetalhes").classList.add("hidden");
+      document.body.classList.remove("overflow-hidden");
+    }
+  </script>
+
+  <!-- ====== JS: Carrossel + Tema ====== -->
+  <script>
+    // Carrossel: rolagem por viewport (funciona mesmo com filtros)
+    (function () {
+      const area = document.getElementById('obrasContainer');
+      const prev = document.getElementById('prevObras');
+      const next = document.getElementById('nextObras');
+
+      function scrollByViewport(dir) {
+        const amount = area.clientWidth; // rola exatamente a área visível
+        area.scrollBy({ left: dir * amount, behavior: 'smooth' });
+      }
+      prev.addEventListener('click', () => scrollByViewport(-1));
+      next.addEventListener('click', () => scrollByViewport(1));
+    })();
+
+ 
+// Carrossel: Contos (mesma lógica do de Obras)
+(function () {
+  const area = document.getElementById('contosContainer');
+  const prev = document.getElementById('prevContos');
+  const next = document.getElementById('nextContos');
+  if (!area || !prev || !next) return;
+
+  function scrollByViewport(dir) {
+    const amount = area.clientWidth;
+    area.scrollBy({ left: dir * amount, behavior: 'smooth' });
   }
-</script>
-<script>
-function abrirDetalhes(detalhes) {
-  const { nome, descricao, preco, imagem, youtube } = detalhes;
-
-  document.getElementById("detalheTitulo").textContent = nome;
-  document.getElementById("detalheDescricao").textContent = descricao;
-  const precoEl = document.getElementById("detalhePreco");
-  const imagemEl = document.getElementById("detalheImagem");
-  const botoesEl = document.getElementById("botoesDetalhes");
-
-  if (preco !== null && preco !== undefined) {
-    precoEl.textContent = `R$ ${preco.toFixed(2)}`;
-    precoEl.classList.remove("hidden");
-  } else {
-    precoEl.classList.add("hidden");
-  }
-
-  imagemEl.src = imagem;
-  imagemEl.alt = `Capa de ${nome}`;
-
-  botoesEl.innerHTML = "";
-  if (preco) {
-    botoesEl.innerHTML += `
-      <button onclick="adicionarLivro('${nome}', ${preco}, '${imagem}')" class="bg-purple-600 text-white px-6 py-2 rounded-full hover:bg-purple-700 transition-all">
-         Adicionar à Sacola
-      </button>`;
-  }
-  if (youtube) {
-    botoesEl.innerHTML += `
-      <a href="${youtube}" target="_blank" class="bg-red-600 text-white px-6 py-2 rounded-full hover:bg-red-700 transition-all text-center">
-         Assistir no YouTube
-      </a>`;
-  }
-
-  document.getElementById("popupDetalhes").classList.remove("hidden");
-  document.body.classList.add("overflow-hidden");
-}
+  prev.addEventListener('click', () => scrollByViewport(-1));
+  next.addEventListener('click', () => scrollByViewport(1));
+})();
 
 
+    // Tema com localStorage
+    (function () {
+      const body = document.body;
+      const btnClaro = document.getElementById('temaClaro');
+      const btnEscuro = document.getElementById('temaEscuro');
 
-</script>
-<script>
-function fecharDetalhes() {
-  document.getElementById("popupDetalhes").classList.add("hidden");
+      function applyTheme(val) {
+        if (val === 'escuro') body.classList.add('dark-mode');
+        else body.classList.remove('dark-mode');
+        localStorage.setItem('tema', val);
+      }
 
-  // Reativa o scroll da página
-  document.body.classList.remove("overflow-hidden");
-}
-</script>
+      // Estado salvo
+      const saved = localStorage.getItem('tema');
+      if (saved) applyTheme(saved);
+
+      btnClaro.addEventListener('click', () => applyTheme('claro'));
+      btnEscuro.addEventListener('click', () => applyTheme('escuro'));
+    })();
+  </script>
 
 </body>
 </html>
