@@ -169,6 +169,11 @@ body.light-mode .side-btn.active{
           <button id="lhDown"   class="ctl-btn text-xs px-2 py-1 rounded">LH−</button>
           <button id="lhReset"  class="ctl-btn text-xs px-2 py-1 rounded">LH</button>
           <button id="lhUp"     class="ctl-btn text-xs px-2 py-1 rounded">LH+</button>
+          <span class="mx-2 text-xs opacity-70">•</span>
+<button id="musicToggle" class="ctl-btn text-xs px-2 py-1 rounded">Música: Off</button>
+<input id="musicVol" type="range" min="0" max="1" step="0.01" value="0.15"
+       class="ml-2 w-24 align-middle" title="Volume">
+
         </div>
       </div>
     </div>
@@ -295,6 +300,63 @@ body.light-mode .side-btn.active{
       applySize(); applyLH();
     })();
   </script>
+ <audio id="bgm" src="Travelers.mp3" loop preload="auto"></audio>
+
+<script>
+  (function() {
+    const audio = document.getElementById('bgm');
+    const toggle = document.getElementById('musicToggle');
+    const vol = document.getElementById('musicVol');
+
+    if (!audio || !toggle || !vol) return;
+
+    // Estado salvo
+    const savedVol = parseFloat(localStorage.getItem('bgmVol') || '0.15');
+    const savedPlay = localStorage.getItem('bgmPlay') === '1';
+
+    audio.volume = isNaN(savedVol) ? 0.15 : savedVol;
+    vol.value = audio.volume.toString();
+
+    function updateLabel() {
+      toggle.textContent = audio.paused ? 'Música: Off' : 'Música: On';
+    }
+
+    // Toggle play/pause (precisa interação do usuário p/ autoplay nos navegadores)
+    toggle.addEventListener('click', async () => {
+      try {
+        if (audio.paused) {
+          await audio.play();
+          localStorage.setItem('bgmPlay', '1');
+        } else {
+          audio.pause();
+          localStorage.setItem('bgmPlay', '0');
+        }
+        updateLabel();
+      } catch (e) {
+        // Ex.: bloqueio do navegador
+        console.warn('Playback bloqueado:', e);
+      }
+    });
+
+    // Volume + persistência
+    vol.addEventListener('input', () => {
+      audio.volume = parseFloat(vol.value);
+      localStorage.setItem('bgmVol', audio.volume.toString());
+    });
+
+    // Se usuário preferia tocando, tenta iniciar na 1ª interação da página
+    if (savedPlay) {
+      const oneShot = async () => {
+        try { await audio.play(); updateLabel(); }
+        catch (e) { /* navegador pode bloquear até clique no toggle */ }
+        finally { window.removeEventListener('pointerdown', oneShot); }
+      };
+      window.addEventListener('pointerdown', oneShot, { once: true });
+    }
+    updateLabel();
+  })();
+</script>
+
   <script>
   // ====== Textos das 3 partes ======
   const TEXTO_PARTE_1 = `
