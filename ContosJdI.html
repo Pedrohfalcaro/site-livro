@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Inocente — Conto</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* ========= Silent Hill-ish ========= */
+    :root{
+      --sh-iron: #0f1113;     /* fundo escuro */
+      --sh-deep: #0a0c0e;
+      --sh-fog: rgba(220,225,226,0.75);
+      --sh-rust: #6b2a2a;     /* ferrugem/sangue escuro */
+      --sh-blood: #b21e1e;    /* sangue vivo */
+      --sh-amber: #b45309;    /* detalhe âmbar ferrugem */
+    }
+
+    /* Fundo com névoa/ruído */
+    body{
+      color: #e5e7eb;
+      background:
+        radial-gradient(1200px 600px at 60% -10%, #3741511c 0%, transparent 60%),
+        linear-gradient(180deg, var(--sh-iron), var(--sh-deep));
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Granulado sutil */
+    body::before{
+      content:"";
+      position: fixed; inset:0; z-index:0; pointer-events:none;
+      background-image:
+        radial-gradient(1px 1px at 20% 30%, #ffffff08 50%, transparent 51%),
+        radial-gradient(1px 1px at 80% 70%, #00000010 50%, transparent 51%);
+      background-size: 3px 3px, 4px 4px;
+      mix-blend-mode: overlay;
+      opacity:.6;
+    }
+
+    /* Camadas de névoa */
+    .fog, .fog2{
+      position: fixed; inset:-30vh -20vw; z-index:1; pointer-events:none;
+      background: radial-gradient(60vw 40vh at 30% 10%, var(--sh-fog), transparent 70%),
+                  radial-gradient(50vw 35vh at 70% 15%, var(--sh-fog), transparent 70%);
+      filter: blur(6px);
+      animation: driftFog 70s linear infinite;
+    }
+    .fog2{
+      animation-duration: 110s;
+      opacity:.7;
+      background: radial-gradient(55vw 35vh at 20% 80%, var(--sh-fog), transparent 70%),
+                  radial-gradient(45vw 30vh at 85% 75%, var(--sh-fog), transparent 70%);
+    }
+    @keyframes driftFog{
+      from { transform: translateX(0); }
+      to   { transform: translateX(-12vw); }
+    }
+
+    /* Manchas / respingos “sangue” (vetor inline) */
+    .blood{
+      position: fixed; z-index:2; pointer-events:none; opacity:.18; filter: blur(.2px);
+    }
+    .blood.b1{ left:2vw; top:12vh; width:220px; transform: rotate(-8deg); }
+    .blood.b2{ right:6vw; top:28vh; width:180px; transform: rotate(12deg); opacity:.22; }
+    .blood.b3{ left:10vw; bottom:12vh; width:240px; transform: rotate(4deg); }
+
+    /* Barra de progresso / topo */
+    .progress-wrap{
+      position: sticky; top:0; z-index:20; backdrop-filter: blur(6px);
+      background: linear-gradient(180deg, rgba(8,10,12,.8), rgba(8,10,12,.55));
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .progress-bar{
+      height: 3px;
+      background: linear-gradient(90deg, var(--sh-blood), var(--sh-amber));
+      width: 0%;
+    }
+
+    /* Card de leitura */
+    .reading-card{
+      backdrop-filter: blur(10px);
+      background: rgba(15,17,19,.65);
+      border: 1px solid rgba(255,255,255,.06);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.03),
+        0 20px 60px rgba(0,0,0,.45);
+      position: relative;
+      overflow: hidden;
+    }
+    /* textura “arranhado” */
+    .reading-card::after{
+      content:"";
+      position:absolute; inset:0; pointer-events:none;
+      background:
+        repeating-linear-gradient(115deg, rgba(255,255,255,.03) 0 2px, transparent 2px 6px),
+        linear-gradient(180deg, rgba(178,30,30,.08), transparent 45%, rgba(107,42,42,.06));
+      mix-blend-mode: screen; opacity:.35;
+    }
+
+    /* Pills / chips */
+    .pill{
+      background: linear-gradient(135deg, rgba(178,30,30,.18), rgba(180,83,9,.12));
+      border: 1px solid rgba(255,255,255,.10);
+    }
+
+    /* Botões de controle */
+    .ctl-btn{
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+    }
+    .ctl-btn:hover{ background: rgba(255,255,255,.1); }
+
+    /* Sidebar */
+    .side-tabs{
+      backdrop-filter: blur(8px);
+      background: rgba(15,17,19,.65);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 12px;
+    }
+    .side-btn{
+      width: 100%;
+      text-align: left;
+      padding: .875rem 1rem;
+      border-radius: .65rem;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04);
+      color: #e5e7eb;
+      transition: background .2s, transform .15s, border-color .2s;
+    }
+    .side-btn:hover{ background: rgba(255,255,255,.08); transform: translateX(2px); }
+    .side-btn.active{
+      background: linear-gradient(135deg, rgba(178,30,30,.24), rgba(180,83,9,.16));
+      border-color: rgba(255,255,255,.25);
+      color: #fff;
+    }
+
+    .accent{ color: var(--sh-blood); }
+    .fade-in{ animation: fadeIn .28s ease; }
+    @keyframes fadeIn{ from{opacity:0; transform:translateY(4px)} to{opacity:1; transform:translateY(0)} }
+  </style>
+</head>
+
+<body class="selection:bg-red-700/30">
+  <!-- Névoa -->
+  <div class="fog"></div>
+  <div class="fog2"></div>
+
+  <!-- respingos “sangue” -->
+  <svg class="blood b1" viewBox="0 0 400 300" aria-hidden="true">
+    <path d="M80 40c30 10 60 40 30 70s-70 10-80-10 20-70 50-60z" fill="#b21e1e"/>
+    <circle cx="150" cy="120" r="10" fill="#6b2a2a"/>
+    <circle cx="170" cy="150" r="7" fill="#6b2a2a"/>
+    <path d="M220 40c-10 30 20 60 50 50s40-40 20-55-60-15-70 5z" fill="#8f1b1b"/>
+  </svg>
+  <svg class="blood b2" viewBox="0 0 400 300" aria-hidden="true">
+    <path d="M60 80c25-8 50 10 45 35s-40 35-62 20-8-47 17-55z" fill="#9c1c1c"/>
+    <circle cx="140" cy="140" r="9" fill="#6b2a2a"/>
+    <circle cx="165" cy="165" r="6" fill="#6b2a2a"/>
+  </svg>
+  <svg class="blood b3" viewBox="0 0 500 300" aria-hidden="true">
+    <path d="M120 60c40 5 55 35 30 60s-70 20-85 0 15-65 55-60z" fill="#a61d1d"/>
+    <circle cx="220" cy="120" r="8" fill="#6b2a2a"/>
+    <circle cx="245" cy="150" r="6" fill="#6b2a2a"/>
+  </svg>
+
+  <!-- Topo / progresso -->
+  <div class="progress-wrap">
+    <div class="max-w-4xl mx-auto px-4">
+      <div class="flex items-center gap-3 py-3 text-sm">
+        <a href="index.html#contos"
+           class="px-3 py-1.5 rounded-lg border border-white/20 hover:bg-white/10 transition">
+          Voltar
+        </a>
+        <div class="pill px-3 py-1.5 rounded-full uppercase tracking-wide">
+          Jardineiro do Inferno
+        </div>
+        <div class="ml-auto flex items-center gap-2">
+          <button id="wNarrow"  class="ctl-btn text-xs px-2 py-1 rounded">Narrow</button>
+          <button id="wNormal"  class="ctl-btn text-xs px-2 py-1 rounded">Normal</button>
+          <button id="wWide"    class="ctl-btn text-xs px-2 py-1 rounded">Wide</button>
+          <span class="mx-2 opacity-60">•</span>
+          <button id="fzDown"   class="ctl-btn text-xs px-2 py-1 rounded">A−</button>
+          <button id="fzReset"  class="ctl-btn text-xs px-2 py-1 rounded">A</button>
+          <button id="fzUp"     class="ctl-btn text-xs px-2 py-1 rounded">A+</button>
+          <span class="mx-2 opacity-60">•</span>
+          <button id="lhDown"   class="ctl-btn text-xs px-2 py-1 rounded">LH−</button>
+          <button id="lhReset"  class="ctl-btn text-xs px-2 py-1 rounded">LH</button>
+          <button id="lhUp"     class="ctl-btn text-xs px-2 py-1 rounded">LH+</button>
+        </div>
+      </div>
+    </div>
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <!-- conteúdo -->
+  <main class="relative z-10">
+    <header class="max-w-4xl mx-auto px-4 pt-10">
+      <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight">
+        Jardineiro do <span class="accent">Inferno</span>
+      </h1>
+      <p class="mt-3 text-gray-300">
+        Uma travessia em neblina: perguntas sussurradas, portas que rangem, e o peso do que não se vê.
+      </p>
+      <div class="mt-4 flex flex-wrap items-center gap-3 text-xs">
+        <span class="pill px-3 py-1 rounded-full">Leitura ~ 10–12 min</span>
+        <span class="pill px-3 py-1 rounded-full">Suspense</span>
+        <span class="pill px-3 py-1 rounded-full">Mistério</span>
+      </div>
+    </header>
+
+    <!-- grid: sidebar + leitor -->
+    <div class="relative z-10 max-w-5xl mx-auto px-4 mt-8 mb-20 grid grid-cols-1 md:grid-cols-4 gap-6 items-start">
+      <!-- Sidebar -->
+      <aside class="side-tabs p-3 md:sticky md:top-24 md:col-span-1">
+        <div class="space-y-2">
+          <button id="tab1" class="side-btn active">Parte 1 — Panquecas Vencidas</button>
+          <button id="tab2" class="side-btn">Parte 2 — Pequena Cidade</button>
+          <button id="tab3" class="side-btn">Parte 3 — Como Acaba?</button>
+          <button id="tab4" class="side-btn">Parte 4 — Inferno</button>
+        </div>
+      </aside>
+
+      <!-- Leitor -->
+      <section id="reader" class="md:col-span-3 reading-card rounded-2xl">
+        <article id="conteudo" class="prose prose-invert max-w-none p-6 md:p-8 leading-relaxed fade-in">
+          <!-- conteúdo é injetado via JS -->
+        </article>
+      </section>
+    </div>
+  </main>
+
+  <footer class="relative z-10 pb-12">
+    <div class="max-w-4xl mx-auto px-4 text-sm text-gray-400">
+      <div class="flex items-center justify-between">
+        <span>&copy; 2025 — Pedro Henrique</span>
+        <a class="text-red-400/80 hover:text-red-300 transition" href="index.html#contos">Voltar para contos</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ====== Progresso ======
+    (function(){
+      const bar = document.getElementById('progressBar');
+      function update(){
+        const doc = document.documentElement;
+        const total = doc.scrollHeight - doc.clientHeight;
+        const pct = total > 0 ? (doc.scrollTop / total) * 100 : 0;
+        bar.style.width = pct + '%';
+      }
+      document.addEventListener('scroll', update, { passive:true });
+      window.addEventListener('resize', update);
+      update();
+    })();
+
+    // ====== Controles de leitura ======
+    (function(){
+      const reader = document.getElementById('reader');
+      const content = document.getElementById('conteudo');
+
+      document.getElementById('wNarrow').addEventListener('click', ()=> {
+        reader.classList.remove('max-w-4xl','max-w-3xl'); reader.classList.add('max-w-2xl');
+      });
+      document.getElementById('wNormal').addEventListener('click', ()=> {
+        reader.classList.remove('max-w-4xl','max-w-2xl'); reader.classList.add('max-w-3xl');
+      });
+      document.getElementById('wWide').addEventListener('click', ()=> {
+        reader.classList.remove('max-w-3xl','max-w-2xl'); reader.classList.add('max-w-4xl');
+      });
+
+      let size = 1; const applySize = ()=> content.style.fontSize = size + 'em';
+      document.getElementById('fzUp').addEventListener('click', ()=> { size = Math.min(size + 0.05, 1.5); applySize(); });
+      document.getElementById('fzDown').addEventListener('click', ()=> { size = Math.max(size - 0.05, 0.85); applySize(); });
+      document.getElementById('fzReset').addEventListener('click', ()=> { size = 1; applySize(); });
+
+      let lh = 1.75; const applyLH = ()=> content.style.lineHeight = lh;
+      document.getElementById('lhUp').addEventListener('click', ()=> { lh = Math.min(lh + 0.1, 2.2); applyLH(); });
+      document.getElementById('lhDown').addEventListener('click', ()=> { lh = Math.max(lh - 0.1, 1.3); applyLH(); });
+      document.getElementById('lhReset').addEventListener('click', ()=> { lh = 1.75; applyLH(); });
+
+      applySize(); applyLH();
+    })();
+
+    // ====== Textos (placeholders) ======
+    const TEXTO_P1 = `
+  <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-red-300 mb-4">Panquecas Vencidas</h1>
+  <p>O dia finalmente havia chegado. Depois de semanas preparando cada detalhe para o Halloween, acordei cedo, tomado por uma excitação quase infantil. Meus pais tinham viajado na noite anterior, deixando minha irmã mais nova sob meus cuidados.</p>
+  <p>Levantei-me e fui direto para a cozinha, decidido a preparar um café da manhã especial. O aroma adocicado das panquecas se espalhou pela casa, aquecendo o ambiente com um falso conforto. Quando terminei, fui ver se minha irmã já estava acordada… mas o quarto dela estava vazio.</p>
+  <p>Um incômodo estranho, quase palpável, começou a se arrastar pelo meu peito. Chamei por ela algumas vezes, vasculhei cada canto da casa, mas nada. O cheiro das panquecas parecia se infiltrar em minhas narinas de forma sufocante, misturado a um peso amargo que me crescia no estômago. Sem saber o que fazer, acabei me trancando no banheiro, tentando controlar minha respiração.</p>
+  <p>E então eu a encontrei.</p>
+  <p>Ela estava ali, caída no chão frio, os pulsos abertos, o corpo sem vida. Estranhamente, não senti pânico. Apenas… calma. Ao lado, um bilhete repousava com uma caligrafia irregular:</p>
+  <p><em>“Não fique espantado. No fundo, você queria isso. E sabe muito bem quem é o responsável.”</em></p>
+  <p>Virei o papel e, no verso, havia colado um pequeno espelho. Ele refletia o meu rosto — um sorriso satisfeito me encarava de volta. Logo abaixo, escrito em letras irregulares, quase tremidas, estava a frase:</p>
+  <p><strong>“Você é sonâmbulo.”</strong></p>
+  <p>Sem dizer nada, fechei a porta do armário onde ela jazia e voltei para a cozinha. Continuei comendo minhas panquecas. O cheiro doce não me incomodava mais. Para mim, era apenas o aroma de panquecas vencidas.</p>
+  <p>Mas o tempo passou, e o perfume acolhedor começou a se dissipar… dando lugar a um fedor nauseante. Um odor podre, pesado, que percebi ter estado ali o tempo todo, apenas escondido pelo açúcar e pela manteiga. O cheiro parecia ganhar forma, rastejando pelo ar até se concentrar na direção do porão.</p>
+  <p>Cada passo que eu dava naquela escada estreita intensificava a podridão. O ar ficava mais denso, mais viscoso, grudando na pele e queimando minhas narinas. Senti ânsia de vômito. Os calafrios me percorriam como pequenas agulhas de gelo.</p>
+  <p>O cheiro atingiu seu auge diante de um velho armário encostado na parede do fundo. Meu coração martelava dentro do peito. Por um instante, hesitei. Mas algo — curiosidade ou instinto — me fez abrir a porta.</p>
+  <p>E, no exato momento em que a escuridão lá dentro me engoliu, todos os calafrios… e toda a culpa… simplesmente desapareceram.</p>
+`;
+
+const TEXTO_P2 = `
+  <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-red-300 mb-4">Pequena Cidade</h1>
+  <p>Três dias e duas noites… bem, contando com esta, já são três noites em claro. Não consigo entender. Sempre fui o melhor detetive desta cidade — o mais rápido, o mais perspicaz, o mais premiado. E, ainda assim, este caso… este maldito caso… escapa das minhas mãos.</p>
+  <p>Talvez as pistas não tenham sido tão claras. Talvez o crime seja mais complexo do que parece. Ou talvez eu esteja me enganando desde o início.</p>
+  <p>Lembro-me perfeitamente do dia em que tudo começou. Era uma noite chuvosa. Relâmpagos cortavam o céu, trovões ecoavam como tambores de guerra. O som do telefone quebrou o silêncio do meu escritório. Atendi. A voz na recepção disse que havia alguém insistindo para me ver. Mandei subir.</p>
+  <p>Poucos minutos depois, a porta se abriu sem sequer bater.</p>
+  <p>Ela entrou. Uma mulher… belíssima. Cabelos cacheados, castanhos, pingando água de chuva pelo chão. Os olhos verdes dela pareciam brilhar mesmo sob a luz fraca do escritório. Mas havia algo errado — ela estava agitada demais, os movimentos rápidos, a respiração curta.</p>
+  <p>Rapidamente, chamei dois dos meus assistentes para acalmá-la. Um deles aplicou um sedativo, mas… talvez a dose tenha sido maior do que deveria. Ela parou de se mover. Parou de respirar.</p>
+  <p><strong>Mortos não falam.</strong></p>
+  <p>O funcionário foi demitido na hora, é claro. Mas não havia tempo para luto ou explicações. Logo descobrimos, através do irmão da mulher, que ela tinha vindo me procurar porque seu noivo havia sido assassinado dias antes. Ele entregou alguns pertences dela e me deu um prazo para resolver o caso: setenta e duas horas.</p>
+  <p>Três dias. Três noites.</p>
+  <p>E é aqui que estou. A poucas horas do prazo acabar, sem respostas. Uma pena… mas inevitável. Porque, assim que o tempo expirar, o caso será arquivado.</p>
+  <p>Essa é a vantagem de ser o único detetive em uma cidade pequena: ninguém nunca desconfia.</p>
+  <p>A verdade é que nada disso foi um acidente. Ela me trocou por aquele homem — e pagou por isso. <strong>Matei minha ex-mulher.</strong> Matei o novo noivo dela. E, quando percebi que ela sabia demais… um simples ajuste na dosagem resolveu o problema.</p>
+  <p>Deu mais trabalho do que imaginei, confesso. Mas logo tudo voltará ao normal. Um caso não resolvido não vai destruir a reputação do maior detetive da cidade.</p>
+  <p>E, afinal… <em>ninguém investiga o investigador.</em></p>
+`;
+
+const TEXTO_P3 = `
+  <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-red-300 mb-4">Como acaba?</h1>
+  <p>— Tudo isso que o senhor me contou… é verdade?</p>
+  <p>— Sim. Exatamente como disse. Não sei se é uma vida da qual eu me orgulho.</p>
+  <p>— Certo… e é por isso que decidiu procurar ajuda psiquiátrica?</p>
+  <p>— Bem… queria tentar mudar minha mente. Pelo menos no fim da minha vida.</p>
+  <p>— Senhor… não sei se apenas sessões serão suficientes para ajudá-lo. As coisas que o senhor fez… foram extremas. O senhor se importaria em repetir tudo que me disse?</p>
+  <p>— Claro, repito</p>
+  <p>Talvez eu sempre tenha sido um homem de sorte… ou de azar, dependendo do ponto de vista. Quando eu tinha doze anos, sentia uma inveja corrosiva da minha irmã. Ela sempre recebia toda a atenção dos meus pais. Então, um dia, <strong>matei-a</strong>. Sem remorso. Enganei minha família, fiz com que acreditassem que ela havia desaparecido… e jurei que me tornaria detetive para “encontrá-la”.</p>
+  <p>Cumpri parte da promessa. Tornei-me detetive. Mas algo… algo sombrio cresceu dentro de mim. Uma fome. Uma vontade de matar que só aumentava. Decidi que cada vez que alguém me causasse dor… eu retribuiria.</p>
+  <p>E assim, quando minha esposa me deixou — nem chegou a me trair, mas convenci minha mente disso — vi a oportunidade. Matei o novo noivo dela. Pouco depois, em um acesso de histeria dela no meu escritório, matei-a também. Discretamente. E gostei. <em>Gostei demais.</em></p>
+  <p>Depois disso, parei. Pelo menos, tentei.</p>
+  <p>Até que começaram os pesadelos. Sons estridentes, agudos, como chiados de rádio… e, ao fundo, vozes. As vozes deles. Todas as noites. Nunca acreditei em espíritos… mas aquilo me gelava os ossos.</p>
+  <p>Foi por isso que vim até aqui. Quero me livrar disso de uma vez. Não suporto mais essa dor. Nunca foi fácil carregar esse peso… e, às vezes, até sinto culpa. Mas tento não me importar.</p>
+  <p>— Aliás, doutora… pode desligar o gravador. Eu notei que estava me gravando. O que pretende fazer com isso? Achei que vocês tivessem um pacto de sigilo com os pacientes.</p>
+  <p>— Temos… mas, em casos como o seu, posso quebrá-lo e ir às autoridades.</p>
+  <p>— Faça o que quiser. Eu disse que queria dar um fim nisso, não disse? Só que… não queria fazer sozinho. Precisava contar para alguém…</p>
+  <p>O silêncio entre nós pesou. Eu a encarei. Ela parecia começar a entender.</p>
+  <p>— Doutora… o meu fim está próximo. E o seu também.</p>
+  <p>Um leve cheiro de gasolina já se espalhava pelo consultório.</p>
+  <p>— Nós dois… morreremos em chamas, aqui e agora.</p>
+  <p>Sorri.</p>
+  <p>— Espero que tenha tido uma boa vida.</p>
+`;
+
+const TEXTO_P4 = `
+  <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-red-300 mb-4">Inferno</h1>
+  <p><strong>Fogo. Gritos. Destruição.</strong> Tudo ao mesmo tempo. E eu… continuo aqui.</p>
+  <p>Não importa o que eu faça — não importa o quanto eu tente — nada me alcança. Nenhuma consequência me toca. Apenas as mortes nas minhas mãos continuam sendo somadas, uma por uma, como se alguém lá em cima estivesse mantendo a contagem.</p>
+  <p>Eu não aguento mais. Mas também não consigo pôr um fim. E sempre que tento, a vida — ou o que quer que isso seja — encontra um jeito de me manter por aqui.</p>
+  <p>Pela minha irmã. Pela minha ex-mulher e o homem que a substituiu. Pelos meus pais, que até o último suspiro acreditaram na minha inocência. Pela pobre doutora, morta tragicamente pelo fogo que eu mesmo iniciei. Por todos eles… eu merecia morrer. Eu merecia ir para o inferno.</p>
+  <p>Mas talvez… talvez eu já esteja aqui. <br><strong>O inferno é a terra.</strong> <br>Um lugar onde as piores pessoas permanecem e as melhores são levadas embora.</p>
+  <p>Agora eu entendo. Agora eu sei por que, mesmo ateando fogo a mim mesmo, não consigo morrer. Tudo isso é punição. Ha… hahaha… agora eu sei. Eu sei de tudo.</p>
+  <p>Eu não me reconheço mais. Meu corpo é um mapa de queimaduras. Minha pele se contrai sobre ossos retorcidos. Meu rosto… já não existe. Sou um cadáver ambulante, condenado a vagar. E esse fim que eu tanto procuro… não existe. Meu fim é sofrer para sempre neste inferno.</p>
+  <p>Lá fora, pessoas são assaltadas, assassinadas… e nada acontece com quem faz isso. Eu sou a prova — “viva” — de que o mal não morre. Eu estou vivo. Mas ao mesmo tempo… sei que já estou morto há muito tempo.</p>
+  <p><em>Todos os pesadelos. <br>Todos os remédios. <br>Todas as dores. <br>São parte do meu purgatório.</em></p>
+  <p>A vida e a morte não existem. Só existe a dor. E o sofrimento alimentado pelos homens.</p>
+  <p>…</p>
+  <p>Certo, destino. Eu já entendi. Eu sei quem sou. Não há mais nada para fazer. <br>Mas… se ao menos eu pudesse vê-la no fim — minha irmã — eu teria as palavras certas para dizer.</p>
+  <p><strong>Inveja. Ciúme. Arrogância.</strong> Esses foram os vermes que me devoraram por dentro e me transformaram no que sou.</p>
+  <p>Tudo que fiz… foi para tentar esquecer o que aconteceu com você. Crianças não entendem o mundo, não sabem lidar com ele… e esse foi o meu erro. Você era o anjo. Eu sou o inverso — seja lá o que isso signifique.</p>
+  <p>Então, irmãzinha… me deixe fazer meu último movimento por você. <br>Guardei isso desde aquele dia. <br>Deixe-me sentir, de uma vez por todas, as chamas do inferno queimando até a minha alma… <br>Enquanto vejo você voando entre as flores eternas do jardim do fim.</p>
+  <p><strong>Adeus, irmãzinha.</strong></p>
+`;
+
+    // ====== Injeção + troca ======
+    (function(){
+      const conteudo = document.getElementById('conteudo');
+      const tabs = [
+        document.getElementById('tab1'),
+        document.getElementById('tab2'),
+        document.getElementById('tab3'),
+        document.getElementById('tab4')
+      ];
+      const textos = [TEXTO_P1, TEXTO_P2, TEXTO_P3, TEXTO_P4];
+
+      function setParte(i){
+        tabs.forEach(t=>t.classList.remove('active'));
+        tabs[i].classList.add('active');
+        conteudo.classList.remove('fade-in');
+        void conteudo.offsetWidth;
+        conteudo.innerHTML = textos[i];
+        conteudo.classList.add('fade-in');
+      }
+
+      setParte(0);
+      tabs.forEach((btn, i)=> btn.addEventListener('click', ()=> setParte(i)));
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Incidente de Willowbrook</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* ========= Estética cinza + névoa + vilarejo ========= */
+    :root{
+      --iron: #101214;      /* fundo escuro acinzentado */
+      --deep: #0c0e10;
+      --fog: rgba(220,225,226,0.75);
+      --rust: #6b2a2a;
+      --blood: #b21e1e;
+      --amber: #b45309;
+      --ink: #e5e7eb;
+    }
+
+    body{
+      color: var(--ink);
+      background:
+        radial-gradient(1200px 600px at 60% -10%, #47556922 0%, transparent 60%),
+        linear-gradient(180deg, #1f2937, #0f1419 60%, var(--deep));
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Grão sutil */
+    body::before{
+      content:"";
+      position: fixed; inset:0; z-index:0; pointer-events:none;
+      background-image:
+        radial-gradient(1px 1px at 20% 30%, #ffffff08 50%, transparent 51%),
+        radial-gradient(1px 1px at 80% 70%, #00000010 50%, transparent 51%);
+      background-size: 3px 3px, 4px 4px;
+      mix-blend-mode: overlay;
+      opacity:.55;
+    }
+
+    /* Névoa em camadas */
+    .fog, .fog2{
+      position: fixed; inset:-30vh -20vw; z-index:1; pointer-events:none;
+      background:
+        radial-gradient(60vw 40vh at 30% 12%, var(--fog), transparent 70%),
+        radial-gradient(55vw 35vh at 70% 15%, var(--fog), transparent 70%);
+      filter: blur(6px);
+      animation: fogDrift 70s linear infinite;
+    }
+    .fog2{
+      animation-duration: 115s;
+      opacity:.7;
+      background:
+        radial-gradient(55vw 35vh at 20% 80%, var(--fog), transparent 70%),
+        radial-gradient(45vw 30vh at 85% 75%, var(--fog), transparent 70%);
+    }
+    @keyframes fogDrift{
+      from { transform: translateX(0); }
+      to   { transform: translateX(-12vw); }
+    }
+
+    /* Vilarejo desfocado (silhueta) */
+    .village{
+      position: fixed; left:0; right:0; bottom:-2vh; height:36vh;
+      z-index:0; pointer-events:none; opacity:.26;
+      filter: blur(2.5px) drop-shadow(0 10px 18px rgba(0,0,0,.35));
+    }
+
+    /* Barra de progresso */
+    .progress-wrap{
+      position: sticky; top:0; z-index:20; backdrop-filter: blur(6px);
+      background: linear-gradient(180deg, rgba(12,14,16,.8), rgba(12,14,16,.55));
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .progress-bar{
+      height: 3px;
+      background: linear-gradient(90deg, #9ca3af, #64748b);
+      width: 0%;
+    }
+
+    /* Card de leitura */
+    .reading-card{
+      backdrop-filter: blur(10px);
+      background: rgba(18,20,23,.65);
+      border: 1px solid rgba(255,255,255,.06);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.03),
+        0 20px 60px rgba(0,0,0,.45);
+      position: relative; overflow: hidden;
+    }
+    .reading-card::after{
+      content:"";
+      position:absolute; inset:0; pointer-events:none;
+      background:
+        repeating-linear-gradient(115deg, rgba(255,255,255,.03) 0 2px, transparent 2px 6px),
+        linear-gradient(180deg, rgba(148,163,184,.08), transparent 45%, rgba(100,116,139,.06));
+      mix-blend-mode: screen; opacity:.30;
+    }
+
+    .pill{
+      background: linear-gradient(135deg, rgba(148,163,184,.20), rgba(100,116,139,.12));
+      border: 1px solid rgba(255,255,255,.08);
+    }
+
+    .ctl-btn{
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+    }
+    .ctl-btn:hover{ background: rgba(255,255,255,.1); }
+
+    /* Sidebar Capítulos */
+    .side-tabs{
+      backdrop-filter: blur(8px);
+      background: rgba(18,20,23,.65);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 12px;
+    }
+    .side-title{
+      font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+      color: #cbd5e1;
+    }
+    .cap-grid{
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: .5rem;
+      margin-top: .5rem;
+    }
+    .cap-btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding: .55rem .65rem; border-radius: .6rem;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.08);
+      color:#e5e7eb; font-weight:700;
+      transition: transform .12s, background .2s, border-color .2s;
+    }
+    .cap-btn:hover{ background: rgba(255,255,255,.09); transform: translateY(-1px); }
+    .cap-btn.active{
+      background: linear-gradient(135deg, rgba(156,163,175,.28), rgba(100,116,139,.22));
+      border-color: rgba(255,255,255,.25);
+      color:#fff;
+      box-shadow: 0 6px 18px rgba(0,0,0,.25);
+    }
+
+    .accent{ color: #cbd5e1; }
+    .fade-in{ animation: fadeIn .28s ease; }
+    @keyframes fadeIn{ from{opacity:0; transform:translateY(4px)} to{opacity:1; transform:translateY(0)} }
+  </style>
+</head>
+
+<body class="selection:bg-slate-400/20">
+
+  <!-- Névoa -->
+  <div class="fog"></div>
+  <div class="fog2"></div>
+
+  <!-- Vilarejo (SVG silhueta) -->
+  <svg class="village" viewBox="0 0 1200 400" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="roof" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="#64748b"/>
+        <stop offset="100%" stop-color="#334155"/>
+      </linearGradient>
+    </defs>
+    <!-- morros -->
+    <path d="M0,320 C180,260 240,300 380,300 C520,300 620,260 760,290 C900,320 1020,280 1200,320 L1200,400 L0,400 Z"
+          fill="#1f2937"/>
+    <!-- casas toscas + torre da igreja -->
+    <g fill="url(#roof)">
+      <path d="M90 290 h80 v-60 h-80 z"/><path d="M170 290 h60 v-40 h-60 z"/>
+      <path d="M260 290 h90 v-70 h-90 z"/><path d="M365 290 h70 v-50 h-70 z"/>
+      <path d="M460 290 h120 v-90 h-120 z"/>
+      <!-- igreja -->
+      <path d="M620 290 h110 v-110 h-110 z"/>
+      <path d="M672 180 l18 -60 l18 60 v110 h-36 z"/>
+      <rect x="687" y="105" width="6" height="20" fill="#94a3b8"/>
+      <path d="M760 290 h85 v-70 h-85 z"/><path d="M860 290 h95 v-80 h-95 z"/>
+      <path d="M970 290 h70 v-60 h-70 z"/><path d="M1060 290 h80 v-50 h-80 z"/>
+    </g>
+  </svg>
+
+  <!-- Topo / progresso -->
+  <div class="progress-wrap">
+    <div class="max-w-4xl mx-auto px-4">
+      <div class="flex items-center gap-3 py-3 text-sm">
+        <a href="index.html#contos"
+           class="px-3 py-1.5 rounded-lg border border-white/20 hover:bg-white/10 transition">
+          Voltar
+        </a>
+        <div class="pill px-3 py-1.5 rounded-full uppercase tracking-wide">
+           Incidente de Willowbrook
+        </div>
+        <div class="ml-auto flex items-center gap-2">
+          <button id="wNarrow"  class="ctl-btn text-xs px-2 py-1 rounded">Narrow</button>
+          <button id="wNormal"  class="ctl-btn text-xs px-2 py-1 rounded">Normal</button>
+          <button id="wWide"    class="ctl-btn text-xs px-2 py-1 rounded">Wide</button>
+          <span class="mx-2 opacity-60">•</span>
+          <button id="fzDown"   class="ctl-btn text-xs px-2 py-1 rounded">A−</button>
+          <button id="fzReset"  class="ctl-btn text-xs px-2 py-1 rounded">A</button>
+          <button id="fzUp"     class="ctl-btn text-xs px-2 py-1 rounded">A+</button>
+          <span class="mx-2 opacity-60">•</span>
+          <button id="lhDown"   class="ctl-btn text-xs px-2 py-1 rounded">LH−</button>
+          <button id="lhReset"  class="ctl-btn text-xs px-2 py-1 rounded">LH</button>
+          <button id="lhUp"     class="ctl-btn text-xs px-2 py-1 rounded">LH+</button>
+        </div>
+      </div>
+    </div>
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <!-- conteúdo -->
+  <main class="relative z-10">
+    <header class="max-w-4xl mx-auto px-4 pt-10">
+      <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight">
+        <span class="accent">Incidente de Willowbrook</span>
+      </h1>
+      <p class="mt-3 text-gray-300">
+        Vilarejo em névoa. Portas semiabertas. Vozes que não chegam a ser voz.
+      </p>
+      <div class="mt-4 flex flex-wrap items-center gap-3 text-xs">
+        <span class="pill px-3 py-1 rounded-full">Capítulos: 18</span>
+        <span class="pill px-3 py-1 rounded-full">Suspense</span>
+        <span class="pill px-3 py-1 rounded-full">Mistério</span>
+      </div>
+    </header>
+
+    <!-- grid: sidebar + leitor -->
+    <div class="relative z-10 max-w-5xl mx-auto px-4 mt-8 mb-20 grid grid-cols-1 md:grid-cols-4 gap-6 items-start">
+      <!-- Sidebar -->
+      <aside class="side-tabs p-3 md:sticky md:top-24 md:col-span-1">
+        <div class="space-y-2">
+          <div class="side-title text-sm">Capítulos</div>
+          <div id="capGrid" class="cap-grid"></div>
+        </div>
+      </aside>
+
+      <!-- Leitor -->
+      <section id="reader" class="md:col-span-3 reading-card rounded-2xl">
+        <article id="conteudo" class="prose prose-invert max-w-none p-6 md:p-8 leading-relaxed fade-in">
+          <!-- conteúdo injetado via JS -->
+        </article>
+      </section>
+    </div>
+  </main>
+
+  <footer class="relative z-10 pb-12">
+    <div class="max-w-4xl mx-auto px-4 text-sm text-gray-400">
+      <div class="flex items-center justify-between">
+        <span>&copy; 2025 — Pedro Henrique</span>
+        <a class="text-slate-300/80 hover:text-slate-200 transition" href="index.html#contos">Voltar para contos</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ====== Progresso ======
+    (function(){
+      const bar = document.getElementById('progressBar');
+      function update(){
+        const doc = document.documentElement;
+        const total = doc.scrollHeight - doc.clientHeight;
+        const pct = total > 0 ? (doc.scrollTop / total) * 100 : 0;
+        bar.style.width = pct + '%';
+      }
+      document.addEventListener('scroll', update, { passive:true });
+      window.addEventListener('resize', update);
+      update();
+    })();
+
+    // ====== Controles de leitura ======
+    (function(){
+      const reader = document.getElementById('reader');
+      const content = document.getElementById('conteudo');
+
+      document.getElementById('wNarrow').addEventListener('click', ()=> {
+        reader.classList.remove('max-w-4xl','max-w-3xl'); reader.classList.add('max-w-2xl');
+      });
+      document.getElementById('wNormal').addEventListener('click', ()=> {
+        reader.classList.remove('max-w-4xl','max-w-2xl'); reader.classList.add('max-w-3xl');
+      });
+      document.getElementById('wWide').addEventListener('click', ()=> {
+        reader.classList.remove('max-w-3xl','max-w-2xl'); reader.classList.add('max-w-4xl');
+      });
+
+      let size = 1; const applySize = ()=> content.style.fontSize = size + 'em';
+      document.getElementById('fzUp').addEventListener('click', ()=> { size = Math.min(size + 0.05, 1.5); applySize(); });
+      document.getElementById('fzDown').addEventListener('click', ()=> { size = Math.max(size - 0.05, 0.85); applySize(); });
+      document.getElementById('fzReset').addEventListener('click', ()=> { size = 1; applySize(); });
+
+      let lh = 1.75; const applyLH = ()=> content.style.lineHeight = lh;
+      document.getElementById('lhUp').addEventListener('click', ()=> { lh = Math.min(lh + 0.1, 2.2); applyLH(); });
+      document.getElementById('lhDown').addEventListener('click', ()=> { lh = Math.max(lh - 0.1, 1.3); applyLH(); });
+      document.getElementById('lhReset').addEventListener('click', ()=> { lh = 1.75; applyLH(); });
+
+      applySize(); applyLH();
+    })();
+
+    // ====== Conteúdos 18 capítulos (placeholders) ======
+    const CHAPTERS = Array.from({length:18}, (_,i)=> {
+      const n = i+1;
+      return `
+        <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-300 mb-4">Capítulo ${n}</h1>
+        <p>Conteúdo do Capítulo ${n}. Substitua este texto com a narrativa final. Mantenha o clima cinza, úmido, quase sussurrado.</p>
+        <p>Use imagens mentais do vilarejo coberto por névoa, portas semiabertas e passos em tábuas antigas ao fundo.</p>
+      `;
+    });
+
+    // ====== Renderização de botões 1..18 + troca de capítulo ======
+    (function(){
+      const grid = document.getElementById('capGrid');
+      const conteudo = document.getElementById('conteudo');
+      const btns = [];
+
+      for(let i=1;i<=18;i++){
+        const b = document.createElement('button');
+        b.type='button';
+        b.className='cap-btn';
+        b.textContent = i.toString();
+        b.setAttribute('aria-label', 'Capítulo ' + i);
+        grid.appendChild(b);
+        btns.push(b);
+      }
+
+      function setCap(i){
+        btns.forEach(el=> el.classList.remove('active'));
+        btns[i].classList.add('active');
+        conteudo.classList.remove('fade-in');
+        void conteudo.offsetWidth; // reflow
+        conteudo.innerHTML = CHAPTERS[i];
+        conteudo.classList.add('fade-in');
+      }
+
+      // Inicial
+      setCap(0);
+      btns.forEach((b, idx)=> b.addEventListener('click', ()=> setCap(idx)));
+    })();
+  </script>
+</body>
+</html>

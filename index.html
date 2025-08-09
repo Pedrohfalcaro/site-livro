@@ -256,7 +256,7 @@
         <div class="obra" data-tags="Livro">
           <div class="bg-white rounded-3xl shadow-lg flex flex-col p-5 h-full hover:shadow-xl transition-all group relative">
             <div class="absolute top-3 left-3 z-10 bg-green-100 text-green-700 px-3 py-1 text-xs font-bold rounded-full shadow-sm">📖 Livro</div>
-            <img src="LdC1.png" class="w-full h-64 object-cover rounded-2xl mb-4 transform group-hover:scale-105 transition-all" alt="A Lenda do Caos capa"/>
+            <img src="LdC1.png" class="w-full aspect-[2/3] object-cover rounded-2xl mb-4 transform group-hover:scale-105 transition-all" alt="A Lenda do Caos capa"/>
             <h3 class="text-lg sm:text-xl font-bold text-center mb-1">A Lenda do Caos - Tríplice Caótica + Marca-páginas + Conto exclusivo</h3>
             <p class="text-base sm:text-lg mt-2 text-center">
               <del class="text-red-500 text-base mr-2">R$ 57,90</del>
@@ -283,7 +283,7 @@
         <div class="obra" data-tags="Áudio-série">
           <div class="bg-white rounded-3xl shadow-lg flex flex-col p-5 h-full hover:shadow-xl transition-all group relative">
             <div class="absolute top-3 left-3 z-10 bg-purple-100 text-purple-700 px-3 py-1 text-xs font-bold rounded-full shadow-sm">🎧 Áudio-série</div>
-            <img src="AdC1.jpg" class="w-full h-64 object-cover rounded-2xl mb-4 transform group-hover:scale-105 transition-all" alt="Além dos Céus T1 capa"/>
+            <img src="AdC1.jpg" class="w-full aspect-[2/3] object-cover rounded-2xl mb-4 transform group-hover:scale-105 transition-all" alt="Além dos Céus T1 capa"/>
             <h3 class="text-lg sm:text-xl font-bold text-center mb-1">Além dos Céus – T1: Desbravadores</h3>
             <p class="text-gray-600 text-sm mb-3 text-center">Uma jornada espacial e sentimental através do universo.</p>
             <div class="mt-auto pt-4">
@@ -306,7 +306,7 @@
         <div class="obra" data-tags="WebLivro">
           <div class="bg-white rounded-3xl shadow-lg flex flex-col p-5 h-full hover:shadow-xl transition-all group relative">
             <div class="absolute top-3 left-3 z-10 bg-indigo-100 text-indigo-700 px-3 py-1 text-xs font-bold rounded-full shadow-sm">🌐 WebLivro</div>
-            <img src="IdW.jpg" class="w-full h-64 object-cover rounded-2xl mb-4 transform group-hover:scale-105 transition-all" alt="O Incidente de Willowbrook capa"/>
+            <img src="IdW.jpg" class="w-full aspect-[2/3] object-cover rounded-2xl mb-4 transform group-hover:scale-105 transition-all" alt="O Incidente de Willowbrook capa"/>
             <h3 class="text-lg sm:text-xl font-bold text-center mb-1">O incidente de Willowbrook</h3>
             <p class="text-base mt-2 text-center text-gray-800"><strong class="text-indigo-600 text-xl font-bold">R$ 7,50</strong></p>
             <div class="mt-auto pt-4">
@@ -402,7 +402,7 @@
         <button id="prevContos" class="carousel-btn carousel-btn-left hidden sm:block" aria-label="Anterior">&lt;</button>
 
         <div id="contosContainer" class="flex overflow-x-auto no-scrollbar scroll-smooth">
-          <!-- Card exemplo -->
+          <!-- Meu Universo -->
           <div class="obra bg-white dark:bg-gray-800 rounded-3xl shadow-md overflow-hidden">
             <img src="ContoMUcapa.png" alt="Capa conto" class="w-full aspect-[16/9] object-cover">
             <div class="p-4">
@@ -414,7 +414,32 @@
               </a>
             </div>
           </div>
-          <!-- /Card exemplo -->
+
+          <!-- Jardineiro do Inferno -->
+
+          <div class="obra bg-white dark:bg-gray-800 rounded-3xl shadow-md overflow-hidden">
+            <img src="ContoJdIcapa.png" alt="Capa conto" class="w-full aspect-[16/9] object-cover">
+            <div class="p-4">
+              <h3 class="font-bold text-base sm:text-lg text-gray-800 dark:text-white">Jardineiro do Inferno</h3>
+              <p class="text-gray-600 dark:text-gray-300 text-sm mt-1">Um conto ambientado entre estrelas, silêncio e decisões que mudam rotas.</p>
+              <a href="ContosJdI.html" 
+                 class="mt-3 block w-full bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg text-center transition">
+                 Ler conto
+              </a>
+            </div>
+          </div>
+          <!-- A Última Colheita-->
+            <div class="obra bg-white dark:bg-gray-800 rounded-3xl shadow-md overflow-hidden">
+            <img src="ContoAUCcapa.png" alt="Capa conto" class="w-full aspect-[16/9] object-cover">
+            <div class="p-4">
+              <h3 class="font-bold text-base sm:text-lg text-gray-800 dark:text-white">A Última Colheita</h3>
+              <p class="text-gray-600 dark:text-gray-300 text-sm mt-1">Um conto ambientado entre estrelas, silêncio e decisões que mudam rotas.</p>
+              <a href="!ContoAUC.html" 
+                 class="mt-3 block w-full bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg text-center transition">
+                 Ler conto
+              </a>
+            </div>
+          </div>
         </div>
 
         <button id="nextContos" class="carousel-btn carousel-btn-right hidden sm:block" aria-label="Próximo">&gt;</button>
@@ -578,59 +603,99 @@
     }
 
     /* ===== Popup Detalhes ===== */
-    function abrirDetalhes(detalhes) {
-      const { nome, descricao, preco, imagem, youtube, tipo, hotmartLink } = detalhes;
+  
+function abrirDetalhes(detalhes) {
+  const { nome, descricao, preco, imagem, youtube, tipo } = detalhes;
 
-      document.getElementById("detalheTitulo").textContent = nome;
-      document.getElementById("detalheDescricao").textContent = descricao;
-      const precoEl = document.getElementById("detalhePreco");
-      const imagemEl = document.getElementById("detalheImagem");
-      const botoesEl = document.getElementById("botoesDetalhes");
+  const tituloEl = document.getElementById("detalheTitulo");
+  const descEl   = document.getElementById("detalheDescricao");
+  const precoEl  = document.getElementById("detalhePreco");
+  const imgEl    = document.getElementById("detalheImagem");
+  const btnsEl   = document.getElementById("botoesDetalhes");
 
-      if (preco !== null && preco !== undefined && tipo === "livro") {
-        precoEl.textContent = `R$ ${preco.toFixed(2)}`;
-        precoEl.classList.remove("hidden");
+  // Cabeçalho
+  tituloEl.textContent = nome;
+  descEl.textContent   = descricao;
+
+  if (typeof preco === "number") {
+    precoEl.textContent = `R$ ${preco.toFixed(2)}`;
+    precoEl.classList.remove("hidden");
+  } else {
+    precoEl.classList.add("hidden");
+    precoEl.textContent = "";
+  }
+
+  imgEl.src = imagem;
+  imgEl.alt = `Capa de ${nome}`;
+
+  // Limpa e garante coluna
+  btnsEl.innerHTML = "";
+  btnsEl.classList.remove("sm:flex-row");
+  btnsEl.classList.add("flex", "flex-col", "gap-3");
+
+  // ===== Bloco de ACESSO (sempre acima do carrinho p/ WebLivro) =====
+  if (tipo === "weblivro") {
+    const info = document.createElement("p");
+    info.className = "text-sm text-gray-600";
+    info.textContent = "Já adquiriu o WebLivro? Acesse-o com a senha enviada em seu email.";
+    btnsEl.appendChild(info);
+
+    const blocoAcesso = document.createElement("div");
+    blocoAcesso.className = "flex gap-2 items-center w-full";
+    blocoAcesso.innerHTML = `
+      <label class="sr-only" for="inputChaveAcesso">Chave de Acesso</label>
+      <input id="inputChaveAcesso" type="text" placeholder="Chave de Acesso"
+             class="flex-1 px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+             autocomplete="off">
+      <button id="btnAcessarWebLivro"
+              class="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition-all">
+        Acessar
+      </button>
+    `;
+    btnsEl.appendChild(blocoAcesso);
+
+    // listeners
+    const chaveInput = blocoAcesso.querySelector('#inputChaveAcesso');
+    const btnAcessar = blocoAcesso.querySelector('#btnAcessarWebLivro');
+
+    function tentarAcesso() {
+      const chave = (chaveInput.value || "").trim();
+      if (chave === "ID10-W7BK-EMHW") {
+        window.location.href = "IdWWebLivro.html";
       } else {
-        precoEl.classList.add("hidden");
-        precoEl.textContent = "";
+        alert("A senha de acesso está errada.");
       }
-
-      imagemEl.src = imagem;
-      imagemEl.alt = `Capa de ${nome}`;
-
-      botoesEl.innerHTML = "";
-
-      if (tipo === "livro" && preco) {
-        botoesEl.innerHTML += `
-          <button onclick="adicionarLivro('${nome.replace(/'/g,"\\'")}', ${preco}, '${imagem}')" 
-            class="bg-purple-600 text-white px-6 py-2 rounded-full hover:bg-purple-700 transition-all">
-             Adicionar à Sacola
-          </button>`;
-      }
-
-      if (tipo === "weblivro" && hotmartLink) {
-        botoesEl.innerHTML += `
-          <a href="${hotmartLink}" target="_blank" rel="noopener"
-            class="bg-indigo-600 text-white px-6 py-2 rounded-full hover:bg-indigo-700 transition-all text-center">
-             Acessar Hotmart
-          </a>`;
-      }
-
-      if (youtube) {
-        botoesEl.innerHTML += `
-          <a href="${youtube}" target="_blank" rel="noopener"
-            class="bg-red-600 text-white px-6 py-2 rounded-full hover:bg-red-700 transition-all text-center">
-             Assistir no YouTube
-          </a>`;
-      }
-
-      document.getElementById("popupDetalhes").classList.remove("hidden");
-      document.body.classList.add("overflow-hidden");
     }
-    function fecharDetalhes() {
-      document.getElementById("popupDetalhes").classList.add("hidden");
-      document.body.classList.remove("overflow-hidden");
-    }
+    btnAcessar.addEventListener("click", tentarAcesso);
+    chaveInput.addEventListener("keydown", (e) => { if (e.key === "Enter") tentarAcesso(); });
+  }
+
+  // ===== Botão ADICIONAR À SACOLA (vem DEPOIS) =====
+  if (typeof preco === "number") {
+    const btnAdd = document.createElement("button");
+    btnAdd.className = "bg-purple-600 text-white px-6 py-2 rounded-full hover:bg-purple-700 transition-all";
+    btnAdd.textContent = "Adicionar à Sacola";
+    btnAdd.addEventListener("click", () => {
+      adicionarLivro(nome.replace(/'/g, "\\'"), preco, imagem);
+    });
+    btnsEl.appendChild(btnAdd);
+  }
+
+  // ===== Botão YouTube (opcional) =====
+  if (youtube) {
+    const aYT = document.createElement("a");
+    aYT.href = youtube;
+    aYT.target = "_blank";
+    aYT.rel = "noopener";
+    aYT.className = "bg-red-600 text-white px-6 py-2 rounded-full hover:bg-red-700 transition-all text-center";
+    aYT.textContent = "Assistir no YouTube";
+    btnsEl.appendChild(aYT);
+  }
+
+  // Abre popup
+  document.getElementById("popupDetalhes").classList.remove("hidden");
+  document.body.classList.add("overflow-hidden");
+}
 
     /* ===== Carrosséis (viewport-based) ===== */
     (function () {
@@ -659,5 +724,41 @@
       }
     })();
   </script>
+  <script>
+  // Fecha popup com botão, overlay e ESC
+  (function() {
+    const popup   = document.getElementById("popupDetalhes");
+    const overlay = document.getElementById("popupDetalhes"); // usamos o próprio backdrop (inset-0)
+
+    function fecharDetalhes() {
+      popup.classList.add("hidden");
+      document.body.classList.remove("overflow-hidden");
+    }
+
+    // Garante que o botão realmente chame fecharDetalhes
+    const closeBtn = document.querySelector("#popupDetalhes button[aria-label='Fechar']");
+    if (closeBtn) {
+      closeBtn.addEventListener("click", (e) => { e.stopPropagation(); fecharDetalhes(); });
+      // melhora a clicabilidade
+      closeBtn.style.pointerEvents = "auto";
+      closeBtn.style.zIndex = 100;
+    }
+
+    // Fechar clicando fora (se quiser estrito só fora da caixa, dá pra checar target)
+    overlay.addEventListener("click", (e) => {
+      // fecha só se clicou fora do card interno
+      if (e.target === overlay) fecharDetalhes();
+    });
+
+    // ESC
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !popup.classList.contains("hidden")) fecharDetalhes();
+    });
+
+    // Expõe global (caso o HTML ainda use onclick="fecharDetalhes()")
+    window.fecharDetalhes = fecharDetalhes;
+  })();
+</script>
+
 </body>
 </html>
