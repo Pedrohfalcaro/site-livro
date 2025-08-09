@@ -388,5 +388,29 @@ const TEXTO_P4 = `
       tabs.forEach((btn, i)=> btn.addEventListener('click', ()=> setParte(i)));
     })();
   </script>
+  <script>
+  // Bloqueia seleção de texto
+  document.addEventListener('selectstart', e => e.preventDefault());
+
+  // Bloqueia clique com botão direito
+  document.addEventListener('contextmenu', e => e.preventDefault());
+
+  // Bloqueia atalhos de cópia
+  document.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && ['c', 'x', 'u', 's', 'p'].includes(e.key.toLowerCase())) {
+      e.preventDefault();
+    }
+  });
+</script>
+
+<style>
+  /* Remove seleção de texto */
+  body, * {
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+  }
+</style>
+
 </body>
 </html>

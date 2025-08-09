@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Incidente de Willowbrook</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* ========= Estética cinza + névoa + vilarejo ========= */
+    :root{
+      --iron: #101214;      /* fundo escuro acinzentado */
+      --deep: #0c0e10;
+      --fog: rgba(220,225,226,0.75);
+      --rust: #6b2a2a;
+      --blood: #b21e1e;
+      --amber: #b45309;
+      --ink: #e5e7eb;
+    }
+
+    body{
+      color: var(--ink);
+      background:
+        radial-gradient(1200px 600px at 60% -10%, #47556922 0%, transparent 60%),
+        linear-gradient(180deg, #1f2937, #0f1419 60%, var(--deep));
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Grão sutil */
+    body::before{
+      content:"";
+      position: fixed; inset:0; z-index:0; pointer-events:none;
+      background-image:
+        radial-gradient(1px 1px at 20% 30%, #ffffff08 50%, transparent 51%),
+        radial-gradient(1px 1px at 80% 70%, #00000010 50%, transparent 51%);
+      background-size: 3px 3px, 4px 4px;
+      mix-blend-mode: overlay;
+      opacity:.55;
+    }
+
+    /* Névoa em camadas */
+    .fog, .fog2{
+      position: fixed; inset:-30vh -20vw; z-index:1; pointer-events:none;
+      background:
+        radial-gradient(60vw 40vh at 30% 12%, var(--fog), transparent 70%),
+        radial-gradient(55vw 35vh at 70% 15%, var(--fog), transparent 70%);
+      filter: blur(6px);
+      animation: fogDrift 70s linear infinite;
+    }
+    .fog2{
+      animation-duration: 115s;
+      opacity:.7;
+      background:
+        radial-gradient(55vw 35vh at 20% 80%, var(--fog), transparent 70%),
+        radial-gradient(45vw 30vh at 85% 75%, var(--fog), transparent 70%);
+    }
+    @keyframes fogDrift{
+      from { transform: translateX(0); }
+      to   { transform: translateX(-12vw); }
+    }
+
+    /* Vilarejo desfocado (silhueta) */
+    .village{
+      position: fixed; left:0; right:0; bottom:-2vh; height:36vh;
+      z-index:0; pointer-events:none; opacity:.26;
+      filter: blur(2.5px) drop-shadow(0 10px 18px rgba(0,0,0,.35));
+    }
+
+    /* Barra de progresso */
+    .progress-wrap{
+      position: sticky; top:0; z-index:20; backdrop-filter: blur(6px);
+      background: linear-gradient(180deg, rgba(12,14,16,.8), rgba(12,14,16,.55));
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .progress-bar{
+      height: 3px;
+      background: linear-gradient(90deg, #9ca3af, #64748b);
+      width: 0%;
+    }
+
+    /* Card de leitura */
+    .reading-card{
+      backdrop-filter: blur(10px);
+      background: rgba(18,20,23,.65);
+      border: 1px solid rgba(255,255,255,.06);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.03),
+        0 20px 60px rgba(0,0,0,.45);
+      position: relative; overflow: hidden;
+    }
+    .reading-card::after{
+      content:"";
+      position:absolute; inset:0; pointer-events:none;
+      background:
+        repeating-linear-gradient(115deg, rgba(255,255,255,.03) 0 2px, transparent 2px 6px),
+        linear-gradient(180deg, rgba(148,163,184,.08), transparent 45%, rgba(100,116,139,.06));
+      mix-blend-mode: screen; opacity:.30;
+    }
+
+    .pill{
+      background: linear-gradient(135deg, rgba(148,163,184,.20), rgba(100,116,139,.12));
+      border: 1px solid rgba(255,255,255,.08);
+    }
+
+    .ctl-btn{
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+    }
+    .ctl-btn:hover{ background: rgba(255,255,255,.1); }
+
+    /* Sidebar Capítulos */
+    .side-tabs{
+      backdrop-filter: blur(8px);
+      background: rgba(18,20,23,.65);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 12px;
+    }
+    .side-title{
+      font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+      color: #cbd5e1;
+    }
+    .cap-grid{
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: .5rem;
+      margin-top: .5rem;
+    }
+    .cap-btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding: .55rem .65rem; border-radius: .6rem;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.08);
+      color:#e5e7eb; font-weight:700;
+      transition: transform .12s, background .2s, border-color .2s;
+    }
+    .cap-btn:hover{ background: rgba(255,255,255,.09); transform: translateY(-1px); }
+    .cap-btn.active{
+      background: linear-gradient(135deg, rgba(156,163,175,.28), rgba(100,116,139,.22));
+      border-color: rgba(255,255,255,.25);
+      color:#fff;
+      box-shadow: 0 6px 18px rgba(0,0,0,.25);
+    }
+
+    .accent{ color: #cbd5e1; }
+    .fade-in{ animation: fadeIn .28s ease; }
+    @keyframes fadeIn{ from{opacity:0; transform:translateY(4px)} to{opacity:1; transform:translateY(0)} }
+  </style>
+</head>
+
+<body class="selection:bg-slate-400/20">
+
+  <!-- Névoa -->
+  <div class="fog"></div>
+  <div class="fog2"></div>
+
+  <!-- Vilarejo (SVG silhueta) -->
+  <svg class="village" viewBox="0 0 1200 400" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="roof" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="#64748b"/>
+        <stop offset="100%" stop-color="#334155"/>
+      </linearGradient>
+    </defs>
+    <!-- morros -->
+    <path d="M0,320 C180,260 240,300 380,300 C520,300 620,260 760,290 C900,320 1020,280 1200,320 L1200,400 L0,400 Z"
+          fill="#1f2937"/>
+    <!-- casas toscas + torre da igreja -->
+    <g fill="url(#roof)">
+      <path d="M90 290 h80 v-60 h-80 z"/><path d="M170 290 h60 v-40 h-60 z"/>
+      <path d="M260 290 h90 v-70 h-90 z"/><path d="M365 290 h70 v-50 h-70 z"/>
+      <path d="M460 290 h120 v-90 h-120 z"/>
+      <!-- igreja -->
+      <path d="M620 290 h110 v-110 h-110 z"/>
+      <path d="M672 180 l18 -60 l18 60 v110 h-36 z"/>
+      <rect x="687" y="105" width="6" height="20" fill="#94a3b8"/>
+      <path d="M760 290 h85 v-70 h-85 z"/><path d="M860 290 h95 v-80 h-95 z"/>
+      <path d="M970 290 h70 v-60 h-70 z"/><path d="M1060 290 h80 v-50 h-80 z"/>
+    </g>
+  </svg>
+
+  <!-- Topo / progresso -->
+  <div class="progress-wrap">
+    <div class="max-w-4xl mx-auto px-4">
+      <div class="flex items-center gap-3 py-3 text-sm">
+        <a href="index.html#contos"
+           class="px-3 py-1.5 rounded-lg border border-white/20 hover:bg-white/10 transition">
+          Voltar
+        </a>
+        <div class="pill px-3 py-1.5 rounded-full uppercase tracking-wide">
+           Incidente de Willowbrook
+        </div>
+        <div class="ml-auto flex items-center gap-2">
+          <button id="wNarrow"  class="ctl-btn text-xs px-2 py-1 rounded">Narrow</button>
+          <button id="wNormal"  class="ctl-btn text-xs px-2 py-1 rounded">Normal</button>
+          <button id="wWide"    class="ctl-btn text-xs px-2 py-1 rounded">Wide</button>
+          <span class="mx-2 opacity-60">•</span>
+          <button id="fzDown"   class="ctl-btn text-xs px-2 py-1 rounded">A−</button>
+          <button id="fzReset"  class="ctl-btn text-xs px-2 py-1 rounded">A</button>
+          <button id="fzUp"     class="ctl-btn text-xs px-2 py-1 rounded">A+</button>
+          <span class="mx-2 opacity-60">•</span>
+          <button id="lhDown"   class="ctl-btn text-xs px-2 py-1 rounded">LH−</button>
+          <button id="lhReset"  class="ctl-btn text-xs px-2 py-1 rounded">LH</button>
+          <button id="lhUp"     class="ctl-btn text-xs px-2 py-1 rounded">LH+</button>
+        </div>
+      </div>
+    </div>
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <!-- conteúdo -->
+  <main class="relative z-10">
+    <header class="max-w-4xl mx-auto px-4 pt-10">
+      <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight">
+        <span class="accent">Incidente de Willowbrook</span>
+      </h1>
+      <p class="mt-3 text-gray-300">
+        Vilarejo em névoa. Portas semiabertas. Vozes que não chegam a ser voz.
+      </p>
+      <div class="mt-4 flex flex-wrap items-center gap-3 text-xs">
+        <span class="pill px-3 py-1 rounded-full">Capítulos: 18</span>
+        <span class="pill px-3 py-1 rounded-full">Suspense</span>
+        <span class="pill px-3 py-1 rounded-full">Mistério</span>
+      </div>
+    </header>
+
+    <!-- grid: sidebar + leitor -->
+    <div class="relative z-10 max-w-5xl mx-auto px-4 mt-8 mb-20 grid grid-cols-1 md:grid-cols-4 gap-6 items-start">
+      <!-- Sidebar -->
+      <aside class="side-tabs p-3 md:sticky md:top-24 md:col-span-1">
+        <div class="space-y-2">
+          <div class="side-title text-sm">Capítulos</div>
+          <div id="capGrid" class="cap-grid"></div>
+        </div>
+      </aside>
+
+      <!-- Leitor -->
+      <section id="reader" class="md:col-span-3 reading-card rounded-2xl">
+        <article id="conteudo" class="prose prose-invert max-w-none p-6 md:p-8 leading-relaxed fade-in">
+          <!-- conteúdo injetado via JS -->
+        </article>
+      </section>
+    </div>
+  </main>
+
+  <footer class="relative z-10 pb-12">
+    <div class="max-w-4xl mx-auto px-4 text-sm text-gray-400">
+      <div class="flex items-center justify-between">
+        <span>&copy; 2025 — Pedro Henrique</span>
+        <a class="text-slate-300/80 hover:text-slate-200 transition" href="index.html#contos">Voltar para contos</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ====== Progresso ======
+    (function(){
+      const bar = document.getElementById('progressBar');
+      function update(){
+        const doc = document.documentElement;
+        const total = doc.scrollHeight - doc.clientHeight;
+        const pct = total > 0 ? (doc.scrollTop / total) * 100 : 0;
+        bar.style.width = pct + '%';
+      }
+      document.addEventListener('scroll', update, { passive:true });
+      window.addEventListener('resize', update);
+      update();
+    })();
+
+    // ====== Controles de leitura ======
+    (function(){
+      const reader = document.getElementById('reader');
+      const content = document.getElementById('conteudo');
+
+      document.getElementById('wNarrow').addEventListener('click', ()=> {
+        reader.classList.remove('max-w-4xl','max-w-3xl'); reader.classList.add('max-w-2xl');
+      });
+      document.getElementById('wNormal').addEventListener('click', ()=> {
+        reader.classList.remove('max-w-4xl','max-w-2xl'); reader.classList.add('max-w-3xl');
+      });
+      document.getElementById('wWide').addEventListener('click', ()=> {
+        reader.classList.remove('max-w-3xl','max-w-2xl'); reader.classList.add('max-w-4xl');
+      });
+
+      let size = 1; const applySize = ()=> content.style.fontSize = size + 'em';
+      document.getElementById('fzUp').addEventListener('click', ()=> { size = Math.min(size + 0.05, 1.5); applySize(); });
+      document.getElementById('fzDown').addEventListener('click', ()=> { size = Math.max(size - 0.05, 0.85); applySize(); });
+      document.getElementById('fzReset').addEventListener('click', ()=> { size = 1; applySize(); });
+
+      let lh = 1.75; const applyLH = ()=> content.style.lineHeight = lh;
+      document.getElementById('lhUp').addEventListener('click', ()=> { lh = Math.min(lh + 0.1, 2.2); applyLH(); });
+      document.getElementById('lhDown').addEventListener('click', ()=> { lh = Math.max(lh - 0.1, 1.3); applyLH(); });
+      document.getElementById('lhReset').addEventListener('click', ()=> { lh = 1.75; applyLH(); });
+
+      applySize(); applyLH();
+    })();
+
+    // ====== Conteúdos dos capítulos ======
+const CHAPTERS = [
+  `<h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-300 mb-4">Primeiro Capítulo</h1>
+   <p><strong>09 de julho de 1967<br>Domingo, 10:30 pm</strong></p>
+   <hr class="my-4 border-gray-600"/>
+   <p>A noite já se espalhava por todo o Reino Unido. As ruas de Sunderland, que até há pouco recebiam o caminhar apressado de trabalhadores e famílias, agora se esvaziavam lentamente. As luzes dos postes projetavam sombras longas sobre o calçamento úmido, e as vitrines refletiam o brilho suave da lua. No alto, um céu pontilhado de estrelas se abria como um imenso véu negro cravejado de diamantes — uma visão que sempre me fascinou. Havia algo de reconfortante em observar a imensidão e imaginar o que se escondia além dela.</p>
+   <p>Subi as escadas até o meu quarto. Nada de extraordinário naquele espaço: uma cama de casal coberta por um lençol bege, uma escrivaninha encostada à parede, alguns armários discretos. No entanto, naquele momento, algo se destacava. Ao me sentar na beirada da cama, estendi meus braços magros até a escrivaninha e notei uma carta repousando ao lado da foto emoldurada de meu falecido marido.</p>
+   <p>Um arrepio percorreu minha pele.</p>
+   <p>Minha vida sempre foi marcada por pequenos desafios que, juntos, formaram um fardo pesado. Antes mesmo de nascer, minha mãe enfrentou complicações na gravidez, e isso deixou marcas permanentes. Desde o primeiro dia, o silêncio foi minha única companhia — nasci sem o sentido da audição. Minha infância exigiu mais que força de vontade: precisei de apoio constante para aprender, me comunicar e, principalmente, para me entender no mundo. Com o tempo, e muita luta, alcancei a independência. Hoje, vivo do meu trabalho e caminho sozinha, ainda que algumas feridas não possam ser vistas.</p>
+   <p>Voltei meus olhos para o estranho envelope. Peguei-o com cuidado, e antes mesmo de abri-lo, um aroma familiar escapou de seu interior: café. Sorri de leve. Só uma pessoa enviaria uma carta com aquele cheiro — meu velho amigo Hugo.</p>
+   <p>Rompi o lacre e desdobrei o papel. As palavras eram firmes, escritas com a caligrafia levemente inclinada que eu conhecia bem:</p>
+   <blockquote>
+   "Minha querida Emily Holwes, espero que esta carta a encontre bem.<br>
+   Venho comunicar sobre uma oportunidade de trabalho. Recentemente, soube que você decidiu adentrar neste mundo de mistérios, e isso me deixou muito feliz. Indo direto ao ponto: há poucos dias, li no jornal escocês sobre uma pequena cidade situada ao sul do país — na verdade, um vilarejo. Boatos dizem que o local foi dizimado por completo e que todos os seus moradores morreram repentinamente. O nome desse vilarejo é Willowbrook.<br>
+   A princípio, um conhecido meu viveu lá durante a década de 40. Acredito que ele seja uma boa fonte de informações. Seu endereço é 74, Lawe Rd, South Shield, Inglaterra.<br>
+   Pelo trabalho, serão pagos £7.250 em caso de uma investigação bem-sucedida, ou seja, me trazendo resultados concretos. Você receberá £1.000 antecipadamente, e o restante apenas com garantia de sucesso. Confio em suas capacidades para solucionar este caso, por isso a estou contatando.<br>
+   Assinado:<br>
+   Hugo Selene"
+   </blockquote>
+   <p>Um vilarejo inteiro dizimado… e ninguém sabia explicar o motivo? No mínimo, intrigante. Hugo estava certo: eu era persistente, e se havia pagamento envolvido, ainda mais. Encontraria a verdade sobre Willowbrook, custasse o que custasse.</p>
+   <p>Pelas minhas contas, levaria cerca de quarenta e cinco minutos de metrô até o endereço do tal conhecido. Planejei ser breve. Quanto menos tempo ocupasse, melhor. Amanhã cedo, me arrumaria e partiria.</p>
+   <p>Por ora, me deitei, cobrindo-me com o calor reconfortante de um cobertor grosso. A noite prometia ser fria.</p>
+   <p>O sono, no entanto, trouxe comigo um peso amargo. Sonhos turbulentos se agitaram em minha mente — lembranças distorcidas, mas dolorosamente reais. Vi falhas, erros, fracassos… e, no centro de tudo, a morte dele. O homem que o matou ainda me escapava. Apenas uma silhueta: sobretudo negro, chapéu inclinado, nada mais. Eu, que sempre fui tão atenta aos detalhes, falhei naquele dia.</p>
+   <p>O pesadelo se intensificou. Meu coração batia rápido, e lágrimas quentes me cegavam. Revivi, como na primeira vez, o momento em que meu marido foi assassinado a sangue frio pelo homem encapuzado. A cena me engoliu. As cores desapareceram. O frio da noite se infiltrou até o osso. O dia em que eu não podia falhar… mas falhei.</p>
+   <p>Acordei de sobressalto. O quarto parecia mais escuro que antes. Respirei fundo, mas a angústia não passou.</p>
+   <p>Não havia mais motivo para esperar o amanhecer. Peguei meu casaco, guardei a carta no bolso e saí. O destino: o desconhecido.</p>`,
+
+  `<h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-300 mb-4">Segundo Capítulo</h1>
+<p><strong>10 de julho de 1967<br>Segunda-feira, 1:10 am</strong></p>
+<hr class="my-4 border-gray-600"/>
+<p>Tomei um banho frio, deixando que a água escorresse pelo meu corpo como se pudesse levar embora o peso que me esmagava. Mas, por mais que a água batesse contra minha pele, as memórias insistiam em retornar. Era como tentar lavar um ferimento que não cicatriza. Respirei fundo, desliguei o chuveiro e saí, com a mente ainda mergulhada em lembranças que eu preferia esquecer.</p>
+<p>Vesti-me com simplicidade: uma camiseta branca, calça preta e um blazer escuro. Ao colocá-lo, senti um aroma familiar — o cheiro de gato. Durante uma viagem de trabalho, dois anos atrás, deixei minhas roupas na casa de uma amiga. Seu felino havia se apoderado das minhas cobertas. O cheiro permaneceu, e estranhamente, ainda me traz certo conforto.</p>
+<p>Preparei um café forte. Do lado de fora, a noite ainda reinava absoluta. Fui até a pequena sacada do meu apartamento e fiquei observando a rua silenciosa, contando os poucos carros que cortavam a tranquilidade. Em trinta minutos, passaram apenas três.</p>
+<p>Ao terminar o café, comecei a reunir meus pertences para a viagem. Peguei uma bolsa antiga, esquecida no fundo do armário, e retirei de dentro dela vários utensílios úteis para a investigação. Entre eles, um caderno de capa gasta com o nome “Filip Holwes” — meu marido. Abri o caderno, e as anotações saltaram como fantasmas de um tempo que eu não conseguia abandonar.</p>
+<p>As páginas guardavam fragmentos de nossos últimos casos juntos. E, inevitavelmente, o caso que tirou sua vida.</p>
+<p>Lembro-me do início: uma jovem nos procurou, dizendo ter sido agredida pelo próprio pai. Interrogamos os familiares, mas todos negaram. O homem, acusado pela filha, parecia convincente. Ainda assim, algo na história dela me incomodava. Enquanto Filip continuou investigando a família, fiquei com a garota, conversando por meio de anotações em papel. Com o tempo, percebi que ela mentia. Havia lacunas no relato.</p>
+<p>E então percebi: faltava alguém na história. O namorado. Mas quando liguei os pontos, já era tarde. Corri até o local, seguindo pistas apressadas. Cheguei a uma chácara isolada, onde um galpão se erguia em meio ao mato alto. Lá dentro, a cena se gravou para sempre em mim: os pais da garota mortos no chão… e Filip, em pé, diante deles, com o braço esquerdo coberto de sangue.</p>
+<p>Minha mente congelou. Eu não estava perto o suficiente para que me vissem, mas vi o braço esquerdo de um homem apontando uma arma para Filip. Sobretudo negro. Nenhum rosto visível. Um disparo. Meu marido caiu junto aos outros corpos. Ajoelhei-me no mato, sem forças para me aproximar. O ar era úmido, mas não chovia. Logo, os assassinos limparam a cena, apagando qualquer vestígio. Nunca mais pude ver Filip. Nunca pude me despedir.</p>
+<p>A dor da perda é como uma lâmina de ferro que permanece cravada no coração, enferrujando com o tempo, mas nunca se soltando.</p>
+<p>Enxuguei as lágrimas e continuei organizando minha bolsa. Antes de sair, bati à porta da minha vizinha e lhe entreguei as chaves, pedindo que, se eu não voltasse em até duas semanas, me considerasse desaparecida.</p>
+<p>O frio da madrugada me envolveu ao atravessar ruas e parques. Apesar do silêncio, a estação de metrô estava mais iluminada, quase desperta. O trem chegou em poucos minutos. Entrei, sentei-me, e observei o ambiente. Poucos passageiros — figuras solitárias, mas o suficiente para me lembrar de que eu não estava completamente sozinha naquela hora estranha.</p>
+<p>Quase uma hora depois, o vagão desacelerou. Desci, deixando para trás os outros viajantes da madrugada.</p>
+<p>Na estação, retirei um mapa de South Shield de um totem e procurei o endereço que Hugo me passara. O relógio marcava 3h40. Ainda havia tempo antes do amanhecer. Decidi caminhar até uma praça próxima. Sentei-me num banco, observando as flores pálidas sob a luz dos postes, os frutos escuros pendendo das árvores e alguns pássaros noturnos se movimentando entre os arbustos. A brisa balançava folhas e galhos em ondas suaves, quase hipnóticas.</p>
+<p>Quando o céu começou a clarear, deduzi que eram cerca de 5h. Confirmei: 5h32. Levantei-me e segui rumo ao endereço.</p>
+<p>Poucos minutos depois, estava diante da casa. Toquei a campainha e aguardei. Nenhuma resposta. Esperei mais alguns segundos e toquei novamente, considerando que pudesse estar quebrada.</p>
+<p>Apertei a maçaneta. Estava destrancada. Empurrei lentamente a porta e entrei. O interior estava escuro, mas encontrei o interruptor. A luz revelou uma sala simples: sofá de couro, estantes com livros e alguns objetos espalhados.</p>
+<p>Foi então que o cheiro me atingiu. Forte. Ferro e ferrugem. Sangue.</p>
+<p>Segui o odor pelo corredor. As portas à esquerda e à direita o exalavam em diferentes intensidades. Entrei primeiro no banheiro. O cheiro vinha da pia, onde manchas de sangue fresco indicavam que alguém havia lavado algo ali recentemente. Anotei no meu diário.</p>
+<p>Continuei explorando. No chão, um rastro de sangue quase imperceptível. Poderia ser de um ferimento pequeno… ou de alguém tentando apagar um crime. E, no pior dos cenários, poderia ser a marca de um assassino.</p>
+<p>A investigação começava ali.</p>`
+,
+
+ `<h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-300 mb-4">Terceiro Capítulo</h1>
+<p><strong>10 de julho de 1967<br>Segunda-feira, 6:15 am</strong></p>
+<hr class="my-4 border-gray-600"/>
+<p>Eu seguia pelo corredor, sentindo o odor de sangue se intensificar a cada passo, até parar diante da última porta. Era dali que o cheiro era mais forte, denso, quase metálico. Segurei a maçaneta por um instante, respirando fundo, e então a girei.</p>
+<p>O que vi me confirmou o pior cenário.</p>
+<p>Não havia sido apenas uma tentativa de assassinato — alguém realmente matara um homem ali, provavelmente durante a última noite. O corpo jazia no centro de uma cama de casal. Um corte profundo, quase uma abertura cirúrgica, atravessava-o do pescoço até próximo ao quadril, do lado esquerdo. O golpe fora certeiro, fatal, provavelmente desferido enquanto a vítima dormia.</p>
+<p>Meu estômago se revirou.</p>
+<p>O falecido só poderia ser o conhecido de Hugo. E, se minha intuição estivesse certa, o assassino queria silenciar qualquer um que pudesse ter informações sobre Willowbrook — talvez para evitar que a verdade viesse à tona.</p>
+<p>Aproximei-me da cama, tentando ignorar o frio na espinha. Sobre uma pequena bancada, notei um telefone e algumas anotações rabiscadas em um pedaço de papel. Peguei-o com cuidado e li:</p>
+<hr class="my-4 border-gray-600"/>
+<p><em>Lembrar:</em></p>
+<ul class="list-disc list-inside">
+<li>Emily Holwes, nome da mulher que virá para cá.</li>
+<li>Ela é surda, tomar cuidado e conversar com ela pelas anotações.</li>
+<li>Contar o pouco que sei sobre Willowbrook.</li>
+<li>Por que você mesmo não contou?</li>
+</ul>
+<hr class="my-4 border-gray-600"/>
+<p>Um calor estranho subiu pelo meu peito. Hugo havia falado sobre mim com ele… e pelo visto, se preparavam para essa conversa. Isso também significava que, muito possivelmente, já haviam trocado informações por telefone. Se o assassino o matou por causa disso, era porque sabia do que este homem poderia revelar.</p>
+<p>Mas… será que esse assassino sabia que eu viria? Ou o crime fora puramente para eliminar quem possuía informações comprometedoras? A hipótese mais provável ainda era a segunda — ninguém sabia que eu estava envolvida.</p>
+<p>Anotei tudo no meu diário. Independentemente da ligação com Willowbrook, aquilo ainda era um assassinato, e precisava ficar sob minha atenção.</p>
+<p>Continuei a busca. Dentro de uma das gavetas do quarto, encontrei uma pequena caixa de metal amarronzado, pesada para seu tamanho. Estava trancada por um cadeado minúsculo. Voltei o olhar para o corpo. Relutante, mas decidida, procurei nos bolsos e ao redor da cama. Nada. Então cobri a vítima com um lençol, enrolando-o com cuidado. Não conhecia aquele homem, mas merecia ao menos um gesto de respeito.</p>
+<p>Passei a vasculhar outros cômodos. Horas se passaram até que, na sala de estar, encontrei um fundo falso em uma gaveta — enferrujado, mas não tão difícil de perceber. Ao abri-lo, vi duas coisas: uma pequena chave, provavelmente do cadeado, e uma pistola Astra 900, modelo espanhol de 1927 inspirado nas pistolas alemãs. Pesei a arma nas mãos, abrindo-a para conferir a carga: cinco balas. Com um assassino à solta, não pensei duas vezes. Seria minha garantia de defesa.</p>
+<p>Voltei ao quarto e, com a chave, abri a caixa de metal. Dentro, havia três objetos principais:</p>
+<ol class="list-decimal list-inside">
+<li>Uma chave maior, enferrujada, mas intacta.</li>
+<li>Um bilhete com a anotação: “Casa 06”.</li>
+<li>Um documento: a via do vendedor de uma residência.</li>
+</ol>
+<p>Ao folheá-lo, descobri que o vendedor se chamava Bruce Demeter — finalmente, o nome do homem morto. A compradora era Georgia Voscove. A venda havia ocorrido em 21 de agosto de 1962, e o endereço da casa estava claramente escrito no rodapé.</p>
+<p>Um detalhe chamou mais minha atenção: no contrato, havia uma cláusula permitindo que Bruce mantivesse uma cópia da chave para eventuais emergências. Isso significava que a chave em minhas mãos provavelmente abria essa casa.</p>
+<p>Meu coração acelerou. Agora eu tinha o endereço e a chave. E, segundo o documento, a propriedade ficava a leste de North Shield, cidade localizada ao norte do Rio Tyne, fronteira natural com South Shield.</p>
+<p>Coloquei tudo — chave, documentos e arma — na bolsa. Chamei um táxi para cruzar o rio. Alguns minutos de viagem e estávamos em North Shield. Daquele ponto, decidi seguir a pé.</p>
+<p>A estrada de terra se estendia diante de mim, engolida por campos silenciosos e árvores retorcidas. Cada passo me aproximava de Willowbrook, a cidade morta. O lugar onde, talvez, todos os mistérios finalmente se revelassem… ou onde eu poderia me perder para sempre.</p>`
+,
+`<h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-300 mb-4">Quarto Capítulo</h1>
+<p><strong>10 de julho de 1967<br>Segunda-feira, 9:44 am</strong></p>
+<hr class="my-4 border-gray-600"/>
+<p>Ao final da estrada de terra, a neblina começou a se adensar, tornando o ar pesado e frio. As primeiras sombras do vilarejo surgiram diante de mim. Um grande portão de ferro, coberto por manchas de ferrugem, estava entreaberto. Suas grades rangiam levemente com o vento, enquanto muralhas de pedra, cobertas de musgo e trepadeiras secas, cercavam o perímetro como sentinelas silenciosas.</p>
+<p>Ali estava.<br>Willowbrook.<br>O vilarejo que, até pouco tempo atrás, abrigava vida, risos e rotinas. Agora, apenas um cemitério de pedras, madeira e memórias perdidas.</p>
+<p>Aproximei-me do portão com passos lentos. A cada passo, eu sentia minhas botas amassarem os pedaços de cascalho do solo. Ao atravessá-lo, senti o ar mudar: um odor adocicado e levemente pútrido misturava-se ao cheiro de madeira molhada e ferrugem antiga. Era o perfume da decadência.</p>
+<p>Uma estrada de pedras irregulares e cascalhos subia um pequeno morro, levando até o centro do vilarejo. Lá, mesmo à distância, pude distinguir construções abandonadas: casas alinhadas com arquitetura semelhante, uma igreja de torre estreita e um hospital de janelas quebradas. Mais adiante, silhuetas de edifícios que não consegui identificar.</p>
+<p>Comecei pela área residencial, à procura da Casa 06 — a que a chave enferrujada abriria. Contando cada porta, percebi que havia vinte casas, todas com tijolos avermelhados, portas de madeira maciça e janelas com vidros rachados ou totalmente ausentes. Não havia sinais de reformas improvisadas ao longo dos anos. Era como se todo o vilarejo tivesse sido projetado de uma só vez, e depois congelado no tempo.</p>
+<p>Cheguei, enfim, à porta da Casa 06. A fechadura resistiu por um instante ao toque da chave, mas cedeu com um estalo seco. Ao abrir, uma nuvem de poeira se ergueu, forçando-me a prender a respiração. O cheiro era de lugar abandonado há muito tempo: um misto de mofo, madeira velha e um toque metálico no ar.</p>
+<p>A documentação dizia que a residência mudara de dono em 1949. Desde então, se passaram 18 anos. O incidente que dizimou Willowbrook era recente, mas aquela casa… não via moradores há anos.</p>
+<p>Explorei a sala coberta por camadas espessas de poeira. Nos armários, papéis amarelados e inutilizáveis. Na cozinha, pratos e talheres enferrujados ao lado de restos petrificados de alimentos. Nenhuma pista útil.</p>
+<p>Continuei explorando. O quarto principal não parecia diferente — apenas móveis cobertos por lençóis encardidos. Mas, ao abrir a porta para a varanda, algo chamou minha atenção. Uma pequena mesa redonda, coberta por fuligem e poeira, guardava um pedaço de papel dobrado. Peguei-o.</p>
+<hr class="my-4 border-gray-600"/>
+<blockquote>
+"Minha querida Georgia, amanhã às 8 pm irei com meu irmão até a gruta ao norte da Igreja. Você sabe como é assustador, e os boatos que o padre conta, vai ser divertido!<br>
+Atenciosamente, Alastor Vintergall."
+</blockquote>
+<hr class="my-4 border-gray-600"/>
+<p>Dois novos nomes: Alastor Vintergall e, indiretamente, seu irmão. E um novo local: uma gruta ao norte da igreja, aparentemente cercada de boatos e medo.</p>
+<p>Uma gruta condenada pelo padre? Isso sugeria uma ligação com crenças ou superstições locais. Talvez algo que a comunidade considerasse sagrado… ou amaldiçoado. Mas, se Willowbrook seguia uma fé cristã, qual era o papel da gruta nessa história? Era apenas um local perigoso, ou havia algo mais sombrio?</p>
+<p>Guardei a carta e segui adiante. Uma porta nos fundos levava a uma escada de madeira estreita, descendo para um porão. O ar lá dentro era mais frio e denso, e a escuridão absoluta engolia tudo. Retirei a pistola da bolsa, encaixando a lanterna tática no suporte. O feixe de luz cortou a escuridão, revelando partículas de poeira dançando no ar.</p>
+<p>A cada passo, os degraus rangiam sob meu peso, afundando levemente — a madeira parecia cansada de sustentar qualquer presença. Cheguei ao chão do porão e, antes mesmo de olhar, senti o cheiro: ferro, mofo e… decomposição.</p>
+<p>Então vi.<br>No centro do cômodo, uma corda pendia do teto, sustentando o corpo de uma mulher. Cabelos castanhos curtos, pele pálida, pés descalços. A cena estava imóvel, mas o silêncio tornava tudo mais perturbador.</p>
+<p>No canto, uma pequena mesa com papéis espalhados. Entre eles, um diário aberto:</p>
+<hr class="my-4 border-gray-600"/>
+<blockquote>
+"06/03/1965<br>
+Ontem, Alastor me pediu para acompanhá-lo, junto com seu irmão Victor, até a gruta. Não fui… tive medo. Hoje, Alastor me contou que Victor se acidentou no interior da gruta — caiu em um poço e morreu. Eu me culpo. Se estivesse lá, talvez pudesse ter evitado. O pobre garoto estaria vivo. É tudo minha culpa.<br>
+Deixarei as chaves dos meus armários no escritório. Só me desculpe… por não ter estado lá para ajudá-lo.<br>
+— Georgia Voscove"
+</blockquote>
+<hr class="my-4 border-gray-600"/>
+<p>A mulher diante de mim tinha nome. Georgia.<br>Não sabia se sua morte havia sido escolha própria ou a mão de outra pessoa. Mas, de uma forma ou de outra, ela também fazia parte do enigma que era Willowbrook.</p>
+<p>E, de repente, tive a sensação clara de que a gruta era mais do que apenas um local abandonado. Era um ponto de convergência para algo maior.</p>`,
+
+`<h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-300 mb-4">Quinto Capítulo</h1>
+<p><strong>10 de julho de 1967<br>Segunda-feira, 11:13 am</strong></p>
+<hr class="my-4 border-gray-600"/>
+<p>A carta ainda estava fresca na minha memória. Cada palavra parecia ecoar como um lembrete de que Willowbrook guardava mais do que simples histórias tristes. Dois irmãos foram até a gruta, e apenas um voltou.</p>
+<p>Victor e Alastor. Quem eram? Qual a idade deles? Por que se arriscaram a ir até um lugar cercado de boatos e advertências?</p>
+<p>Sacudi os pensamentos e voltei ao que era concreto. Peguei o molho de chaves que Georgia mencionara em seu bilhete e subi as escadas rangentes da Casa 06. No andar de cima, encontrei o quarto que ela usava como escritório. O cheiro de poeira e madeira envelhecida era quase sufocante, mas minhas mãos trabalharam rápido. Abri o primeiro armário e, entre papéis amarelados e objetos pessoais, encontrei algo que começava a dar contornos à história:</p>
+<ul class="list-disc list-inside">
+<li>Identidade de Georgia Voscove: 22 anos, nascida no sul da Inglaterra.</li>
+<li>Chaves do cartório de Willowbrook: pesadas, de ferro antigo, com marcas de desgaste.</li>
+</ul>
+<p>A idade dela me surpreendeu. Tão jovem… o que a teria levado a se mudar para um vilarejo tão isolado?</p>
+<p>Não perdi tempo. Se Georgia guardava as chaves, provavelmente havia algo importante no cartório. Saí da casa e atravessei as ruas silenciosas. O vento frio arranhava minha pele, e o som das minhas botas contra o calçamento era o único ruído na noite morta. As janelas das casas olhavam para mim como olhos ocos, sem vida.</p>
+<p>O cartório se destacava das demais construções: paredes mais claras, fachada com colunas finas e uma porta de madeira robusta, reforçada com dobradiças de ferro. Introduzi a chave na fechadura. O metal girou com dificuldade, e empurrei. A madeira rangeu, resistindo. Forçando mais um pouco, a porta cedeu, liberando um estalo pesado.</p>
+<p>O que encontrei me fez parar no batente.</p>
+<p>O interior estava mergulhado em sombras. O cheiro era denso, uma mistura de mofo, poeira e algo mais — algo doce e enjoativo que reconheci com um aperto no estômago: cheiro de morte. Móveis estavam empilhados contra a porta, formando uma barricada improvisada. As janelas estavam fechadas com tábuas pregadas às pressas, algumas já lascadas pelo tempo. Parecia que ali dentro haviam tentado resistir a algo vindo de fora.</p>
+<p>E falharam.<br>Seis corpos estavam espalhados pelo chão, em posições estranhas, como se tivessem tombado de repente. Roupas amassadas, mãos abertas, expressões congeladas em um misto de surpresa e dor. Nenhuma marca de ferimento visível. Nenhum sangue. Não foi luta… não foi tiro. Talvez veneno. Talvez algo pior.</p>
+<p>Fechei os olhos por um segundo. Willowbrook não era apenas um lugar abandonado — era uma cena congelada de um cerco que ninguém venceu.</p>
+<p>Afastei-me dos corpos e fui até o fundo, onde uma fileira de armários de arquivos ocupava quase toda a parede. Comecei a vasculhar gaveta por gaveta. Entre papéis sem importância e documentos antigos, encontrei uma sessão dedicada a jornais locais. As folhas eram frágeis, amareladas e cheiravam a poeira velha.</p>
+<p>E então vi a manchete:<br><strong>"Jovem Victor Vintergall morre em acidente na Gruta da Perdição."</strong></p>
+<p>A matéria dizia que ele morreu ao cair em um poço no interior da gruta. Mas havia mais: segundo o jornal, Victor estava no local “cometendo crimes” e violando leis de Willowbrook. Alastor, seu irmão, foi acusado de envolvimento e estava sob suspeita de assassinato e crimes contra a comunidade.</p>
+<p>Gruta da Perdição.<br>O nome, por si só, já soava como sentença.</p>
+<p>Minha teoria se fortalecia: a cidade parecia ser guiada por uma estrutura religiosa rígida, possivelmente liderada pela igreja que eu havia visto. E a gruta, longe de ser um simples acidente geográfico, era tratada como uma afronta aos costumes — um lugar proibido. O simples ato de ir até lá poderia ser considerado crime.</p>
+<p>Continuei a busca. Em uma gaveta inferior, escondidas sob uma pilha de papéis administrativos, encontrei anotações avulsas e recortes de jornal sobre lendas locais: sombras que apareciam na entrada da gruta, sons de vozes ecoando sem que ninguém estivesse lá, luzes estranhas no interior. Em todas as histórias, a ligação com a gruta era direta.</p>
+<p>Fiquei um tempo parada, lendo e relendo. Era difícil separar o que era superstição, o que era exagero da imprensa e o que poderia ser um fragmento de verdade. Mas algo era certo: toda estrada neste caso levava à mesma direção — a Gruta da Perdição.</p>
+<p>Fechei a gaveta e olhei em volta. O silêncio dentro do cartório parecia mais denso do que antes. Como se as paredes guardassem os últimos ecos da vida que um dia passou por ali.</p>
+<p>Eu tinha mais peças do quebra-cabeça, mas a imagem final ainda estava longe de se formar.</p>`,
+
+
+`<h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-300 mb-4">Sexto Capítulo</h1>
+<p><strong>10 de julho de 1967<br>Segunda-feira, 01:22 pm</strong></p>
+<hr class="my-4 border-gray-600"/>
+<p>A cada nova pista, a teia de Willowbrook se tornava mais intrincada. Eu estava imersa demais para parar. O medo continuava ali, mas já não me paralisava — apenas pulsava no fundo, como um lembrete constante de que eu estava mexendo em algo grande.</p>
+<p>Revi mentalmente tudo o que já tinha:</p>
+<ul class="list-disc list-inside">
+<li>Fora da cidade, Bruce Demeter — ex-morador da Casa 06 — assassinado.</li>
+<li>Dentro do vilarejo, Georgia, enforcada no porão.</li>
+<li>Victor e Alastor Vintergall, ligados a Georgia; Victor morto na gruta; Alastor transformado em outra pessoa desde então.</li>
+<li>No cartório, seis corpos trancados, sem ferimentos.</li>
+</ul>
+<p>Mas o mais intrigante ainda era a dúvida que me corroía: tudo isso estava conectado, ou eu estava caçando três tragédias diferentes no mesmo palco?</p>
+<p>Se o incidente de Willowbrook se resumia à morte repentina de seus moradores, eu precisava começar pelo que estava diante de mim — os mortos.</p>
+<p>E, se quisesse entender as causas, o hospital seria o melhor lugar para procurar respostas.</p>
+<p>O sol da manhã já havia se transformado em um calor suave de fim de tarde. As ruas pareciam mais silenciosas que antes, como se a cidade observasse minha caminhada. O vento, antes fresco, tornara-se rarefeito.</p>
+<p>O hospital surgiu à minha frente como um gigante adormecido. Fachada de tijolos claros, vidro quebrado na entrada e uma placa de metal manchada pelo tempo, onde o nome já mal se lia. Ao cruzar as portas, um cheiro de mofo e poeira me envolveu, misturado a algo levemente ácido — talvez desinfetante antigo.</p>
+<p>O saguão principal estava mergulhado em sombras. Cadeiras de espera enfileiradas, algumas tombadas; uma recepção simples, com balcão de madeira e uma fileira de fichários. Sobre a bancada, um folheto desbotado explicava que o hospital atendia desde consultas pediátricas até acompanhamento psicológico, mas não realizava cirurgias complexas. Uma observação anotada à mão lembrava: "Emergências graves devem ser encaminhadas a North Shield — 30 min de carro".</p>
+<p>O que significava que, para ferimentos sérios, Willowbrook era praticamente uma sentença de morte.</p>
+<p>Segui pelo corredor até encontrar as placas indicativas das alas médicas. Minhas suspeitas me levaram à psicologia. O prédio não era grande, mas, para o tamanho do vilarejo, era até sofisticado.</p>
+<p>A porta da sala trazia um letreiro gasto: "Dr. Jeesse Gate". A maçaneta cedeu facilmente. Lá dentro, uma única mesa de canto e duas poltronas estofadas no centro, uma de frente para a outra, sobre um tapete felpudo cinza. No teto, um ventilador imóvel coberto de poeira.</p>
+<p>Aproximei-me. Na poltrona mais próxima da porta, manchas escuras chamaram minha atenção. Sangue seco. Provavelmente o assento da própria doutora. A cena sugeria que seu último paciente não havia sido… tranquilo.</p>
+<p>Revirei gavetas na mesa de canto, até que encontrei o que queria: uma pasta grossa, com registros dos pacientes. Folhas amareladas, caligrafia apressada, anotações nas margens. Fui direto à última entrada. 15/10/1965. O nome estampado na ficha: Alastor Vintergall.</p>
+<p>Meu pulso acelerou.</p>
+<p>A leitura era perturbadora. Segundo a doutora, Alastor foi obrigado a comparecer às sessões por ordem direta do padre Lincoln Foster. O rapaz, com 23 anos na época, havia perdido o irmão — Victor, que acabara de completar 18 — na queda da gruta. Desde então, o jovem estava apático, sem qualquer reação emocional, como se a vida tivesse sido drenada dele.</p>
+<p>As anotações indicavam que Alastor se recusava a falar sobre o acidente. Sua única frase sobre o assunto: "Ele se desequilibrou na beirada e caiu". Nada mais. Nenhum detalhe.</p>
+<p>A última página me fez apertar a pasta com força. Era um registro tenso:<br>
+"Padre Lincoln solicitou que o paciente fosse confrontado diretamente sobre o assassinato. Insistiu que eu pressionasse para obter uma confissão, acusando-o de matar o irmão. O paciente não respondeu. Sessão encerrada abruptamente."</p>
+<p>E então… nada. Sem continuidade, sem novos registros.</p>
+<p>Olhei novamente para as manchas de sangue na poltrona.<br>Talvez não fosse apenas um paciente instável. Talvez aquela sala tenha sido palco de algo pior — algo forçado, manipulado. Se a igreja comandava Willowbrook com mão de ferro, Alastor havia cometido a pior ofensa possível: ir contra as regras.</p>
+<p>Fechei a pasta e me recostei por um instante. A história dos irmãos Vintergall ainda não fazia sentido. Mesmo que Alastor não tivesse matado Victor, sobreviver ao incidente o tornava, aos olhos da comunidade, culpado. Culpado e perigoso.</p>
+<p>Mas, se ele ainda estivesse vivo… onde estaria agora?</p>
+<p>Voltei ao corredor, indo para a ala médica. O sol já começava a se inclinar no horizonte, tingindo as janelas quebradas com um tom alaranjado. O ar parecia mais denso, como se o prédio inteiro estivesse ciente da minha presença.</p>
+<p>O hospital ainda tinha segredos. E eu estava cada vez mais perto de encontrar algo que poderia amarrar todas as pontas.</p>
+<p>Victor estava morto.<br>
+Alastor era um acusado desaparecido.<br>
+A psicóloga estava morta.<br>
+Georgia, suicidada.<br>
+E o vilarejo… estava apenas começando a revelar seu verdadeiro rosto.</p>`,
+
+`<h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-300 mb-4">Sétimo Capítulo</h1>
+<p><strong>10 de julho de 1967<br>Segunda-feira, 04:06 pm</strong></p>
+<hr class="my-4 border-gray-600"/>
+<p>A ala da psicóloga já estava vasculhada, mas o hospital de Willowbrook ainda guardava outra parte que poderia me aproximar da verdade: a ala médica. Era lá que, se minha intuição estivesse certa, eu encontraria pistas sobre as mortes.</p>
+<p>Mas havia um problema: eu odiava hospitais. Sempre odiei.</p>
+<p>O último em que pisei foi anos atrás, acompanhando uma amiga. Não era eu a paciente, mas mesmo assim acabei passando mal — enjoos, dor de cabeça, suor frio. Era como se aquelas paredes sugassem a vida das pessoas e devolvessem apenas ecos.</p>
+<p>E talvez eu soubesse o motivo.</p>
+<p>Um dos casos mais nojentos e perturbadores que já investiguei aconteceu num hospital. Ainda éramos nós dois — eu e Filip. Foi algo que teria feito até os mais resistentes tremerem. Mas essa… essa é uma história que ficará para outra hora.</p>
+<p>Sacudi a lembrança, tentando manter o foco.</p>
+<p>Os corredores eram longos e estreitos, pintados de branco, mas o tempo os havia amarelado. As lâmpadas pendiam de suportes enferrujados, algumas apagadas, outras piscando de forma irritante.</p>
+<p>O cheiro de desinfetante antigo misturado a mofo era sufocante. Me aproximei de um vaso de planta esquecido no canto e me agachei. Uma ânsia súbita subiu pela garganta — não de nojo, mas de lembrança. Respirei fundo, contei até cinco, e segui em frente.</p>
+<p>No fim de um corredor, encontrei uma sala com uma placa simples: "Documentos Médicos". Entrei. Uma mesa grande dominava o centro, e sobre ela, pilhas de papéis e fichários. Na borda da mesa, uma placa com o nome: Dr. Samantha Friday.</p>
+<p>As fichas revelavam que Samantha era a médica-chefe do hospital. Três outros profissionais trabalhavam com ela:</p>
+<ul class="list-disc list-inside">
+<li>A psicóloga Jeesse Gate, já conhecida por mim.</li>
+<li>Um dentista, Olivier Golfit, cujo histórico parecia irrelevante.</li>
+<li>Uma pediatra, Elouise Pity, cujo nome aparecia com menos frequência nos arquivos.</li>
+</ul>
+<p>Entre documentos administrativos e fichas de pacientes, encontrei o histórico pessoal de Samantha. Formada em medicina, mas com um detalhe curioso: havia concluído um minicurso de química em North Shield, com duração de um ano, encerrado em 07/12/1966.</p>
+<p>O curso, isoladamente, não significava muito. Mas aí vieram as fichas de pacientes.</p>
+<p>Os últimos cinco casos registrados sob a supervisão de Samantha tinham a mesma causa de morte: envenenamento.</p>
+<p>Nenhum detalhe sobre o tipo de substância. Nenhuma análise química. Nenhum laudo toxicológico. Apenas a palavra seca: envenenamento.</p>
+<p>E o primeiro desses cinco casos me fez parar de respirar por um instante:</p>
+<hr class="my-4 border-gray-600"/>
+<p><strong>Nome:</strong> Alastor Vintergall<br>
+<strong>Nascimento:</strong> 08/05/1942<br>
+<strong>Data do óbito:</strong> 18/10/1966<br>
+<strong>Relato:</strong> “Encontrado caído no chão de sua residência (número 15), em estado grave, atordoado, espumando pela boca. Levado ao hospital por Eliot Gooze. Veio a falecer duas horas depois. Observações finais: uso inadimplente de substâncias alucinógenas e prejudiciais à saúde, levando ao óbito.”<br>
+<strong>Médica responsável:</strong> Dr. Samantha Friday
+</p>
+<hr class="my-4 border-gray-600"/>
+<p>A conclusão oficial era clara: suicídio.</p>
+<p>Conveniente.</p>
+<p>O “jovem assassino”, como certamente era visto pela população, morto por suposto abuso de drogas. Uma narrativa perfeita para acalmar a comunidade: o criminoso que manchara Willowbrook estava morto, e por culpa própria.</p>
+<p>Mas eu não acreditava em coincidências.</p>
+<p>Alastor não se matou. Ele foi removido do tabuleiro por pessoas que tinham muito a esconder. E Samantha estava no centro disso.</p>
+<p>O detalhe que fechava a armadilha na minha mente: as mortes por envenenamento começaram justamente na reta final do curso de química da doutora.</p>
+<p>Olhei pela janela da sala. O sol estava baixo, tingindo o céu de vermelho e laranja. O hospital parecia mais frio por dentro do que a temperatura lá fora.</p>
+<p>Era claro: o envenenamento foi a arma final que varreu Willowbrook. Os seis mortos no cartório eram apenas parte da “última jogada” dos responsáveis. Agora eu precisava descobrir o que era essa substância, como foi feita e, principalmente, quem realmente a criou — Samantha sozinha ou alguém acima dela.</p>
+<p>Fechei a pasta com força.</p>
+<p>Meus próximos passos estavam claros: a igreja, para entender o poder que governava a cidade; a casa de Alastor, para buscar sinais de sua vida antes da morte; e, por fim, a casa da doutora, para encontrar a verdade que ela escondeu.</p>
+<p>Eu estava mais perto do que nunca. Mas, em Willowbrook, isso só significava uma coisa: cada passo a mais me colocava em risco.</p>
+`,
+`<h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-300 mb-4">Oitavo Capítulo</h1>
+<p><strong>10 de julho de 1967<br>Segunda-feira, 04:48 pm</strong></p>
+<hr class="my-4 border-gray-600"/>
+<p>Sair do hospital foi como soltar um peso que eu nem sabia estar carregando nos ombros. O ar frio da tarde me pareceu mais leve, mas a sensação de alívio durou pouco.</p>
+<p>Agora eu tinha a certeza: Alastor estava morto. E a história oficial — suicídio por abuso de substâncias — era tão frágil que se desmanchava só de olhar.</p>
+<p>Antes de ir até sua casa, havia um lugar que poderia me ajudar a conectar as peças: a igreja.</p>
+<p>O acidente de Victor e a Gruta da Perdição passavam, de alguma forma, por ali. Eu precisava saber até onde chegava o alcance das mãos do padre sobre este vilarejo.</p>
+<p>O sol já começava a se inclinar. Eram quase cinco da tarde. E eu sabia que, quando a noite caísse, Willowbrook se tornaria ainda mais opressiva.</p>
+<p>A igreja surgia à minha frente como uma sombra pálida. A pintura branca, já desbotada, estava cheia de rachaduras que subiam pelas paredes como veias. O portão de ferro estava torto e enferrujado. A porta principal resistiu ao meu empurrão; parecia travada, não apenas fechada. Lembrei do cartório: provavelmente alguém tinha bloqueado a entrada por dentro.</p>
+<p>Dei a volta pela construção, procurando outro acesso. As paredes, antes lisas, agora estavam manchadas pela umidade e cobertas por trepadeiras secas.</p>
+<p>Então vi: uma janela alta, com o vidro empoeirado e parcialmente trincado. Teria que ser por ali. Apoiei minha bolsa no chão, junto com um caderno.</p>
+<p>Com esforço, consegui alcançar a janela e me esgueirei para dentro.</p>
+<p>O cenário me atingiu como um soco. O interior estava um caos: bancos virados, mesas quebradas, vitrais estilhaçados. As decorações litúrgicas estavam rasgadas e jogadas ao chão. Perto da porta principal, dois enormes armários bloqueavam completamente a passagem — explicando a dificuldade de abri-la.</p>
+<p>Manchas de sangue seco pontuavam o chão, mas não havia corpos.</p>
+<p>Parece que a destruição foi fruto do mesmo evento que matou as pessoas no cartório.</p>
+<p>Mais ao fundo, encontrei uma escada estreita que levava ao andar superior.</p>
+<p>No corredor, havia um pequeno quarto, mas a porta estava trancada. A fechadura estava coberta por um pano preto preso por dentro. Não havia como espiar.</p>
+<p>Pela posição no prédio, imaginei que esse quarto deveria ter uma janela. E a lembrança de onde ela ficava me fez traçar o próximo movimento.</p>
+<p>Saí pelo mesmo ponto de entrada. Mas, ao chegar ao lado de fora, algo gelou minha espinha: o caderno que deixei no chão havia desaparecido.</p>
+<p>Não era coincidência. Eu já suspeitava de algo, por isso posicionei o caderno lá, não o verdadeiro, mas um exemplar vazio que eu mantinha justamente para testar isso.</p>
+<p>Então eu estava certa: alguém estava aqui, seguindo meus passos, observando. Alguém vivo. E este alguém sabia que eu estava mexendo onde não devia.</p>
+<p>Eu tinha que virar o jogo. Ele podia estar um passo à frente…, mas eu sabia como estar dois.</p>
+<p>Peguei da bolsa a corda com gancho e, usando a lateral de uma parede mais baixa, consegui projetá-la até a janela alta. A subida exigiu força, mas a adrenalina ajudou.</p>
+<p>O vidro estava fechado, mas não reforçado. Dei uma pancada rápida com o cabo da pistola; o vidro se estilhaçou. Afastei os fragmentos e puxei o pano preto que cobria a luz.</p>
+<p>O que vi me fez gelar por dentro.</p>
+<p>No quarto, o ar era abafado e carregado de um odor seco de decomposição. Sobre uma cama estreita, jaziam restos de um corpo que o tempo havia praticamente destruído — ossos quebradiços, fragmentos de tecido ainda grudados. Ao lado, uma corrente com uma pequena cruz. Aos pés da cama, pedaços de tecido branco e vermelho, como os usados nas vestes litúrgicas.</p>
+<p>Não tive dúvidas: aquele corpo era do padre Lincoln Foster.</p>
+<p>Pelo estado, ele estava morto havia menos de dois anos — antes, portanto, da consulta de Alastor com a psicóloga. E isso não fazia sentido.</p>
+<p>Os registros diziam que foi o padre quem pediu que Alastor fosse forçado a se consultar.</p>
+<p>A menos que…</p>
+<p>Alguém o tenha assassinado e se passado por ele.</p>
+<p>Vasculhei os armários do quarto, afastando pilhas de papéis amarelados. Entre sermões e anotações religiosas, encontrei algo muito mais importante:</p>
+<hr class="my-4 border-gray-600"/>
+<blockquote>"11/04/1965<br>
+Sophie, como você está? Estou lhe escrevendo isso pois queria falar sobre o jovem Alastor. Não faz muito tempo desde que ele perdeu seu irmão, e não acho justo nós não o ajudarmos. Nossa função como fiéis seguidores do Senhor é fazer o possível para que nossos irmãos se sintam bem. Você sabe da minha condição, eu não estou em condições de sair da igreja, por isso lhe peço por favor para conversar com o garoto, entender dele o que está acontecendo, sem que precisemos envolvê-los no assunto. O que menos quero é que ele se sinta acuado. Muito obrigado.<br>
+Atenciosamente, Lincoln Foster"
+</blockquote>
+<hr class="my-4 border-gray-600"/>
+<p>"Envolvê-los".</p>
+<p>A quem o padre se referia? Médicos? Ou alguém mais?</p>
+<p>O conteúdo reforçava minha teoria: Lincoln não queria forçar Alastor à psicóloga, mas resolver a situação de forma isolada. Algo mudou o rumo — e talvez isso tenha sido o motivo de sua morte.</p>
+<p>Continuei folheando os documentos. Outro me chamou atenção: registros de cuidadoria.</p>
+<p>Sophie Richermont cuidou do padre até 09/06/1965, quando foi dispensada sob a alegação de “falta de responsabilidade”. Foi substituída por Elouise Pity — a pediatra do hospital — que assumiu o papel de cuidadora.</p>
+<p>E, naquele momento, a igreja, o hospital e a morte do padre passaram a se entrelaçar de forma ainda mais perigosa.</p>
+`,
+`<h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-300 mb-4">Nono Capítulo</h1>
+<p><strong>10 de julho de 1967<br>Segunda-feira, 05:23 pm</strong></p>
+<hr class="my-4 border-gray-600"/>
+<p>Elouise Pity, a pediatra do hospital, assumira o cuidado do padre após a saída de Sophie. E, como cuidadora, ela teria tido acesso a absolutamente tudo: documentos, correspondências, anotações, e — o mais perigoso — a autoridade dele.</p>
+<p>Em um vilarejo como Willowbrook, onde a palavra do padre é lei, controlar a voz da igreja é controlar o destino de todos.</p>
+<p>Se ela assumiu esse papel há dois anos, teria tido tempo suficiente para construir um plano e executá-lo com calma. A partir daí, a influência do verdadeiro padre desapareceu, e o que restou foi um comando moldado aos interesses dela.</p>
+<p>Mas havia algo que não me deixava em paz: eu tinha absoluta certeza de que não estava sozinha nesta cidade.</p>
+<p>Todos os moradores haviam morrido pela toxina… então a pessoa viva só poderia ser a responsável pelo incidente.</p>
+<p>E, se isso fosse verdade, por que ela não tentou me impedir de entrar naquele quarto?</p>
+<p>A hipótese começou a se formar. Talvez o executor do ataque não fosse o cérebro do plano, apenas alguém usado como peça descartável — uma arma viva que cumpriu ordens sem saber todo o alcance delas.</p>
+<p>Entre os papéis do quarto do padre, encontrei uma última carta, destinada a Alastor:</p>
+<hr class="my-4 border-gray-600"/>
+<blockquote>"16 de junho de 1965<br>
+Alastor, meu filho,<br>
+Peço perdão… perdão por tudo o que não consegui fazer, pelas conversas que não tivemos, pelo silêncio que me foi imposto. No fundo, eu entendo sua dor — e é por isso que não posso partir deste mundo sem que você conheça a verdade.<br>
+Essa história começa muito antes de eu vestir esta batina. Quando eu era apenas um garoto, vivia sob o cuidado do antigo padre, Santiago. Ele era severo, mas justo, e cuidava de mim como um pai. Certo dia, em desafio ao meu próprio pai, fugi até a gruta. Me disseram a vida inteira que aquele lugar era pecado, morada do mal…, mas Santiago me seguiu, e ao invés de me repreender, me mostrou algo que mudou tudo.<br>
+Alastor, não existe o diabo lá — mas existe algo pior.<br>
+No fundo mais escuro da caverna, há um segredo… algo criado para destruir, não para redimir.<br>
+Na fundação de Willowbrook, Willow Rose, o homem cujo nome esta cidade carrega, confrontou seu próprio irmão, Brook Rose, dentro daquela gruta. Brook estava tomado por ideias perigosas, capazes de arruinar tudo o que o irmão havia construído. Eles discutiram. Houve um empurrão. Brook caiu no fosso e nunca mais voltou… ou foi o que todos acreditaram.<br>
+Você precisa saber, Alastor… seu irmão Victor estava vivo.<br>
+E ele esteve no mesmo lugar onde Brook caiu.<br>
+Ele viu. Ele sabe. E isso o colocou em um caminho que cedo ou tarde fará esta cidade ruir.<br>
+Eu o queria dizer isso pessoalmente, olhar nos seus olhos e lhe dar forças para enfrentar o que estava por vir. Mas não me foi permitido. Há gente aqui que não quer que você saiba. Gente que prefere lhe manter nas sombras, isolado, até que você seja moldado como uma ferramenta deles.<br>
+Se esta carta algum dia chegar até você, saiba que, apesar de todos os erros que cometi, eu lutei até o fim para proteger você e esta cidade. Não por obediência cega à igreja, mas porque você merece a verdade que estão tentando arrancar das suas mãos.<br>
+Perdoe-me por não ter feito mais.<br>
+Que Deus o guarde… e que você nunca esqueça que não está sozinho.<br>
+— Lincoln Foster"</blockquote>
+<hr class="my-4 border-gray-600"/>
+<p>A carta nunca foi entregue.</p>
+<p>Se tivesse chegado às mãos de Alastor, o plano de Elouise poderia ter desmoronado. Minha suspeita é que ela descobriu as intenções do padre e tratou de eliminá-lo antes.</p>
+<p>Agora, com a igreja sob sua autoridade e o controle da narrativa, ela possuía o poder necessário para moldar Willowbrook — e a mente de Alastor — à sua vontade.</p>
+<p>Era hora de seguir para a casa dele. Talvez lá eu encontrasse vestígios do que se passava em sua mente antes do fim.</p>
+<p>Provavelmente, este foi o fim da igreja comandada pelo padre. A partir deste momento, Elouise tornou-se a voz e o rosto da igreja de Willowbrook.</p>
+<p>Com o conhecimento sobre o “fundo falso” da gruta e o domínio sobre a mente fragilizada de Alastor, ela possuía todas as peças para manter seu controle absoluto.</p>
+<p>Acredito que já encontrei tudo o que este quarto podia me oferecer. Talvez a casa do próprio Alastor me dê respostas mais diretas — um vislumbre do que passava pela sua cabeça antes da consulta com a psicóloga, ou até sinais claros de como foi o fim de sua vida.</p>
+<p>Fechei a pasta com as cartas e me levantei.</p>
+<p>Por um instante, olhei para o corpo sem vida do padre e me peguei pensando que, apesar de todas as falhas, ele tentou… tentou proteger não só a cidade, mas o garoto que agora todos lembram como assassino.</p>
+<p>Que ele descanse em paz, mesmo que tenha partido carregando segredos que ninguém além de mim jamais conhecerá.</p>
+<p>No fim, a ruína de Willowbrook não começou com o acidente na gruta ou com o envenenamento em massa. Começou quando a verdade sobre aquele lugar foi trancada a sete chaves — e nas mãos erradas.</p>
+<p>Agora, restava apenas seguir para o próximo nome na minha lista.</p>
+<p>A casa de Alastor me esperava.</p>
+<p>E eu tinha a estranha sensação de que, lá, eu encontraria algo que não estava pronta para ver.</p>
+`,
+
+`<h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-300 mb-4">Décimo Capítulo</h1>
+<p><strong>10 de julho de 1967<br>Segunda-feira, 05:49 pm</strong></p>
+<hr class="my-4 border-gray-600"/>
+<p>Destranquei a porta pelo lado de dentro e pude sair da igreja. O céu começava a dar sinais do fim da tarde; o alaranjar e o pôr do sol me mostravam que logo o medo tomaria conta desta pequena cidade. Caminhei em direção à casa de Alastor, para certificar-me de descobertas relacionadas à sua morte e sua ida ao psicólogo.</p>
+<p>Caminhei de forma mais acelerada, porém prestando atenção em todos os arredores, certificando-me de observar corretamente qualquer possível movimento incomum. Após a caminhada, cheguei à porta, que, como esperado, não estava aberta. Procurando pelos arredores, deparei-me com a janela que levaria ao seu quarto. Depois da dificuldade para acessar a janela da igreja, esta foi bem tranquila. Em minutos, estava no interior da casa de Alastor.</p>
+<p>A mesma bagunça que encontrei em outros locais também era visível aqui. O cheiro persistente na sala de sua casa era muito forte, talvez resquícios da toxina que pôs fim à sua vida. Em outros cômodos, fui encontrando algumas coisas interessantes, e a mais importante foi o que encontrei em um armário abaixo de sua cama.</p>
+<p>Alastor possuía um diário, o que poderia ser muito importante para meu conhecimento. Ao pegá-lo em minhas mãos, pude notar algumas manchas de sangue na capa. Abri-o e comecei a folheá-lo, procurando as coisas que me seriam mais importantes.</p>
+<p>Encontrei uma enorme sessão de registros de escrita entre 03/1965 e 06/1965, todos referentes à morte de seu irmão. Em tom desolado, assustado e caótico, ele escrevia sobre o acidente, culpando-se acima de tudo pela morte de Victor. Alastor o levou para a gruta como forma de comemorar o aniversário de 18 anos do jovem, mas, como sabemos, não acabou bem.</p>
+<p>Após isso, há diversos relatos sobre a ida ao psicólogo. Desde as anotações sobre a decisão do “padre” de obrigá-lo a ir ao hospital até uma estranha conversa. Alastor, mesmo acreditando que ir até a psicóloga não fosse necessário, estava disposto a seguir os conselhos e fazer o possível para melhorar.</p>
+<p>Até que, em certo momento, uma visita um pouco indesejada chega até sua casa. Existem aqui anotações sobre uma conversa entre Alastor e Elouise, onde a médica utilizou de uma incrível persuasão para fazê-lo acreditar que tanto a psicóloga quanto o padre não estavam querendo o bem do garoto, apenas queriam que ele comprovasse que assassinou seu irmão. Após isso, ela o fez acreditar que a solução seria assassinar a psicóloga, entregando-lhe uma faca discreta.</p>
+<p>Dessa forma, obviamente, um jovem abalado mentalmente por acontecimentos anteriores seria pressionado a tomar a decisão. As próximas anotações são bem perturbadoras. Alastor passou a ser considerado um assassino foragido em Willowbrook, alguém que eles deveriam temer, mas uma pessoa estava ao seu lado. A manipuladora Elouise o abraçava e acolhia, fazendo o garoto acreditar que ela era a única que se importava com ele.</p>
+<p>Que cruel, manipular o jovem a cometer um crime que apenas a protegeria e, no fim, fazê-lo acreditar que, dentre todos, ela era a única que se importava com ele. E assim se foram anotações e desabafos por meses. Até o dia 08/06/1966, onde Alastor conta sobre uma visita surpresa de Sophie em sua casa. E, dessa forma, com tudo que ela possuía de informações, contou a Alastor a verdade, de que Elouise havia tomado o lugar do padre há muito tempo e que estava destruindo Willowbrook de dentro para fora.</p>
+<p>Inicialmente, Alastor se prontificou a estar ao lado da mulher que amava. Mas, ao passar dos dias, os pontos se tornavam cada vez mais claros. A mente do jovem Alastor era destruída dia após dia, enquanto se tornava uma marionete dos planos sujos daquela mulher.</p>
+<p>Por fim, a última anotação em seu diário, manchada de sangue, diz:</p>
+<hr class="my-4 border-gray-600"/>
+<blockquote>"O que eu acabei de fazer? O que eu fiz?<br>
+Não, eu fiz o certo, eu não devo me submeter a isso, eu a matei, Elouise está morta.<br>
+Eu matei mais uma pessoa, eu sou um assassino, eu sou um monstro.<br>
+Mas foram eles que começaram, eu só sou um assassino porque me forçaram a ser.<br>
+Que merda, eu só queria te ver de novo, irmão, me desculpe por tudo.<br>
+Foi tudo minha culpa."</blockquote>
+<hr class="my-4 border-gray-600"/>
+<p>Fechei o diário devagar, tentando processar o peso das palavras. A mente dele havia sido corroída até o limite, e, quando percebeu a extensão da manipulação, já era tarde demais para se libertar sem sangue.</p>
+<p>Olhei ao redor do quarto mais uma vez. Entre os destroços, percebi um detalhe: no canto, havia uma caixa de madeira trancada. O cadeado estava quebrado, mas a tampa permanecia presa por um prego enferrujado. Arrebentei-o com a ponta da minha ferramenta e abri.</p>
+<p>Dentro, havia recortes amarelados de jornal relatando o “acidente” de Victor, todos com anotações à margem, como se Alastor tivesse tentado encontrar algum detalhe que não estivesse nas versões oficiais. Ao lado, uma pequena cruz de madeira mal talhada e um pedaço de pano manchado — possivelmente parte da roupa que o irmão usava no dia da queda.</p>
+<p>No fundo, um pedaço de papel dobrado várias vezes, tão amassado que parecia ter sido aberto e fechado inúmeras vezes. Não havia assinatura, apenas três palavras rabiscadas à pressa:</p>
+<p><em>“Não confie neles.”</em></p>
+<p>Fechei a caixa e respirei fundo. Não importava quem “eles” fossem — médicos, líderes da igreja, moradores influentes… todos os caminhos apontavam para o mesmo núcleo de podridão.</p>
+<p>A luz do entardecer já havia se apagado, e a escuridão começava a se infiltrar pelas frestas das paredes. As ruas silenciosas, banhadas apenas por um tom arroxeado dos últimos minutos de luz, davam à cidade um ar de ruína prestes a engolir quem ousasse continuar andando.</p>
+<p>Eu sabia que meu próximo destino não era apenas o próximo passo da investigação. Era o ponto em que tudo poderia ruir para mim também.</p>
+<p>Casa nº 03.<br>
+Se eu cruzasse aquela porta, talvez encontrasse as respostas que tanto busquei. Ou talvez fosse só mais um nome para a lista de mortos de Willowbrook.</p>
+`,
+`
+<h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-300 mb-4">Décimo Primeiro Capítulo</h1>
+<p><strong>10 de julho de 1967<br>Segunda-feira, 06:15 pm</strong></p>
+<hr class="my-4 border-gray-600"/>
+<p>Meu maior receio estava diante de mim: a noite finalmente havia chegado.</p>
+<p>Assim que deixei a casa de Alastor, percebi a escuridão tomando conta das ruas. O pouco de luz que restava era o brilho alaranjado no horizonte, mas ele se apagava rápido, como se a própria cidade tivesse pressa em mergulhar no breu.</p>
+<p>Ainda era possível enxergar, mas eu sabia que, dentro de pouco tempo, cada passo se tornaria mais arriscado — e cada sombra, mais ameaçadora.</p>
+<p>Mesmo com o peso da noite se aproximando, apressei meus passos em direção à casa nº 03. Ali havia morado Samantha Friday, médica-chefe do hospital.</p>
+<p>Eu acreditava que as últimas peças desse quebra-cabeça estavam guardadas lá — e que, com sorte, seriam suficientes para concluir de vez quem orquestrou a ruína de Willowbrook.</p>
+<p>Cheguei sem ser abordada. Nenhum vulto, nenhum movimento suspeito… apenas o silêncio pesado que parecia observar de perto cada ação minha.</p>
+<p>A porta se abriu sem resistência.</p>
+<p>Não era como os outros lugares — nem trancada, nem bloqueada. Uma casa aberta assim, no meio de uma cidade fantasma, não era sinal de hospitalidade… mas de armadilha.</p>
+<p>Ainda assim, cruzei a entrada.</p>
+<p>O interior estava surpreendentemente em ordem. Móveis no lugar, cortinas alinhadas, nenhum sinal de luta ou pressa. Mas a fina camada de poeira nos cantos denunciava que ninguém morava ali havia dias. Um cheiro leve, quase químico, pairava no ar — algo que não identifiquei de imediato, mas que me incomodou desde o primeiro passo.</p>
+<p>Comecei pelas gavetas da sala, depois armários da cozinha, e segui para os quartos. Em cada cômodo, uma ordem que contrastava com o caos que encontrei nas outras casas. Como se Samantha quisesse que, caso alguém chegasse até ali, tivesse a sensação de normalidade… ou, pior, de que nada poderia ser encontrado.</p>
+<p>Mas encontrei.</p>
+<p>Num criado-mudo, um maço de papéis amarelados, amarrados com um barbante fino. Entre eles, cartas e anotações escritas à mão.</p>
+<p>A primeira que li mudou completamente o tom da investigação.</p>
+<hr class="my-4 border-gray-600"/>
+<blockquote>"Samantha,<br>
+Eu preciso conversar com você.<br>
+Eu sei o que você quer e sei o quão impossível você acha que é, mas eu sei de algo que mais ninguém sabe.<br>
+Me encontre à noite, atrás do hospital.<br>
+Só te peço uma coisa: deixe meu irmão de fora disso, e eu prometo que farei tudo para você.<br>
+Richard"</blockquote>
+<hr class="my-4 border-gray-600"/>
+<p>Richard. Um nome que nunca ouvi nesta cidade.</p>
+<p>Mas, pela forma como escreve, ele sabia exatamente o que Samantha estava planejando. Mais que isso: se ofereceu para ajudá-la.</p>
+<p>Desde que não envolvesse o irmão.</p>
+<p>Continuei revirando as páginas e encontrei algo que pareceu ainda mais perturbador: uma carta de tom frio, quase burocrático, mas com veneno em cada linha. Reconheci de imediato: Sophie.</p>
+<p>Ela sabia. Sabia dos planos, sabia do envolvimento de Samantha e Elouise, e vinha tentando, por baixo dos panos, enfraquecer cada passo delas.</p>
+<p>Foi então que encontrei uma anotação que fez o ar ao meu redor ficar mais denso:</p>
+<hr class="my-4 border-gray-600"/>
+<blockquote>"Elouise foi morta enquanto tentava acalmar Alastor e trazê-lo para o nosso plano.<br>
+O garoto agora é um problema.<br>
+Conseguimos desenvolver o último teste com o gás Sarin.<br>
+Nos testes anteriores, ele funcionou de forma eficaz.<br>
+Acredito que seja hora de utilizá-lo em um alvo humano pela primeira vez.<br>
+Alastor será a minha cobaia."</blockquote>
+<hr class="my-4 border-gray-600"/>
+<p>Meu corpo gelou. Gás Sarin. Um agente químico letal, proibido em qualquer lugar do mundo.</p>
+<p>O horror aumentou quando, numa pasta preta de couro, encontrei o documento mais detalhado que já havia passado pelas minhas mãos até agora.</p>
+<hr class="my-4 border-gray-600"/>
+<blockquote>"Passos finais – Projeto de Salvação<br><br>
+1. Três dias antes da execução, soltarei o comunicado na igreja, em nome do padre, para que todos se escondam em ambientes fechados. Os tonéis de gás Sarin já estão conectados à tubulação desses locais, prontos para serem liberados.<br>
+2. Richard comunicará nosso divulgador e informante, para tornar isso um incidente nacional.<br>
+3. Na data marcada, liberarei o gás. Matarei todos. Fulgirei para longe e nunca mais verei esta cidade.<br>
+Depois de tudo que me fizeram passar, é o mínimo que esta cidade merece.<br>
+4. Richard iniciará o plano “provas zero”. O informante contratará a investigação e Richard encerrará de forma violenta.<br>
+5. Lembrete: todo o plano está descrito no porão secreto do hospital. Agora somos só nós dois, Richard. Vamos até o fim.<br>
+Você não quer que descubram sua verdadeira identidade, quer?"</blockquote>
+<hr class="my-4 border-gray-600"/>
+<p>Fechei o documento com força.</p>
+<p>O hospital. Era lá que estava o núcleo de tudo.</p>
+<p>No fundo, eu sabia que só existia uma escolha.<br>
+E ela me levaria diretamente ao coração do inferno de Willowbrook.</p>
+`,
+`
+<h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-300 mb-4">Décimo Segundo Capítulo</h1>
+<p><strong>10 de julho de 1967<br>Segunda-feira, 06:15 pm</strong></p>
+<hr class="my-4 border-gray-600"/>
+<p>Ela chamava esse genocídio de “salvação”.</p>
+<p>Às vezes penso que já vi de tudo… e então encontro algo que me prova o contrário.</p>
+<p>As anotações que tenho diante de mim descrevem, com frieza matemática, cada passo para que o plano fosse um sucesso. Não são apenas ordens — são instruções calculadas, quase como uma receita para a morte de uma cidade inteira.</p>
+<p>Além dos nomes que já conhecemos, surge a menção de um informante e um divulgador trabalhando de fora, como peças externas que ajudariam a levar a operação adiante.</p>
+<p>A ideia de Samantha era transformar Willowbrook em notícia nacional.</p>
+<p>E, de certo modo, ela conseguiu. Se estou aqui, foi porque a divulgação feita pela minha investigação chamou atenção… mas não do jeito que ela queria.</p>
+<p>Na mente dela, o caso seria moldado: um acontecimento trágico sem culpados claros, algo que só alimentasse medo e mistério.</p>
+<p>No entanto, tenho um objetivo diferente — revelar todos os nomes, todas as motivações, cada detalhe.</p>
+<p>E é justamente aí que entra o passo chamado “Prova 0”.<br>
+Nele, Richard deveria “encerrar” qualquer investigação de forma violenta, eliminando quem fosse designado para o caso antes que chegasse perto da verdade.</p>
+<p>Três possibilidades me vêm à mente:</p>
+<ol class="list-decimal list-inside">
+<li>O plano falhou e, por isso, estou viva.</li>
+<li>Antes de mim, houve outro investigador… que não teve a mesma sorte.</li>
+<li>O plano ainda está ativo, e eu apenas não percebi que estou andando direto para a minha execução.</li>
+</ol>
+<p>Sinceramente? A terceira parece a mais provável.</p>
+<p>O que mais me incomoda é o trecho em que Samantha ameaça Richard, insinuando que ele tem uma identidade verdadeira que ninguém conhece.</p>
+<p>No fundo da pilha de papéis, encontro algo que faz meu estômago revirar: uma pequena chave enferrujada, com uma etiqueta amarelada escrita à mão: <em>“Porão – Hospital”</em>.</p>
+<p>Fecho os olhos e respiro fundo. Não é medo. Não exatamente. Mas é… algo próximo o suficiente para fazer meu corpo reagir.</p>
+<p>São quase 7 da noite. Lá fora, o céu está completamente coberto; nem mesmo a lua se arrisca a iluminar Willowbrook.</p>
+<p>E, ironicamente, o último passo dessa investigação me leva de volta ao pior lugar de todos: o hospital.</p>
+<p>Concentre-se, Emily.<br>
+Pense no que ele faria. Como ele reagiria?<br>
+Não se deixaria abalar por um medo tão tolo quanto entrar em um prédio escuro.</p>
+<p>Respire. É agora.</p>
+<p>Coloco os pés para fora da casa nº 03.<br>
+A rua parece mais estreita do que quando cheguei. A escuridão engole tudo, e as nuvens espessas escondem qualquer traço de luz.<br>
+Minha lanterna é fraca — o suficiente para iluminar dois passos à frente, mas incapaz de afastar a sensação de que algo pode estar logo além.</p>
+<p>Caminho devagar, não por hesitação, mas para evitar ser percebida. Meus olhos varrem cada canto, procurando algum movimento… qualquer coisa que prove que não estou sozinha.</p>
+<p>E é nesse silêncio absoluto que percebo: talvez eu esteja procurando demais por sinais de perigo… porque se ele estiver mesmo à minha espreita, não vai se anunciar.</p>
+<p>Meus pensamentos se atropelam, tentando criar distrações inúteis.</p>
+<p>O tempo se alonga, e finalmente a vejo.<br>
+A porta do hospital.<br>
+Parada ali, como um portal para o centro de toda essa podridão.</p>
+<p>Seguro a chave com força.<br>
+É para o porão.<br>
+E no porão… está a verdade final.</p>
+`,
+
+`<h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-300 mb-4">Décimo Terceiro Capítulo</h1>
+<p><strong>10 de julho de 1967<br>Segunda-feira, 7:35 pm</strong></p>
+<hr class="my-4 border-gray-600"/>
+<p>Aproximei minha mão da porta do hospital e a empurrei devagar, como se o simples ranger da madeira pudesse denunciar minha presença.</p>
+<p>O ar frio escapou para fora, roçando meu rosto como um aviso mudo. Assim que entrei, fechei a porta com cuidado e acionei a lanterna na potência máxima.</p>
+<p>O feixe de luz atravessou a escuridão, revelando apenas pedaços de um cenário que eu preferia não ver.</p>
+<p>Cada passo ecoava de forma surda sob meus pés, e eu sentia como se o hospital inteiro respirasse junto comigo — lento, pesado e irregular.</p>
+<p>A cada corredor percorrido, a ansiedade me mordia por dentro. A luz da lanterna piscava em pequenas falhas, e essa combinação de sombras dançantes com o silêncio absoluto fazia minha mente projetar imagens que não existiam.</p>
+<p>O suor frio escorria pela minha nuca, e meu estômago se revirava, criando uma náusea que ameaçava subir.</p>
+<p>Por alguns instantes, minha visão se distorcia, e eu quase acreditava estar vendo vultos parados nas extremidades do corredor.</p>
+<p>Era vergonhoso.</p>
+<p>Eu — aquela que deveria ser firme, a detetive que resolve qualquer quebra-cabeça — presa em um estado de pânico por um ambiente vazio.</p>
+<p>Não posso permitir isso.<br>Não aqui.<br>Não agora.</p>
+<p>Forcei a respiração a voltar ao ritmo certo e continuei, até chegar à sala de Samantha.</p>
+<p>Apliquei o feixe de luz nos cantos, procurando qualquer entrada oculta. Olhei debaixo das mesas, atrás de armários, toquei nas paredes em busca de relevos estranhos.</p>
+<p>Mas uma voz insistente na minha mente começou a gritar:<br>“Isso é burrice. Um porão com todo o plano não ficaria aqui. É cavar a própria cova.”</p>
+<p>Parei. Respirei. Pensei.</p>
+<p>Samantha era manipuladora demais para se expor desse jeito. Ela não apenas escondia segredos — ela os mascarava de forma que outra pessoa pudesse ser culpada por eles.</p>
+<p>Se alguém encontrasse esse porão, o primeiro nome acusado não seria o dela.</p>
+<p>Revi mentalmente a lista de pessoas ao redor dela:</p>
+<ul class="list-disc list-inside">
+<li>Elouise, a pediatra, cúmplice direta.</li>
+<li>Jeesse, a psicóloga, provavelmente inocente.</li>
+<li>Olivier, o dentista, aparentemente neutro.</li>
+</ul>
+<p>Esconder algo na sala de Elouise colocaria uma aliada em risco.<br>Na de Jeesse, seria fácil demais de notar devido à proximidade constante com pacientes e à rotina menos controlável.</p>
+<p>Mas… no consultório de Olivier?<br>A mesma quantidade de pacientes por dia, sempre com foco total no tratamento… poucos olhares atentos ao resto da sala.<br>Controle absoluto do espaço.</p>
+<p>Quanto mais pensava, mais certeza tinha: a entrada estava no consultório do dentista.</p>
+<p>Era próximo o suficiente para Samantha ir e voltar sem esforço, mas isolado o bastante para que ninguém suspeitasse.</p>
+<p>Apertei a lanterna, senti o metal frio da chave em meu bolso e comecei a andar até lá.</p>
+<p>Os corredores do hospital pareciam se estreitar à medida que eu avançava. As sombras me acompanhavam como se soubessem que eu estava cada vez mais perto.<br>E talvez soubessem mesmo.</p>
+`,
+`<h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-300 mb-4">Décimo Quarto Capítulo</h1>
+<p><strong>10 de julho de 1967<br>Segunda-feira, 8:01 pm</strong></p>
+<hr class="my-4 border-gray-600"/>
+<p>Após alguns minutos caminhando pelos corredores, alcancei a porta do consultório do dentista.</p>
+<p>Segurei a maçaneta por um instante, ouvindo apenas o meu próprio respirar abafado. Então, girei-a lentamente, e a porta cedeu sem resistência.</p>
+<p>O ar que veio de dentro me surpreendeu: um cheiro suave de lavanda, completamente diferente do odor impregnado no resto do hospital.</p>
+<p>O contraste era quase inquietante. Aqui, cada detalhe parecia meticulosamente preservado — o piso brilhava, as paredes estavam limpas, e as cortinas estavam perfeitamente alinhadas.</p>
+<p>Na parede, retratos de Olivier com a família, todos sorrindo, congelados no tempo. Pequenas esculturas de cerâmica repousavam em prateleiras polidas. Ao centro, a imponente cadeira de dentista, com o estofado impecável, parecia esperar pelo próximo paciente… que nunca viria.</p>
+<p>Sabendo o que procurava, comecei a vasculhar cada canto. Passei alguns minutos inspecionando o consultório e, para minha frustração, nada parecia indicar a existência de uma passagem secreta.</p>
+<p>Decidi então investigar os armários — três na parte inferior, dois fixos na parede.</p>
+<p>Nos inferiores, apenas utensílios de consulta: espelhos odontológicos, brocas, pinças… até que cheguei ao terceiro. Ele não se abria.<br>Trancado.</p>
+<p>Nos armários superiores, encontrei registros de pacientes, certificados emoldurados e documentos rotineiros.</p>
+<p>E então, entre uma pasta e outra, um envelope pardo. Dentro, uma curta mensagem assinada por Samantha:</p>
+<blockquote>
+“Olivier,<br>
+me desculpe estar lhe enviando isso. Apenas queria te informar que registramos um vazamento de material radioativo dentro do terceiro armário.<br>
+Por causa disso, estou trancando-o permanentemente, impedindo uma contaminação de Willowbrook.<br>
+Manterei a chave comigo. Espero que entenda.<br>
+Atenciosamente,<br>
+Samantha.”
+</blockquote>
+<p>Sorri de forma amarga.</p>
+<p>Era perfeito. Um armário interditado por risco radioativo — qualquer pessoa sensata evitaria abri-lo. Olivier jamais questionaria.</p>
+<p>E eu tinha em mãos a chave que Samantha guardou.</p>
+<p>Ajoelhei-me diante do armário, encaixei a chave na fechadura. O giro foi suave, e um estalo seco quebrou o silêncio.</p>
+<p>Puxei a porta lentamente, e as dobradiças rangendo ecoaram como um grito abafado.</p>
+<p>Apontei a lanterna para dentro… e ali estava.<br>Uma abertura no piso, estreita, com uma escada de metal descendo para um fosso escuro.</p>
+<p>Prendi a lanterna entre os dentes para manter as mãos livres e comecei a descer, um degrau por vez, sentindo o metal frio sob minhas luvas.</p>
+<p>O ar lá embaixo era pesado, úmido e impregnado de um leve cheiro químico.</p>
+<p>Quando meus pés tocaram o chão, ergui a lanterna e… congelei.</p>
+<p>Era como entrar no cérebro do genocídio.</p>
+<p>Paredes forradas de papéis, mapas da cidade, diagramas minuciosos das tubulações, anotações rabiscadas à mão com datas, nomes e setas interligando tudo.</p>
+<p>Sobre uma bancada, frascos de vidro com líquidos incolores, tubos, máscaras de gás e fichas químicas detalhando o uso do Sarin.</p>
+<p>Entre os papéis, listas de moradores — alguns nomes riscados, outros circulados em vermelho.</p>
+<p>Vi até nomes que eu nunca tinha ouvido antes, mas que, claramente, faziam parte dessa rede oculta.</p>
+<p>Comecei a folhear as pastas, buscando algo que revelasse mais do que já sabia.</p>
+<p>Havia instruções precisas, listas de “tarefas” cumpridas, registros de movimentações e até cálculos de dispersão do gás.</p>
+<p>Mas, ainda assim, uma lacuna permanecia: o motivo.</p>
+<p>Eu entendia o que Samantha queria fazer.<br>Sabia como ela faria.<br>Mas o porquê… isso continuava me escapando.</p>
+<p>E, pelo que estava escrito ali, ela tinha um — não era um ato vazio. Algo, em sua mente distorcida, justificava todo esse horror.</p>
+<p>Eu só precisava encontrar a peça que ligava tudo.</p>
+<p>E, no silêncio opressivo daquele porão, tive a sensação de que ela estava ali… me observando.</p>
+`,
+`<h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-300 mb-4">Décimo Quinto Capítulo</h1>
+<p><strong>10 de julho de 1967<br>Segunda-feira, 8:21 pm</strong></p>
+<hr class="my-4 border-gray-600"/>
+<p>O “Plano de Salvação” sempre esteve na mente de Samantha. Era sua obsessão.</p>
+<p>Mas a virada que acendeu o pavio e deu início ao planejamento aconteceu por causa de uma amizade — perigosa e, no fim, mortal.</p>
+<p>Samantha era muito próxima do último descendente dos fundadores de Willowbrook.</p>
+<p>A história oficial sobre Brook Rose — o homem que caiu na gruta e se tornou um fantasma de vergonha para a cidade — manchou o nome de sua família.</p>
+<p>Por isso, o filho de Brook decidiu nunca carregar o sobrenome paterno. Escolheu, em vez disso, o da mãe: Katlyn Selene.</p>
+<p>Essa aproximação fez com que Samantha tivesse acesso a informações que ninguém mais possuía. Segredos antigos, boatos engavetados e mistérios que dormiam debaixo das ruas de Willowbrook.</p>
+<p>A cada descoberta, crescia dentro dela uma fome estranha, uma necessidade quase doentia de ir mais fundo. Muitos diziam, meio em tom de admiração e meio em aviso, que ela tinha aptidão para ser uma detetive.</p>
+<p>O problema era que, quanto mais ela cavava, mais a cidade passava a vê-la como ameaça.</p>
+<p>Na adolescência, Samantha, o filho de Brook e outro garoto — Bruce Demeter — formaram um trio inseparável. Investigavam lugares proibidos, se infiltravam em arquivos e passavam noites explorando cada canto de Willowbrook. Era, a princípio, apenas uma brincadeira… até que deixou de ser.</p>
+<p>Samantha começou a falar sobre “fazer justiça” a seu modo.</p>
+<p>Um plano ousado: invadir o púlpito da igreja durante um sermão e expor, diante de toda a cidade, os segredos mais sombrios de quem a julgava. E, se fosse necessário, ela admitia — sem piscar — que mataria algumas dessas pessoas.</p>
+<p>O filho de Brook permaneceu ao lado dela, preso não só pela amizade, mas também pelo medo: ela sabia da sua verdadeira linhagem, algo que ele queria esconder de todos, exceto do próprio padre.</p>
+<p>Bruce, por outro lado, não tinha a mesma tolerância. Discordou, disse que não havia necessidade de expor vidas privadas ou matar por vingança.</p>
+<p>Mas Samantha o intimidava, e ele acabou concordando… pelo menos na frente dela.</p>
+<p>Na noite anterior ao dia marcado para a execução do plano, Bruce não aguentou. Procurou o padre e contou tudo.</p>
+<p>O padre não se surpreendeu — parecia já esperar algo assim de Samantha. Ainda assim, tomou providências: reforçou a segurança e preparou um cerco para detê-la.</p>
+<p>Quando ela entrou na igreja, acompanhada do filho de Brook, o padre a interceptou.</p>
+<p>Ambos foram punidos: proibidos de sair de casa por longos períodos e obrigados a se dedicar aos estudos.</p>
+<p>O grupo se desfez.</p>
+<p>O tempo passou.</p>
+<p>Samantha tornou-se médica, com a imagem pública de uma cidadã respeitável. O filho de Brook saiu de Willowbrook e virou jornalista em cidades grandes da Inglaterra. Bruce… seguiu sua vida, até o dia em que a morte o encontrou — horas antes de eu vê-lo pela primeira vez.</p>
+<p>Mas nada do passado se apagou para Samantha. Pelo contrário, cada sorriso falso dos moradores reacendia a raiva que ela guardava.</p>
+<p>Foi então que, já executando as primeiras etapas de seu plano, Samantha soube de algo inusitado: um garoto que sobrevivera à queda na gruta.</p>
+<p>O nome dele era Victor Vintergall.</p>
+<p>E para proteger o segredo — e manipulá-lo — ela o rebatizou: Richard.</p>
+<p>Richard se tornaria seu braço direito, o mensageiro entre ela e alguém fora da cidade… alguém que eu conhecia muito bem.</p>
+<p>O “informante” e “divulgador” que alimentaria a mídia com a versão que ela quisesse não era outro senão Hugo Selene — o filho de Brook, o último descendente dos fundadores de Willowbrook.</p>
+<p>Meu estômago revirou.</p>
+<p>O homem que me indicou para esta investigação, a pessoa que eu considerava amiga e em quem confiei minha segurança… estava do outro lado.</p>
+<p>Ele me mandara para cá não para buscar a verdade, mas para que eu fosse morta.<br>Uma peça descartável no jogo deles.</p>
+<p>Agora, todas as peças estavam na mesa.<br>Eu tinha nomes. Provas. Tudo o que precisava para destruir o “Plano de Salvação” e expor Hugo e Samantha.</p>
+<p>Guardei os documentos, respirei fundo e pensei: é só sair daqui, cruzar a fronteira e publicar tudo.</p>
+<p>E foi nesse instante que senti.<br>Um toque frio na nuca.</p>
+<p>Os pelos do meu corpo se arrepiaram, e antes que pudesse reagir, um golpe violento me atingiu a lateral da cabeça.</p>
+<p>O mundo girou, a lanterna caiu da minha mão e, com ela, a luz.</p>
+<p>A última coisa que senti foi a escuridão me engolindo.</p>
+`,
+  `<h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-300 mb-4">Décimo Sexto Capítulo</h1>
+<p><strong>10 de julho de 1967<br>Segunda-feira, 9:38 pm</strong></p>
+<hr class="my-4 border-gray-600"/>
+<p>Lentamente, meus olhos começaram a se abrir novamente.</p>
+<p>Uma dor latejante se espalhava pelo meu pescoço e pela parte lateral da cabeça, como se a pancada ainda ecoasse dentro de mim.</p>
+<p>Respirei fundo, tentando recuperar o controle do corpo. O mundo à minha volta se manteve turvo por alguns segundos, até que as formas começaram a ganhar contornos nítidos.</p>
+<p>Foi então que o vi.</p>
+<p>Um homem, de costas para mim, sentado a poucos metros.</p>
+<p>Seu corpo era jovem, forte, musculoso — mas havia algo de cansado em sua postura, como se carregasse um peso invisível.</p>
+<p>O cabelo, loiro artificialmente, revelava raízes escuras que cresciam sem cuidado.</p>
+<p>Ele se inclinava sobre uma mesa simples, rabiscando algo em um caderno já gasto.</p>
+<p>O lugar onde eu estava não tinha janelas. As paredes eram de concreto nu, manchadas pelo tempo.</p>
+<p>O ar tinha cheiro de metal, misturado a mofo e um leve traço de algo químico.</p>
+<p>Eu estava presa a uma cadeira metálica, fria contra minha pele, com os pulsos amarrados atrás do encosto.</p>
+<p>Após alguns minutos, o homem parou de escrever.</p>
+<p>Virou-se lentamente para mim, revelando um rosto marcado não por idade, mas por fadiga. Vestia apenas uma camisa branca regata e calça jeans azul.</p>
+<p>Sem dizer uma palavra, ele girou o caderno e o ergueu para que eu lesse o que estava escrito:</p>
+<p>“Eu sei de você, mas não quero te machucar.<br>
+Me desculpe pelo golpe, eu precisava te apagar por um instante.<br>
+Eu quero apenas conversar com você.”</p>
+<p>Sem pressa, ele se aproximou e soltou as amarras dos meus punhos.</p>
+<p>Ainda assim, minhas pernas continuavam presas à cadeira.</p>
+<p>Meu primeiro impulso foi óbvio: me jogar na direção da mesa e pegar minha arma.</p>
+<p>Mas ela estava ali, junto da minha bolsa, repousando ao lado dele — como um lembrete cruel de que eu não teria chance.</p>
+<p>Sem outra escolha, acenei com a cabeça em silêncio, aceitando conversar.</p>
+<p>Ele me entregou o caderno e uma caneta, apontando para o próprio ouvido e balançando a cabeça.</p>
+<p>Entendi: ele não conhecia língua de sinais. Teríamos que nos comunicar apenas por escrito.</p>
+<p>Respirei fundo, peguei a caneta e escrevi:</p>
+<p>“Tudo bem, vamos conversar, Victor.”</p>
+<p>Ao ler, seus olhos se estreitaram. Ele me encarou por alguns segundos longos, e então rabiscou de volta, com força visível na pressão da caneta:</p>
+<p>“Eu não sou mais Victor. Esse nome está morto.<br>
+Victor morreu naquele dia. Não me chame assim.”</p>
+<p>Havia algo quebrado nele.</p>
+<p>Eu imaginava que o trauma fosse grande, mas não esperava ver tamanha negação de si mesmo.</p>
+<p>Peguei o caderno e respondi, escolhendo cada palavra com cuidado:</p>
+<p>“Eu entendo o que você diz, mas não concordo.<br>
+Mudar quem você é para se moldar a alguém que nunca se importou de verdade com você… está errado.<br>
+Victor, você não é esse homem. Richard é um criminoso manipulado.<br>
+Você não é ele.”</p>
+<p>Quando ele leu, seu rosto mudou.</p>
+<p>A máscara endurecida se partiu, e as lágrimas começaram a descer, silenciosas.</p>
+<p>Ele segurou o caderno com força, como se as minhas palavras pesassem.</p>
+<p>Escreveu, mais devagar desta vez:</p>
+<p>“Eu não posso… não tenho o direito de ser uma boa pessoa.<br>
+Eu matei uma garota inocente, que no fim só fez o certo.<br>
+Eu matei todos em Willowbrook.<br>
+Fui eu que soltei o gás Sarin no vilarejo.<br>
+Eu sou um assassino.”</p>
+<p>Senti um frio na espinha.</p>
+<p>Eu queria negar, dizer que ele estava mentindo, mas a clareza naqueles olhos não deixava espaço para ilusões.</p>
+<p>Mesmo que não tivesse sido o mentor, ele havia executado o ato final. E, lá fora, qualquer lei o consideraria culpado para sempre.</p>
+<p>Escrevi com a mão trêmula:</p>
+<p>“Você liberou o gás? Por quê?<br>
+Por que fez tudo isso?”</p>
+<p>Ele leu e, pela primeira vez, não hesitou para responder:</p>
+<p>“Alguns dias antes da liberação do gás, Samantha foi confrontada pela garota que nos seguia desde o início.<br>
+Sophie.<br>
+Dentro da igreja, ela enfrentou Samantha.<br>
+Aproveitando que a médica estava despreparada, Sophie matou Samantha.<br>
+Eu vi. Eu podia ter feito algo… mas fiquei com medo.”</p>
+<p>Ele fez uma pausa, como se as próximas palavras fossem mais pesadas que todas as anteriores.</p>
+<p>“A partir daquele momento, o plano ficou nas minhas mãos.<br>
+Mas antes, eu precisava me livrar da única pessoa que poderia impedi-lo.<br>
+Enquanto Sophie carregava o corpo de Samantha para o cemitério, eu apareci.<br>
+E a matei.”</p>
+<p>Levantei o olhar do caderno.</p>
+<p>Ele também me encarava, os olhos vermelhos, sem piscar.</p>
+<p>“Ela tentou proteger o vilarejo… mas na minha visão, ela era a vilã.”</p>
+<p>E ali, por um instante, percebi que não estava diante apenas de uma vítima manipulada.<br>
+Algo nele realmente acreditava que havia feito a coisa certa.</p>`
+,
+`<h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-300 mb-4">Décimo Sétimo Capítulo</h1>
+<p><strong>10 de julho de 1967<br>Segunda-feira, 10 pm</strong></p>
+<hr class="my-4 border-gray-600"/>
+<p>Ver aquelas palavras escritas por ele… era sufocante.</p>
+<p>Na minha frente, não havia apenas um criminoso — havia um garoto que perdera tudo, que passara metade da vida preso em correntes invisíveis, moldado pela manipulação cruel de Samantha.</p>
+<p>Peguei o caderno e escrevi, firme:</p>
+<p>“Este é o problema, Victor. Não era a sua visão.<br>
+Você nunca teve permissão para ter uma.<br>
+Forçaram você a sentir compaixão por dores que não eram suas, de alguém que só queria usar isso para machucar você e todos à sua volta.<br>
+Richard é essa pessoa que ela criou…<br>
+Mas você, Victor, é alguém bom.<br>
+Mesmo sem te conhecer de verdade, eu vi o que seu irmão dizia sobre você.”</p>
+<p>Ele leu e respirou fundo, várias vezes, como se cada frase minha fosse um golpe no peito.</p>
+<p>Quando voltou a escrever, sua caligrafia parecia mais hesitante:</p>
+<p>“Você investigou tudo?<br>
+Você sabe as respostas?<br>
+Eu quero que me conte… todos os crimes dela, tudo o que eu fiz.<br>
+Quando aceitei entrar no plano, só pedi uma coisa: que meu irmão fosse poupado.<br>
+Samantha prometeu que mandaria ele para fora do vilarejo, sob a palavra do padre, para que vivesse longe dessa cidade amaldiçoada.”</p>
+<p>As mãos me tremeram.</p>
+<p>De todos os crimes de Samantha, esse talvez fosse o mais cruel.</p>
+<p>Escrevi devagar, sabendo que aquilo o destruiria:</p>
+<p>“Victor… me desculpe.<br>
+Ela mentiu.<br>
+Alastor foi convencido por Sophie de que estava ajudando as pessoas erradas.<br>
+Ele matou Elouise… e, sabendo disso, Samantha o usou como primeira cobaia do gás Sarin.”</p>
+<p>Ele ficou imóvel por um instante… e então vi seu corpo estremecer.</p>
+<p>O rosto se contorceu, as lágrimas se multiplicaram e, sem forças, ele caiu de joelhos.</p>
+<p>Não tentei pará-lo. Apenas o deixei viver aquele momento, o peso de uma verdade que ele nunca quis.</p>
+<p>Foram longos minutos até que ele se recompôs o suficiente para escrever de novo:</p>
+<p>“Obrigado por me contar.<br>
+O plano para destruir qualquer prova começou comigo.<br>
+A ideia era que nosso informante jornalístico contratasse a melhor detetive que conhecesse.<br>
+Ao mesmo tempo, precisávamos nos livrar de Bruce, que sabia demais sobre as intenções antigas de Samantha.<br>
+Hugo se reconciliou com ele — pelo menos na visão de Bruce.<br>
+Hugo me passou o horário em que encontraria você e Bruce juntos, em South Shield… e eu deveria matá-los ali mesmo.<br>
+Mas algo estava errado.<br>
+Eu sentia que Samantha me escondia coisas, e você poderia descobri-las.<br>
+Então, fui até a casa… e matei Bruce enquanto dormia.<br>
+Eu me sinto um lixo.<br>
+Isso não apaga nada.<br>
+Eu sou o vilão desta história.<br>
+As mortes foram causadas por mim.<br>
+Obrigado, detetive… agora sei de tudo sem me apegar à mentira que ela me fez acreditar.<br>
+Como última mensagem: faça as autoridades investigarem a gruta.<br>
+Lá estão as máquinas e produções do Sarin.”</p>
+<p>Quando terminei de ler, percebi que ele estava afrouxando as cordas nos meus pés.</p>
+<p>Levantei o olhar.</p>
+<p>Victor já caminhava até a mesa.</p>
+<p>Pegou minha arma, olhou para mim com um sorriso que mais parecia um pedido de desculpas… e levou o cano à própria têmpora.</p>
+<p>Não houve tempo para dizer nada.</p>
+<p>O disparo atravessou seu crânio.</p>
+<p>O corpo dele tombou no chão, imóvel, e o cheiro acre de pólvora misturou-se ao metal frio do ambiente.</p>
+<p>Fiquei parada, olhando para ele.</p>
+<p>Victor Vintergall, também conhecido como Richard, o último elo vivo do Incidente de Willowbrook, estava morto.</p>
+<p>Willowbrook…<br>
+A cidade que foi destruída pelas mãos daqueles que também pereceram nela.</p>`
+,
+`<h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-300 mb-4 ">Décimo Oitavo Capítulo</h1>
+<p><strong>16 de julho de 1967<br>Domingo, 10 am</strong></p>
+<hr class="my-4 border-gray-600"/>
+<p>Hoje é dia 16, domingo.<br>
+Faz exatamente uma semana desde que recebi a carta de Hugo me enviando para Willowbrook.</p>
+<p>Algumas coisas aconteceram depois do fim do caso, no dia 10.</p>
+<p>Assim que fui desamarrada, passei o resto da noite reunindo cada documento, carta e prova que consegui encontrar. Eram pedaços de uma história doentia que precisava ser contada.</p>
+<p>Quando o relógio se aproximou das 5 da manhã, deixei Willowbrook para trás. Dirigi até North Shield e, pela primeira vez em dias, respirei o ar de uma cidade viva.</p>
+<p>Me instalei em um hotel, tomei um café reforçado — afinal, estava praticamente um dia inteiro sem comer — e, naquela tarde, fui direto ao jornal que já havia trabalhado comigo e com meu marido em um caso anterior.</p>
+<p>Sentei diante deles e contei tudo.<br>
+Mostrei as provas.<br>
+Expliquei onde poderiam encontrar ainda mais.</p>
+<p>Eles não hesitaram.<br>
+Prometeram repassar minha investigação para todos os grandes jornais do Reino Unido.</p>
+<hr class="my-4 border-gray-600"/>
+<p>Por último, fui às autoridades.<br>
+Disse que ainda havia um culpado vivo: Hugo Selene.</p>
+<p>Fiz questão de estar presente quando fomos buscá-lo.<br>
+Queria olhar para o rosto dele, ver a reação.</p>
+<p>Quando me viu entre os policiais, seu semblante misturou surpresa, medo e… uma pontada de raiva.<br>
+Ele provavelmente já me imaginava morta.</p>
+<hr class="my-4 border-gray-600"/>
+<p>A última semana foi exaustiva:<br>
+entrevistas para jornais, auxílio às autoridades e, principalmente, a demolição da gruta, para expor os maquinários responsáveis pela produção do gás Sarin.</p>
+<p>O lugar era um cemitério de segredos.<br>
+Havia equipamentos antigos, datando da época dos fundadores, e outros mais recentes, trazidos por Samantha para concluir o plano.</p>
+<p>No fim, acho que venci.<br>
+Willowbrook foi estampada nos jornais como o genocídio de uma cidade inteira.</p>
+<p>Entramos em consenso para divulgar os nomes de todos os envolvidos… mas tratando Victor e Richard como duas pessoas diferentes.</p>
+<p>Era a única forma de permitir que, na lembrança pública, Victor não fosse apenas o assassino de todos.</p>
+<hr class="my-4 border-gray-600"/>
+<p>Hugo está preso.<br>
+E, mesmo atrás das grades, ainda deu sua versão aos jornais: disse que eu havia inventado tudo para incriminá-lo.</p>
+<p>Olhou para a câmera e deixou um aviso:<br>
+"Um dia eu saio… e você deveria se preocupar."</p>
+<p>Eu não me preocupo.<br>
+Existem coisas mais importantes para pensar.</p>
+<hr class="my-4 border-gray-600"/>
+<p>No fim, o Incidente de Willowbrook é a prova viva de que segredos e mentiras são armas de destruição em massa.</p>
+<p>Os segredos trancados a sete chaves sobre o passado da cidade geraram uma jovem disposta a tudo para conhecer a verdade.</p>
+<p>As mentiras e manipulações fabricaram os verdadeiros culpados e condenaram inocentes — que, no desespero, se tornaram assassinos.</p>
+<p>Vítimas que acreditaram serem vilãs, fantasmas transformados em ferramentas… todos destruídos pela influência corrupta das autoridades e dos segredos que protegiam.</p>
+<p>Depois deste caso, preciso me afastar desse mundo por um tempo.<br>
+Eu gosto do trabalho… mas ele me consumiu.</p>
+<p>Não sei o que o futuro reserva, mas espero que toda essa loucura tenha servido para algo.</p>
+
+<h2 class="text-xl md:text-2xl font-bold tracking-tight text-slate-300 mb-4 mt-10">Considerações Finais</h2>
+<hr class="my-4 border-gray-600"/>
+<p>Muito obrigado a você que chegou até aqui.<br>
+Meu nome é Pedro Henrique, sou um escritor iniciante.</p>
+<p>O Incidente de Willowbrook foi uma história onde quis mostrar até onde mentiras e segredos podem ir.</p>
+<p>Por trás da trama de suspense e da jornada da protagonista, há um tema que sempre esteve na minha mente: a manipulação da fragilidade.</p>
+<p>Todo o caos de Willowbrook nasceu do aproveitamento da vulnerabilidade de vítimas, que, sob a pressão de um manipulador habilidoso, se transformaram em algo que jamais seriam por conta própria.</p>
+<p>Para mim, escrever essa história foi uma aventura intensa.<br>
+Para você, espero que tenha sido uma experiência imersiva e marcante.</p>
+<p>Muito obrigado por ler.<br>
+Se quiser me conhecer melhor, me siga no Instagram: @pedrohfalcaro.</p>
+<p>E lembre-se: este não foi o primeiro caso investigado por Emily Holwes… e com certeza não será o último.</p>
+<p>Cedo ou tarde, o mistério voltará a rondar.<br>
+E quando isso acontecer, alguém precisará estar disposta a descobrir — e sobreviver — à verdade.</p>
+`,
+];
+
+
+    // ====== Renderização de botões 1..18 + troca de capítulo ======
+    (function(){
+      const grid = document.getElementById('capGrid');
+      const conteudo = document.getElementById('conteudo');
+      const btns = [];
+
+      for(let i=1;i<=18;i++){
+        const b = document.createElement('button');
+        b.type='button';
+        b.className='cap-btn';
+        b.textContent = i.toString();
+        b.setAttribute('aria-label', 'Capítulo ' + i);
+        grid.appendChild(b);
+        btns.push(b);
+      }
+
+      function setCap(i){
+        btns.forEach(el=> el.classList.remove('active'));
+        btns[i].classList.add('active');
+        conteudo.classList.remove('fade-in');
+        void conteudo.offsetWidth; // reflow
+        conteudo.innerHTML = CHAPTERS[i];
+        conteudo.classList.add('fade-in');
+      }
+
+      // Inicial
+      setCap(0);
+      btns.forEach((b, idx)=> b.addEventListener('click', ()=> setCap(idx)));
+    })();
+  </script>
+  <script>
+  // Bloqueia seleção de texto
+  document.addEventListener('selectstart', e => e.preventDefault());
+
+  // Bloqueia clique com botão direito
+  document.addEventListener('contextmenu', e => e.preventDefault());
+
+  // Bloqueia atalhos de cópia
+  document.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && ['c', 'x', 'u', 's', 'p'].includes(e.key.toLowerCase())) {
+      e.preventDefault();
+    }
+  });
+</script>
+
+<style>
+  /* Remove seleção de texto */
+  body, * {
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+  }
+</style>
+
+</body>
+</html>
