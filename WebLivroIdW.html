@@ -1102,6 +1102,53 @@ E quando isso acontecer, alguém precisará estar disposta a descobrir — e sob
     }
   });
 </script>
+<script>
+(function () {
+  // *** SUA CHAVE ***
+  const REQUIRED_CODE = "ID10-W7BK-EMHW";
+
+  // Se veio do index.html, pula validação
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('from') === 'index') {
+    unlock();
+    return;
+  }
+
+  // Caso contrário, executa o fluxo de senha normalmente
+  document.documentElement.setAttribute('data-locked', '1');
+
+  const input = document.getElementById('gate-input');
+  const okBtn = document.getElementById('gate-ok');
+  const cancelBtn = document.getElementById('gate-cancel');
+  const error = document.getElementById('gate-error');
+  const overlay = document.getElementById('gate-overlay');
+
+  setTimeout(() => input && input.focus(), 60);
+
+  function tryUnlock() {
+    const val = (input.value || '').trim();
+    if (val === REQUIRED_CODE) {
+      unlock();
+    } else {
+      error.textContent = "Chave inválida.";
+      input.select();
+    }
+  }
+
+  function unlock() {
+    overlay.style.display = 'none';
+    document.documentElement.setAttribute('data-locked', '0');
+  }
+
+  okBtn.addEventListener('click', tryUnlock);
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') tryUnlock();
+  });
+  cancelBtn.addEventListener('click', () => {
+    window.location.href = 'index.html';
+  });
+})();
+</script>
 
 <style>
   /* Remove seleção de texto */
@@ -1111,6 +1158,139 @@ E quando isso acontecer, alguém precisará estar disposta a descobrir — e sob
     -ms-user-select: none;
   }
 </style>
+<script>
+(function(){
+  const ACCESS_CODE = 'ID10-W7BK-EMHW';
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // 1) cria um wrapper e move todo o conteúdo do body para dentro dele
+    const wrap = document.createElement('div');
+    wrap.id = 'pageWrap';
+    wrap.style.minHeight = '100%';
+    // move todos os filhos atuais do body para o wrap
+    while (document.body.firstChild) {
+      wrap.appendChild(document.body.firstChild);
+    }
+    document.body.appendChild(wrap);
+
+    // 2) cria o overlay (fora do wrap, para não sofrer blur)
+    const overlay = document.createElement('div');
+    overlay.id = 'gateOverlay';
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('role', 'dialog');
+    Object.assign(overlay.style, {
+      position: 'fixed',
+      inset: '0',
+      zIndex: '9999',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: 'rgba(0,0,0,.55)' // escurece o fundo
+    });
+
+    overlay.innerHTML = `
+      <div id="gateCard" style="
+        width: min(92vw, 480px);
+        padding: 20px 22px;
+        border-radius: 14px;
+        background: rgba(20,22,25,.95);
+        border: 1px solid rgba(255,255,255,.08);
+        box-shadow: 0 20px 60px rgba(0,0,0,.55), inset 0 0 0 1px rgba(255,255,255,.03);
+        color: #e5e7eb;
+      ">
+        <h2 style="margin:0 0 10px 0; font-weight:800; letter-spacing:.02em;">Acesso necessário</h2>
+        <p style="margin:0 0 14px 0; color:#cbd5e1;">Digite a sua chave de leitura para continuar.</p>
+
+        <label for="gateInput" style="display:block; font-size:.9rem; margin-bottom:6px; color:#cbd5e1;">Chave</label>
+        <input id="gateInput" type="password" autocomplete="off" inputmode="text" spellcheck="false" placeholder="Ex.: XXXX-XXXX-XXXX" style="
+          width:100%;
+          padding: 10px 12px;
+          border-radius: 10px;
+          border: 1px solid rgba(255,255,255,.12);
+          background: rgba(255,255,255,.06);
+          color: #fff;
+          outline: none;
+        "/>
+
+        <div style="display:flex; gap:10px; margin-top:14px;">
+          <button id="gateConfirm" type="button" style="
+            flex:1;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,.2);
+            background: linear-gradient(135deg, rgba(156,163,175,.28), rgba(100,116,139,.22));
+            color:#fff; font-weight:700; cursor:pointer;
+          ">Entrar</button>
+          <button id="gateCancel" type="button" style="
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,.12);
+            background: rgba(255,255,255,.05);
+            color:#e5e7eb; cursor:pointer;
+          ">Cancelar</button>
+        </div>
+
+        <p id="gateMsg" aria-live="polite" style="margin:10px 2px 0; font-size:.9rem; color:#fca5a5; min-height:1.2em;"></p>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    // 3) aplica blur/escurecimento no wrapper e bloqueia scroll
+    const prevOverflow = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = 'hidden';
+    wrap.style.filter = 'blur(8px) brightness(0.6)';
+    wrap.style.transition = 'filter .25s ease';
+
+    const input = document.getElementById('gateInput');
+    const btnOk = document.getElementById('gateConfirm');
+    const btnNo = document.getElementById('gateCancel');
+    const msg   = document.getElementById('gateMsg');
+    const card  = document.getElementById('gateCard');
+
+    setTimeout(()=> input.focus(), 50);
+
+    function shake(el){
+      el.animate(
+        [
+          { transform: 'translateX(0)' },
+          { transform: 'translateX(-6px)' },
+          { transform: 'translateX(6px)' },
+          { transform: 'translateX(-4px)' },
+          { transform: 'translateX(4px)' },
+          { transform: 'translateX(0)' },
+        ],
+        { duration: 240 }
+      );
+    }
+
+    function validate(){
+      const chave = (input.value || '').trim();
+      if(chave === ACCESS_CODE){
+        overlay.remove();
+        wrap.style.filter = '';
+        document.documentElement.style.overflow = prevOverflow || '';
+      } else {
+        msg.textContent = 'Chave inválida. Tente novamente.';
+        shake(card);
+        input.select();
+        input.focus();
+      }
+    }
+
+    btnOk.addEventListener('click', validate);
+    input.addEventListener('keydown', (e)=> { if(e.key === 'Enter') validate(); });
+    btnNo.addEventListener('click', ()=> { window.location.href = 'index.html'; });
+  });
+})();
+</script>
+<noscript>
+  <div style="position:fixed; inset:0; z-index:9999; display:flex; align-items:center; justify-content:center; background:#0b0d10; color:#fff;">
+    Habilite o JavaScript para acessar este conteúdo.
+  </div>
+</noscript>
+
+
 
 </body>
 </html>
