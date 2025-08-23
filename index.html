@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <link rel="icon" type="image/png" href="imagens/favicon.png">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Estante de histórias</title>
@@ -43,7 +44,7 @@
       #obrasContainer .obra, #contosContainer .obra { flex: 0 0 calc(50% - 1rem); }
     }
     @media (max-width: 640px) {
-      #obrasContainer .obra, #contosContainer .obra { flex: 0 0 90%; } /* dá “respiro” lateral no mobile */
+      #obrasContainer .obra, #contosContainer .obra { flex: 0 0 90%; }
     }
 
     .carousel-btn {
@@ -63,7 +64,6 @@
     .carousel-btn:hover { background: #fff; color: #9333ea; transform: translateY(-50%) scale(1.05); }
     .carousel-btn-left { left: -1rem; }
     .carousel-btn-right { right: -1rem; }
-    /* No mobile, traz as setas pra dentro e reduz um pouco */
     @media (max-width: 640px) {
       .carousel-btn { opacity: .95; font-size: 1.2rem; padding: .7rem .85rem; }
       .carousel-btn-left { left: .25rem; }
@@ -145,7 +145,8 @@
   </div>
 
   <!-- POPUP Sacola -->
-  <div id="popupEstante" class="fixed top-0 right-0 w-full sm:w-96 h-full bg-white shadow-2xl p-6 z-50 transform translate-x-full transition-transform duration-300 overflow-y-auto">
+  <div id="popupEstante" class="fixed top-[80px] right-0 w-full sm:w-96 h-[calc(100%-80px)] bg-white shadow-2xl p-6 z-50 transform translate-x-full transition-transform duration-300 overflow-y-auto">
+
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-2xl font-bold text-purple-700">Sua Sacola</h2>
       <button onclick="toggleEstante()" class="text-gray-500 hover:text-red-600 text-2xl font-bold leading-none p-2">&times;</button>
@@ -160,76 +161,157 @@
   <!-- Overlay -->
   <div id="overlayEstante" onclick="toggleEstante()" class="hidden fixed inset-0 bg-black/30 z-40 cursor-pointer"></div>
 
-  <!-- Barra de Navegação Topo (responsiva) -->
-  <nav class="bg-purple-700 text-white py-4 sm:py-5 px-4 sm:px-6 shadow-md sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto flex items-center gap-4">
-      <!-- Botões de tema -->
-      <div class="flex items-center gap-2 shrink-0">
+  <!-- Barra de Navegação Topo -->
+<nav class="bg-purple-700 text-white py-5 px-4 sm:px-5 shadow-md sticky top-0 z-50">
+  <div class="relative w-full flex items-center">
+    <!-- ESQUERDA: Logo + tema + Instagram -->
+    <div class="flex items-center gap-4">
+      <img src="imagens/LogoSite.png" alt="Logo - Estante de Histórias" class="h-20 w-auto select-none" />
+      <div class="flex items-center gap-2">
         <button id="temaClaro" class="theme-dot" title="Tema claro" aria-label="Tema claro"></button>
         <button id="temaEscuro" class="theme-dot" title="Tema escuro" aria-label="Tema escuro"></button>
       </div>
-
-      <!-- Título -->
-      <h1 class="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight">
-        Estante de Histórias
-      </h1>
-
-      <!-- Ações (desktop) -->
-      <div class="ml-auto items-center gap-6 sm:gap-8 md:gap-10 text-sm sm:text-base md:text-lg font-medium hidden md:flex">
-        <button onclick="scrollToSection('obrasProjetos')" class="nav-link">Obras & Projetos</button>
-        <button onclick="scrollToSection('sobreAutor')" class="nav-link">Sobre o Autor</button>
-        <button onclick="scrollToSection('linhaTempo')" class="nav-link">Linha do Tempo</button>
-        <button onclick="document.getElementById('contos').scrollIntoView({ behavior: 'smooth' })"
-          class="ml-2 px-4 py-2 bg-white/15 hover:bg-white/25 backdrop-blur-sm border border-white/20 rounded-full shadow-md transition">
-          Contos
-        </button>
-        <button onclick="toggleEstante()"
-          class="px-4 py-2 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-sm border border-white/20 transition">
-          Sacola
-        </button>
-      </div>
-
-      <!-- Botões (mobile) -->
-      <div class="ml-auto flex md:hidden items-center gap-2">
-        <button onclick="toggleEstante()" class="px-3 py-2 rounded-full bg-white/15 hover:bg-white/25 border border-white/20">Sacola</button>
-        <button id="btnMenu" class="p-2 rounded-lg bg-white/15 hover:bg-white/25 border border-white/20" aria-label="Abrir menu">
-          ☰
-        </button>
-      </div>
+      <!-- Ícone Instagram -->
+      <a href="https://instagram.com/pedrohfalcaro" target="_blank" rel="noopener noreferrer" title="Instagram" aria-label="Instagram">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 hover:opacity-80 transition" fill="white" viewBox="0 0 24 24">
+          <path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5a4.25 4.25 0 0 0 4.25-4.25v-8.5A4.25 4.25 0 0 0 16.25 3.5h-8.5zm8.75 2a1 1 0 1 1 0 2 1 1 0 0 1 0-2zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 1.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z"/>
+        </svg>
+      </a>
     </div>
 
-    <!-- Menu colapsável (mobile) -->
-    <div id="menuMobile" class="md:hidden hidden mt-3">
-      <div class="flex flex-col gap-2 text-base">
-        <button onclick="scrollToSection('obrasProjetos');toggleMenu()" class="text-left px-3 py-2 hover:bg-white/10 rounded-lg">Obras & Projetos</button>
-        <button onclick="scrollToSection('sobreAutor');toggleMenu()" class="text-left px-3 py-2 hover:bg-white/10 rounded-lg">Sobre o Autor</button>
-        <button onclick="scrollToSection('linhaTempo');toggleMenu()" class="text-left px-3 py-2 hover:bg-white/10 rounded-lg">Linha do Tempo</button>
-        <button onclick="document.getElementById('contos').scrollIntoView({ behavior: 'smooth' });toggleMenu()"
-                class="text-left px-3 py-2 hover:bg-white/10 rounded-lg">Contos</button>
+
+      <!-- CENTRO: Título -->
+      <div class="absolute left-1/2 -translate-x-1/2">
+        <h1 class="font-extrabold tracking-tight text-white text-xl sm:text-2xl md:text-3xl select-none">
+          Estante de Histórias
+        </h1>
+      </div>
+
+<!-- DIREITA (desktop): Navegação com ícones significativos + tooltip -->
+<div class="ml-auto items-center gap-5 hidden md:flex">
+  <!-- Modelo de botão com tooltip -->
+  <div class="relative group">
+    <button
+      onclick="scrollToSection('obrasProjetos')"
+      class="p-3 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-sm border border-white/20 transition"
+      aria-label="Obras & Projetos">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3.75" y="4.5" width="4.5" height="4.5" rx="1"></rect>
+        <rect x="15.75" y="4.5" width="4.5" height="4.5" rx="1"></rect>
+        <rect x="15.75" y="16.5" width="4.5" height="4.5" rx="1"></rect>
+        <rect x="3.75" y="16.5" width="4.5" height="4.5" rx="1"></rect>
+      </svg>
+    </button>
+    <span class="absolute bottom-[-2rem] left-1/2 -translate-x-1/2 text-xs bg-black/80 text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
+      Obras & Projetos
+    </span>
+  </div>
+
+  <!-- Sobre o Autor -->
+  <div class="relative group">
+    <button
+      onclick="scrollToSection('sobreAutor')"
+      class="p-3 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-sm border border-white/20 transition"
+      aria-label="Sobre o Autor">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 14.5c-3.59 0-6.5 2.16-6.5 4.5v.5h13v-.5c0-2.34-2.91-4.5-6.5-4.5z"/>
+        <circle cx="12" cy="8" r="3.5"/>
+      </svg>
+    </button>
+    <span class="absolute bottom-[-2rem] left-1/2 -translate-x-1/2 text-xs bg-black/80 text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
+      Sobre o Autor
+    </span>
+  </div>
+
+  <!-- Linha do Tempo -->
+  <div class="relative group">
+    <button
+      onclick="scrollToSection('linhaTempo')"
+      class="p-3 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-sm border border-white/20 transition"
+      aria-label="Linha do Tempo">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="9"/>
+        <path d="M12 7v5l3 3"/>
+      </svg>
+    </button>
+    <span class="absolute bottom-[-2rem] left-1/2 -translate-x-1/2 text-xs bg-black/80 text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
+      Linha do Tempo
+    </span>
+  </div>
+
+  <!-- Contos -->
+  <div class="relative group">
+    <button
+      onclick="document.getElementById('contos').scrollIntoView({ behavior: 'smooth' })"
+      class="p-3 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-sm border border-white/20 transition"
+      aria-label="Contos">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 6.75c-2.25-1.5-6-1.5-8.25 0v10.5c2.25-1.5 6-1.5 8.25 0 2.25-1.5 6-1.5 8.25 0V6.75c-2.25-1.5-6-1.5-8.25 0z"/>
+      </svg>
+    </button>
+    <span class="absolute bottom-[-2rem] left-1/2 -translate-x-1/2 text-xs bg-black/80 text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
+      Contos
+    </span>
+  </div>
+
+  <!-- Sacola -->
+  <div class="relative group">
+    <button
+      onclick="toggleEstante()"
+      class="p-3 rounded-full bg-sky-400 hover:bg-sky-500 text-white border border-white/20 shadow-md transition"
+      aria-label="Sacola">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M16 11V8a4 4 0 0 0-8 0v3"/>
+        <path d="M5 11h14l1 9H4l1-9z"/>
+      </svg>
+    </button>
+    <span class="absolute bottom-[-2rem] left-1/2 -translate-x-1/2 text-xs bg-black/80 text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
+      Sacola
+    </span>
+  </div>
+</div>
+
+      <!-- DIREITA (mobile): Botões mínimos -->
+      <div class="ml-auto flex md:hidden items-center gap-2">
+        <button
+          onclick="toggleEstante()"
+          class="px-3 py-1 rounded-full bg-white/15 hover:bg-white/25 border border-white/20 text-sm"
+        >
+          Sacola
+        </button>
+        <button
+          id="btnMenu"
+          class="p-2 rounded-lg bg-white/15 hover:bg-white/25 border border-white/20"
+          aria-label="Abrir menu"
+          onclick="toggleMenu()"
+        >
+          ☰
+        </button>
       </div>
     </div>
   </nav>
 
   <!-- Hero -->
-  <section class="bg-gradient-to-br from-purple-700 to-indigo-700 text-white py-8 sm:py-10 px-4 md:px-8">
-    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 items-center gap-8">
-      <div class="animate-fade text-center md:text-left order-2 md:order-1">
-        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-2">Pré-venda Exclusiva (Até 30/09/2025)</h2>
-        <p class="text-sm sm:text-base md:text-lg mb-4">"A Lenda do Caos - Tríplice Caótica" já está disponível! Comprando na pré-venda você recebe um marca-páginas e um conto exclusivo dentro do universo do livro!</p>
-        <button 
-          onclick="adicionarLivro('A Lenda do Caos - Tríplice Caótica', 52.9, 'LdC1.png')" 
-          class="bg-white text-purple-700 px-5 py-2 rounded-full font-semibold hover:bg-gray-100 transition-all shadow-md">
-           Adicionar à Sacola
-        </button>
-      </div>
-      <div class="flex justify-center md:justify-end order-1 md:order-2">
-        <img src="LdC1.png" alt="Capa do Livro" class="w-40 sm:w-52 md:w-72 h-64 object-cover rounded-xl shadow-2xl transform hover:scale-105 transition-all duration-300" />
-      </div>
+<section class="bg-gradient-to-br from-purple-700 to-indigo-700 text-white py-8 sm:py-10 px-4 md:px-8">
+  <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 items-center gap-8">
+    <div class="animate-fade text-center md:text-left order-2 md:order-1">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-2">Pré-venda Exclusiva (Até 30/09/2025)</h2>
+      <p class="text-sm sm:text-base md:text-lg mb-4">"A Lenda do Caos - Tríplice Caótica" já está disponível! Comprando na pré-venda você recebe um marca-páginas e um conto exclusivo dentro do universo do livro!</p>
+      <button 
+        onclick="adicionarLivro('A Lenda do Caos - Tríplice Caótica', 52.9, 'imagens/LdC1.png')" 
+        class="bg-white text-purple-700 px-5 py-2 rounded-full font-semibold hover:bg-gray-100 transition-all shadow-md">
+         Adicionar à Sacola
+      </button>
     </div>
-  </section>
+    <div class="flex justify-center md:justify-end order-1 md:order-2">
+      <img src="imagens/LdC1.png" alt="Capa do Livro" 
+           class="w-40 sm:w-52 md:w-72 max-h-72 object-contain rounded-xl shadow-2xl transform hover:scale-105 transition-all duration-300" />
+    </div>
+  </div>
+</section>
 
-  <!-- Obras -->
-  <section id="obrasProjetos" class="max-w-6xl mx-auto py-12 sm:py-16 px-4">
+  <!-- Obras (alvo da navegação) -->
+  <section id="obrasProjetos" class="max-w-6xl mx-auto py-12 sm:py-16 px-4 scroll-mt-24">
     <h2 class="text-2xl sm:text-3xl font-extrabold text-center mb-6 text-purple-700">Obras & Projetos</h2>
 
     <!-- Filtros -->
@@ -256,7 +338,7 @@
         <div class="obra" data-tags="Livro">
           <div class="bg-white rounded-3xl shadow-lg flex flex-col p-5 h-full hover:shadow-xl transition-all group relative">
             <div class="absolute top-3 left-3 z-10 bg-green-100 text-green-700 px-3 py-1 text-xs font-bold rounded-full shadow-sm">📖 Livro</div>
-            <img src="LdC1.png" class="w-full aspect-[2/3] object-cover rounded-2xl mb-4 transform group-hover:scale-105 transition-all" alt="A Lenda do Caos capa"/>
+            <img src="imagens/LdC1.png" class="w-full aspect-[2/3] object-cover rounded-2xl mb-4 transform group-hover:scale-105 transition-all" alt="A Lenda do Caos capa"/>
             <h3 class="text-lg sm:text-xl font-bold text-center mb-1">A Lenda do Caos - Tríplice Caótica + Marca-páginas + Conto exclusivo</h3>
             <p class="text-base sm:text-lg mt-2 text-center">
               <del class="text-red-500 text-base mr-2">R$ 57,90</del>
@@ -268,7 +350,7 @@
                   nome: 'A Lenda do Caos - Tríplice Caótica + Marca-páginas + Conto exclusivo',
                   descricao: 'E se cada história que já foi contada existisse de verdade, em um universo próprio, moldado pela mente de quem a criou? Arthur, um garoto comum de 14 anos, sempre acreditou que histórias eram apenas... histórias. Mas tudo muda quando uma simples narrativa contada pelo seu pai se transforma em algo maior — muito maior. Ele começa a ver coisas que ninguém mais vê. Ouvir vozes que ninguém mais ouve. Sentir um chamado vindo de um lugar que ele nem sabia existir. O que Arthur não sabe é que sua mente se conectou a uma porta — uma ligação entre mundos. Uma passagem entre a realidade que vivemos e outra, nascida do caos primordial: a realidade da história que escutou. Arthur se vê no centro de uma guerra entre mundos, onde criação e destruição são apenas duas faces da mesma força: o Caos.',
                   preco: 52.9,
-                  imagem: 'LdC1.png',
+                  imagem: 'imagens/LdC1.png',
                   youtube: null,
                   tipo: 'livro'
                 })"
@@ -283,7 +365,7 @@
         <div class="obra" data-tags="Áudio-série">
           <div class="bg-white rounded-3xl shadow-lg flex flex-col p-5 h-full hover:shadow-xl transition-all group relative">
             <div class="absolute top-3 left-3 z-10 bg-purple-100 text-purple-700 px-3 py-1 text-xs font-bold rounded-full shadow-sm">🎧 Áudio-série</div>
-            <img src="AdC1.jpg" class="w-full aspect-[2/3] object-cover rounded-2xl mb-4 transform group-hover:scale-105 transition-all" alt="Além dos Céus T1 capa"/>
+            <img src="imagens/AdC1.jpg" class="w-full aspect-[2/3] object-cover rounded-2xl mb-4 transform group-hover:scale-105 transition-all" alt="Além dos Céus T1 capa"/>
             <h3 class="text-lg sm:text-xl font-bold text-center mb-1">Além dos Céus – T1: Desbravadores</h3>
             <p class="text-gray-600 text-sm mb-3 text-center">Uma jornada espacial e sentimental através do universo.</p>
             <div class="mt-auto pt-4">
@@ -291,7 +373,7 @@
                 onclick="abrirDetalhes({
                   nome: 'Além dos Céus – Temporada 1: Desbravadores',
                   descricao: 'Além dos Céus é uma áudio série focada em aventuras e viagens espaciais. Leonardo é o protagonista desta história, onde sua tarefa é liderar uma equipe em uma missão rumo a um sistema solar longínquo. Ele irá lidar, com sentimentos, conflitos internos e decisões difíceis a tomar, além de muita ação e determinação. Como será a aventura desta tripulação? Isso você só descobrirá em Além dos Céus',
-                  imagem: 'AdC1.jpg',
+                  imagem: 'imagens/AdC1.jpg',
                   youtube: 'https://youtube.com/playlist?list=PLVQe8695upyjlnarF121CIlis7cCW6-n1&si=Ly59Vjxq5-M0a6tf',
                   tipo: 'audio'
                 })"
@@ -302,81 +384,81 @@
           </div>
         </div>
 
-   <!-- WebLivro: O Incidente de Willowbrook -->
-<div class="obra" data-tags="WebLivro">
-  <div class="bg-white rounded-3xl shadow-lg flex flex-col p-5 h-full hover:shadow-xl transition-all group relative">
-    <div class="absolute top-3 left-3 z-10 bg-indigo-100 text-indigo-700 px-3 py-1 text-xs font-bold rounded-full shadow-sm">🌐 WebLivro</div>
-    <img src="IdW.jpg" class="w-full aspect-[2/3] object-cover rounded-2xl mb-4 transform group-hover:scale-105 transition-all" alt="O Incidente de Willowbrook capa"/>
-    <h3 class="text-lg sm:text-xl font-bold text-center mb-1">O Incidente de Willowbrook</h3>
-    <p class="text-base mt-2 text-center text-gray-800">
-      <strong class="text-indigo-600 text-xl font-bold">R$ 7,50</strong>
-    </p>
-    <div class="mt-auto pt-4">
-      <button 
-        onclick="abrirDetalhes({
-          nome: 'O Incidente de Willowbrook',
-          descricao: 'Em um Reino Unido envolto em mistérios e segredos...',
-          preco: 7.5,
-          imagem: 'IdW.jpg',
-          youtube: null,
-          tipo: 'weblivro',
-          accessCode: 'ID10-W7BK-EMHW',
-          accessUrl: 'WebLivroIdW.html?from=index'
+        <!-- WebLivro: O Incidente de Willowbrook -->
+        <div class="obra" data-tags="WebLivro">
+          <div class="bg-white rounded-3xl shadow-lg flex flex-col p-5 h-full hover:shadow-xl transition-all group relative">
+            <div class="absolute top-3 left-3 z-10 bg-indigo-100 text-indigo-700 px-3 py-1 text-xs font-bold rounded-full shadow-sm">🌐 WebLivro</div>
+            <img src="imagens/IdW.jpg" class="w-full aspect-[2/3] object-cover rounded-2xl mb-4 transform group-hover:scale-105 transition-all" alt="O Incidente de Willowbrook capa"/>
+            <h3 class="text-lg sm:text-xl font-bold text-center mb-1">O Incidente de Willowbrook</h3>
+            <p class="text-base mt-2 text-center text-gray-800">
+              <strong class="text-indigo-600 text-xl font-bold">R$ 7,50</strong>
+            </p>
+            <div class="mt-auto pt-4">
+              <button 
+                onclick="abrirDetalhes({
+                  nome: 'O Incidente de Willowbrook',
+                  descricao: 'Em um Reino Unido envolto em mistérios e segredos, Emily Holwes, uma investigadora surda, recebe uma carta de um antigo amigo propondo um trabalho intrigante: investigar o misterioso vilarejo de Willowbrook, onde todos os habitantes morreram repentinamente. Determinada a desvendar o que aconteceu, Emily embarca em uma jornada que a leva por caminhos obscuros e inesperados. Enquanto ela explora as ruas desertas e os edifícios abandonados de Willowbrook, Emily descobre pistas que a levam a confrontar seu próprio passado doloroso e a enfrentar segredos há muito enterrados. Cada descoberta traz novas perguntas, e a verdade se revela mais sinistra do que ela jamais poderia imaginar.O Incidente de Willowbrook é uma história de suspense e investigação que prende o leitor desde a primeira página, mergulhando-o em um enredo repleto de mistério, intriga e revelações chocantes. Acompanhe Emily enquanto ela luta para descobrir a verdade por trás das mortes no vilarejo e enfrenta seus próprios demônios ao longo do caminho.',
+                  preco: 7.5,
+                  imagem: 'imagens/IdW.jpg',
+                  youtube: null,
+                  tipo: 'weblivro',
+                  accessCode: 'ID10-W7BK-EMHW',
+                  accessUrl: 'WebLivroIdW.html?from=index'
+                })"
+                class="w-full bg-purple-600 text-white py-2 rounded-full hover:bg-purple-700 transition mt-4">
+                Ver Detalhes
+              </button>
+            </div>
+          </div>
+        </div>
 
-        })"
-        class="w-full bg-purple-600 text-white py-2 rounded-full hover:bg-purple-700 transition mt-4">
-        Ver Detalhes
-      </button>
-    </div>
-  </div>
-</div>
+        <!-- WebLivro 2: A Última Colheita -->
+        <div class="obra" data-tags="WebLivro">
+          <div class="bg-white rounded-3xl shadow-lg flex flex-col p-5 h-full hover:shadow-xl transition-all group relative">
+            <div class="absolute top-3 left-3 z-10 bg-indigo-100 text-indigo-700 px-3 py-1 text-xs font-bold rounded-full shadow-sm">🌐 WebLivro</div>
+            <img src="imagens/AUCcapa.png" class="w-full aspect-[2/3] object-cover rounded-2xl mb-4 transform group-hover:scale-105 transition-all" alt="A Última Colheita capa"/>
+            <h3 class="text-lg sm:text-xl font-bold text-center mb-1">A Última Colheita</h3>
+            <p class="text-base mt-2 text-center text-gray-800">
+              <strong class="text-indigo-600 text-xl font-bold">R$ 2,50</strong>
+            </p>
+            <div class="mt-auto pt-4">
+              <button 
+                onclick="abrirDetalhes({
+                  nome: 'A Última Colheita',
+                  descricao: 'Após a morte da mãe, Mariana busca consolo entre as plantas do viveiro onde sempre encontrou paz. Mas o luto abre espaço para algo muito mais sombrio: uma estranha presença vegetal que a atrai com promessas de alívio e conforto. Entre fascínio e repulsa, ela mergulha em uma espiral de dor e obsessão que desafia os limites entre vida e decomposição. No coração de uma pequena cidade, o silêncio e os sussurros guardam um segredo que insiste em florescer — e a colheita final pode cobrar um preço terrível.',
+                  preco: 2.5,
+                  imagem: 'imagens/AUCcapa.png',
+                  youtube: null,
+                  tipo: 'weblivro',
+                  accessCode: 'AU20-C7TA-ELSA',
+                  accessUrl: 'WebLivroAUC.html'
+                })"
+                class="w-full bg-purple-600 text-white py-2 rounded-full hover:bg-purple-700 transition mt-4">
+                Ver Detalhes
+              </button>
+            </div>
+          </div>
+        </div>
 
-<!-- WebLivro 2: A Última Colheita -->
-<div class="obra" data-tags="WebLivro">
-  <div class="bg-white rounded-3xl shadow-lg flex flex-col p-5 h-full hover:shadow-xl transition-all group relative">
-    <div class="absolute top-3 left-3 z-10 bg-indigo-100 text-indigo-700 px-3 py-1 text-xs font-bold rounded-full shadow-sm">🌐 WebLivro</div>
-    <img src="AUCcapa.png" class="w-full aspect-[2/3] object-cover rounded-2xl mb-4 transform group-hover:scale-105 transition-all" alt="A Última Colheita capa"/>
-    <h3 class="text-lg sm:text-xl font-bold text-center mb-1">A Última Colheita</h3>
-    <p class="text-base mt-2 text-center text-gray-800">
-      <strong class="text-indigo-600 text-xl font-bold">R$ 2,50</strong>
-    </p>
-    <div class="mt-auto pt-4">
-      <button 
-        onclick="abrirDetalhes({
-          nome: 'A Última Colheita',
-          descricao: 'E se cada história que já foi contada existisse de verdade...',
-          preco: 2.5,
-          imagem: 'AUCcapa.png',
-          youtube: null,
-          tipo: 'weblivro',
-          accessCode: 'AU20-C7TA-ELSA',   /* mude se quiser */
-          accessUrl: 'WebLivroAUC.html'    /* página desse WebLivro */
-        })"
-        class="w-full bg-purple-600 text-white py-2 rounded-full hover:bg-purple-700 transition mt-4">
-        Ver Detalhes
-      </button>
-    </div>
-  </div>
-</div>
-
+      </div>
 
       <button id="nextObras" class="carousel-btn carousel-btn-right hidden sm:block" aria-label="Próximo">&gt;</button>
     </div>
   </section>
 
-  <!-- Sobre o Autor -->
-  <section id="sobreAutor" class="bg-gradient-to-br from-indigo-600 to-purple-800 text-white py-14 sm:py-16 px-4 sm:px-6">
+  <!-- Sobre o Autor (alvo da navegação) -->
+  <section id="sobreAutor" class="bg-gradient-to-br from-indigo-600 to-purple-800 text-white py-16 px-6 scroll-mt-24">
     <div class="max-w-4xl mx-auto text-center">
-      <h2 class="text-2xl sm:text-3xl font-extrabold mb-4">Sobre o Autor</h2>
-      <p class="text-base sm:text-lg leading-relaxed">Pedro Henrique é um autor brasileiro apaixonado por mundos fantásticos...</p>
-      <p class="mt-4 text-sm sm:text-md opacity-90">Além da literatura, Pedro também atua como roteirista, e contador de histórias...</p>
+      <h2 class="text-3xl font-extrabold mb-4">✍️ Sobre o Autor</h2>
+      <p class="text-lg leading-relaxed"> Pedro Henrique é um autor brasileiro apaixonado por mundos fantásticos e histórias emocionais. Mistura suspense, sentimentos e fantasia de um jeito só dele. </p>
+      <p class="mt-4 text-md opacity-90"> Também atua como roteirista e narrador de histórias. Seu universo se expande a cada obra lançada — e ainda vem muito mais por aí. </p>
     </div>
   </section>
 
-  <!-- Linha do Tempo -->
-  <section id="linhaTempo" class="bg-white py-14 sm:py-16 px-4 sm:px-6">
+  <!-- Linha do Tempo (alvo da navegação) -->
+  <section id="linhaTempo" class="bg-white py-14 sm:py-16 px-4 sm:px-6 scroll-mt-24">
     <div class="max-w-4xl mx-auto">
-      <h2 class="text-2xl sm:text-3xl font-extrabold text-center text-purple-700 mb-8 sm:mb-10">Linha do Tempo do Universo</h2>
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-center text-purple-700 mb-8 sm:mb-10">Linha do Tempo de Histórias</h2>
       <div class="relative border-l-4 border-purple-600 pl-6 space-y-8 sm:space-y-10">
         <div class="relative">
           <div class="absolute -left-4 top-1.5 w-3 h-3 bg-purple-600 rounded-full"></div>
@@ -385,7 +467,7 @@
         </div>
         <div class="relative">
           <div class="absolute -left-4 top-1.5 w-3 h-3 bg-indigo-600 rounded-full"></div>
-          <h3 class="text-lg sm:text-xl font-bold text-indigo-700">Setembro de 2025 (previsão)</h3>
+          <h3 class="text-lg sm:text-xl font-bold text-indigo-700">01 de outubro de 2025 </h3>
           <p class="text-gray-700 text-sm sm:text-base">Lançamento do livro <strong>A Lenda do Caos – Tríplice Caótica</strong>.</p>
         </div>
         <div class="relative">
@@ -397,8 +479,8 @@
     </div>
   </section>
 
-  <!-- ================= Seção Contos ================= -->
-  <section id="contos" class="py-10">
+  <!-- Contos  -->
+  <section id="contos" class="py-10 scroll-mt-24">
     <div class="max-w-7xl mx-auto px-4">
       <h2 class="text-2xl sm:text-3xl font-bold text-purple-700 dark:text-purple-300 mb-6">Contos</h2>
 
@@ -408,7 +490,7 @@
         <div id="contosContainer" class="flex overflow-x-auto no-scrollbar scroll-smooth">
           <!-- Meu Universo -->
           <div class="obra bg-white dark:bg-gray-800 rounded-3xl shadow-md overflow-hidden">
-            <img src="ContoMUcapa.png" alt="Capa conto" class="w-full aspect-[16/9] object-cover">
+            <img src="imagens/ContoMUcapa.png" alt="Capa conto" class="w-full aspect-[16/9] object-cover">
             <div class="p-4">
               <h3 class="font-bold text-base sm:text-lg text-gray-800 dark:text-white">Meu Universo</h3>
               <p class="text-gray-600 dark:text-gray-300 text-sm mt-1">Um conto ambientado entre estrelas, silêncio e decisões que mudam rotas.</p>
@@ -420,25 +502,25 @@
           </div>
 
           <!-- Jardineiro do Inferno -->
-
           <div class="obra bg-white dark:bg-gray-800 rounded-3xl shadow-md overflow-hidden">
-            <img src="ContoJdIcapa.png" alt="Capa conto" class="w-full aspect-[16/9] object-cover">
+            <img src="imagens/ContoJdIcapa.png" alt="Capa conto" class="w-full aspect-[16/9] object-cover">
             <div class="p-4">
               <h3 class="font-bold text-base sm:text-lg text-gray-800 dark:text-white">Jardineiro do Inferno</h3>
-              <p class="text-gray-600 dark:text-gray-300 text-sm mt-1">Um conto ambientado entre estrelas, silêncio e decisões que mudam rotas.</p>
+              <p class="text-gray-600 dark:text-gray-300 text-sm mt-1">Um conto sobre suspense e horror de uma vida miserável.</p>
               <a href="ContosJdI.html" 
                  class="mt-3 block w-full bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg text-center transition">
                  Ler conto
               </a>
             </div>
           </div>
-          <!-- A Última Colheita-->
-            <div class="obra bg-white dark:bg-gray-800 rounded-3xl shadow-md overflow-hidden">
-            <img src="ContoAUCcapa.png" alt="Capa conto" class="w-full aspect-[16/9] object-cover">
+
+          <!-- Meus Monstros -->
+          <div class="obra bg-white dark:bg-gray-800 rounded-3xl shadow-md overflow-hidden">
+            <img src="imagens/ContosMM.jpg" alt="Capa conto" class="w-full aspect-[16/9] object-cover">
             <div class="p-4">
-              <h3 class="font-bold text-base sm:text-lg text-gray-800 dark:text-white">A Última Colheita</h3>
-              <p class="text-gray-600 dark:text-gray-300 text-sm mt-1">Um conto ambientado entre estrelas, silêncio e decisões que mudam rotas.</p>
-              <a href="!ContoAUC.html" 
+              <h3 class="font-bold text-base sm:text-lg text-gray-800 dark:text-white">Meus Monstros</h3>
+              <p class="text-gray-600 dark:text-gray-300 text-sm mt-1">Um conto sobre insegurança e dores carregadas pela vida.</p>
+              <a href="ContosMM.html" 
                  class="mt-3 block w-full bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg text-center transition">
                  Ler conto
               </a>
@@ -496,11 +578,8 @@
       btnEscuro?.addEventListener('click', () => { localStorage.setItem(KEY, 'dark');  apply('dark');  });
     })();
 
-    /* ===== Menu mobile ===== */
-    const btnMenu = document.getElementById('btnMenu');
-    const menuMobile = document.getElementById('menuMobile');
-    function toggleMenu(){ menuMobile.classList.toggle('hidden'); }
-    btnMenu?.addEventListener('click', toggleMenu);
+    /* ===== Menu mobile (placeholder — se quiser menu colapsável, posso incluir) ===== */
+    function toggleMenu(){ /* implementar se for usar menu mobile */ }
 
     /* ===== Sacola ===== */
     function adicionarLivro(nome, preco, imagem) {
@@ -607,106 +686,105 @@
     }
 
     /* ===== Popup Detalhes ===== */
-  
-function abrirDetalhes(detalhes) {
-  const { nome, descricao, preco, imagem, youtube, tipo } = detalhes;
+    function abrirDetalhes(detalhes) {
+      const { nome, descricao, preco, imagem, youtube, tipo } = detalhes;
 
-  const tituloEl = document.getElementById("detalheTitulo");
-  const descEl   = document.getElementById("detalheDescricao");
-  const precoEl  = document.getElementById("detalhePreco");
-  const imgEl    = document.getElementById("detalheImagem");
-  const btnsEl   = document.getElementById("botoesDetalhes");
+      const tituloEl = document.getElementById("detalheTitulo");
+      const descEl   = document.getElementById("detalheDescricao");
+      const precoEl  = document.getElementById("detalhePreco");
+      const imgEl    = document.getElementById("detalheImagem");
+      const btnsEl   = document.getElementById("botoesDetalhes");
 
-  // Cabeçalho
-  tituloEl.textContent = nome;
-  descEl.textContent   = descricao;
+      // Cabeçalho
+      tituloEl.textContent = nome;
+      descEl.textContent   = descricao;
 
-  if (typeof preco === "number") {
-    precoEl.textContent = `R$ ${preco.toFixed(2)}`;
-    precoEl.classList.remove("hidden");
-  } else {
-    precoEl.classList.add("hidden");
-    precoEl.textContent = "";
-  }
+      if (typeof preco === "number") {
+        precoEl.textContent = `R$ ${preco.toFixed(2)}`;
+        precoEl.classList.remove("hidden");
+      } else {
+        precoEl.classList.add("hidden");
+        precoEl.textContent = "";
+      }
 
-  imgEl.src = imagem;
-  imgEl.alt = `Capa de ${nome}`;
+      imgEl.src = imagem;
+      imgEl.alt = `Capa de ${nome}`;
 
-  // Limpa e garante coluna
-  btnsEl.innerHTML = "";
-  btnsEl.classList.remove("sm:flex-row");
-  btnsEl.classList.add("flex", "flex-col", "gap-3");
+      // Limpa e garante coluna
+      btnsEl.innerHTML = "";
+      btnsEl.classList.remove("sm:flex-row");
+      btnsEl.classList.add("flex", "flex-col", "gap-3");
 
-  // ===== Bloco de ACESSO (sempre acima do carrinho p/ WebLivro) =====
-if (tipo === "weblivro") {
-  const { accessCode, accessUrl } = detalhes || {};
+      // ===== Acesso (weblivro) =====
+      if (tipo === "weblivro") {
+        const { accessCode, accessUrl } = detalhes || {};
 
-  const info = document.createElement("p");
-  info.className = "text-sm text-gray-600";
-  info.textContent = "Já adquiriu o WebLivro? Acesse-o com a senha enviada em seu email.";
-  btnsEl.appendChild(info);
+        const info = document.createElement("p");
+        info.className = "text-sm text-gray-600";
+        info.textContent = "Já adquiriu o WebLivro? Acesse-o com a senha enviada em seu email.";
+        btnsEl.appendChild(info);
 
-  const blocoAcesso = document.createElement("div");
-  blocoAcesso.className = "flex gap-2 items-center w-full";
-  blocoAcesso.innerHTML = `
-    <label class="sr-only" for="inputChaveAcesso">Chave de Acesso</label>
-    <input id="inputChaveAcesso" type="text" placeholder="Chave de Acesso"
-           class="flex-1 px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
-           autocomplete="off">
-    <button id="btnAcessarWebLivro"
-            class="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition-all">
-      Acessar
-    </button>
-  `;
-  btnsEl.appendChild(blocoAcesso);
+        const blocoAcesso = document.createElement("div");
+        blocoAcesso.className = "flex gap-2 items-center w-full";
+        blocoAcesso.innerHTML = `
+          <label class="sr-only" for="inputChaveAcesso">Chave de Acesso</label>
+          <input id="inputChaveAcesso" type="text" placeholder="Chave de Acesso"
+                 class="flex-1 px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                 autocomplete="off">
+          <button id="btnAcessarWebLivro"
+                  class="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition-all">
+            Acessar
+          </button>
+        `;
+        btnsEl.appendChild(blocoAcesso);
 
-  const chaveInput = blocoAcesso.querySelector('#inputChaveAcesso');
-  const btnAcessar = blocoAcesso.querySelector('#btnAcessarWebLivro');
+        const chaveInput = blocoAcesso.querySelector('#inputChaveAcesso');
+        const btnAcessar = blocoAcesso.querySelector('#btnAcessarWebLivro');
 
-  function tentarAcesso() {
-    const chave = (chaveInput.value || "").trim();
-    if (!accessCode || !accessUrl) {
-      alert("Este WebLivro ainda não está configurado para acesso.");
-      return;
+        function tentarAcesso() {
+          const chave = (chaveInput.value || "").trim();
+          if (!accessCode || !accessUrl) {
+            alert("Este WebLivro ainda não está configurado para acesso.");
+            return;
+          }
+          if (chave === accessCode) {
+            window.location.href = accessUrl;
+          } else {
+            alert("A senha de acesso está errada.");
+          }
+        }
+        btnAcessar.addEventListener("click", tentarAcesso);
+        chaveInput.addEventListener("keydown", (e) => { if (e.key === "Enter") tentarAcesso(); });
+      }
+
+      // Botão ADICIONAR À SACOLA
+      if (typeof preco === "number") {
+        const btnAdd = document.createElement("button");
+        btnAdd.className = "bg-purple-600 text-white px-6 py-2 rounded-full hover:bg-purple-700 transition-all";
+        btnAdd.textContent = "Adicionar à Sacola";
+        btnAdd.addEventListener("click", () => {
+          adicionarLivro(nome.replace(/'/g, "\\'"), preco, imagem);
+        });
+        btnsEl.appendChild(btnAdd);
+      }
+
+      // Botão YouTube (opcional)
+      if (youtube) {
+        const aYT = document.createElement("a");
+        aYT.href = youtube;
+        aYT.target = "_blank";
+        aYT.rel = "noopener";
+        aYT.className = "bg-red-600 text-white px-6 py-2 rounded-full hover:bg-red-700 transition-all text-center";
+        aYT.textContent = "Assistir no YouTube";
+        btnsEl.appendChild(aYT);
+      }
+
+      // Abre popup
+      document.getElementById("popupDetalhes").classList.remove("hidden");
+      document.body.classList.add("overflow-hidden");
     }
-    if (chave === accessCode) {
-      window.location.href = accessUrl;
-    } else {
-      alert("A senha de acesso está errada.");
-    }
-  }
-  btnAcessar.addEventListener("click", tentarAcesso);
-  chaveInput.addEventListener("keydown", (e) => { if (e.key === "Enter") tentarAcesso(); });
-}
 
-  // ===== Botão ADICIONAR À SACOLA (vem DEPOIS) =====
-  if (typeof preco === "number") {
-    const btnAdd = document.createElement("button");
-    btnAdd.className = "bg-purple-600 text-white px-6 py-2 rounded-full hover:bg-purple-700 transition-all";
-    btnAdd.textContent = "Adicionar à Sacola";
-    btnAdd.addEventListener("click", () => {
-      adicionarLivro(nome.replace(/'/g, "\\'"), preco, imagem);
-    });
-    btnsEl.appendChild(btnAdd);
-  }
-
-  // ===== Botão YouTube (opcional) =====
-  if (youtube) {
-    const aYT = document.createElement("a");
-    aYT.href = youtube;
-    aYT.target = "_blank";
-    aYT.rel = "noopener";
-    aYT.className = "bg-red-600 text-white px-6 py-2 rounded-full hover:bg-red-700 transition-all text-center";
-    aYT.textContent = "Assistir no YouTube";
-    btnsEl.appendChild(aYT);
-  }
-
-  // Abre popup
-  document.getElementById("popupDetalhes").classList.remove("hidden");
-  document.body.classList.add("overflow-hidden");
-}
-
-    /* ===== Carrosséis (viewport-based) ===== */
+    /* ===== Carrosséis ===== */
     (function () {
       const makeCarousel = (areaId, prevId, nextId) => {
         const area = document.getElementById(areaId);
@@ -725,7 +803,7 @@ if (tipo === "weblivro") {
       makeCarousel('contosContainer', 'prevContos', 'nextContos');
     })();
 
-    /* ===== Acessibilidade: reduzir animações se preferido ===== */
+    /* ===== Acessibilidade: reduzir animações ===== */
     (() => {
       const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
       if (mq.matches) {
@@ -733,41 +811,36 @@ if (tipo === "weblivro") {
       }
     })();
   </script>
+
   <script>
-  // Fecha popup com botão, overlay e ESC
-  (function() {
-    const popup   = document.getElementById("popupDetalhes");
-    const overlay = document.getElementById("popupDetalhes"); // usamos o próprio backdrop (inset-0)
+    // Fecha popup com botão, overlay e ESC
+    (function() {
+      const popup   = document.getElementById("popupDetalhes");
+      const overlay = document.getElementById("popupDetalhes");
 
-    function fecharDetalhes() {
-      popup.classList.add("hidden");
-      document.body.classList.remove("overflow-hidden");
-    }
+      function fecharDetalhes() {
+        popup.classList.add("hidden");
+        document.body.classList.remove("overflow-hidden");
+      }
 
-    // Garante que o botão realmente chame fecharDetalhes
-    const closeBtn = document.querySelector("#popupDetalhes button[aria-label='Fechar']");
-    if (closeBtn) {
-      closeBtn.addEventListener("click", (e) => { e.stopPropagation(); fecharDetalhes(); });
-      // melhora a clicabilidade
-      closeBtn.style.pointerEvents = "auto";
-      closeBtn.style.zIndex = 100;
-    }
+      const closeBtn = document.querySelector("#popupDetalhes button[aria-label='Fechar']");
+      if (closeBtn) {
+        closeBtn.addEventListener("click", (e) => { e.stopPropagation(); fecharDetalhes(); });
+        closeBtn.style.pointerEvents = "auto";
+        closeBtn.style.zIndex = 100;
+      }
 
-    // Fechar clicando fora (se quiser estrito só fora da caixa, dá pra checar target)
-    overlay.addEventListener("click", (e) => {
-      // fecha só se clicou fora do card interno
-      if (e.target === overlay) fecharDetalhes();
-    });
+      overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) fecharDetalhes();
+      });
 
-    // ESC
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && !popup.classList.contains("hidden")) fecharDetalhes();
-    });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && !popup.classList.contains("hidden")) fecharDetalhes();
+      });
 
-    // Expõe global (caso o HTML ainda use onclick="fecharDetalhes()")
-    window.fecharDetalhes = fecharDetalhes;
-  })();
-</script>
+      window.fecharDetalhes = fecharDetalhes;
+    })();
+  </script>
 
 </body>
 </html>

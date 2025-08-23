@@ -434,6 +434,135 @@ Tudo vai ficar bem. Agora, eu tenho amigos. Eu tenho alguém ao meu lado.</p>
     -ms-user-select: none;
   }
 </style>
+<!-- ===== Gate de acesso (blur + modal), com bypass via ?from=index ===== -->
+<script>
+(function(){
+  const ACCESS_CODE = 'LC01-DK01-AS00'; // << troque aqui
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // BYPASS opcional: se vier do index com ?from=index, não pede senha
+    const params = new URLSearchParams(location.search);
+    if (params.get('from') === 'index') return;
+
+    // 1) cria wrapper e move todo o conteúdo do body para dentro dele
+    const wrap = document.createElement('div');
+    wrap.id = 'pageWrap';
+    wrap.style.minHeight = '100%';
+    while (document.body.firstChild) wrap.appendChild(document.body.firstChild);
+    document.body.appendChild(wrap);
+
+    // 2) overlay/modal (fica FORA do wrap, então não recebe blur)
+    const overlay = document.createElement('div');
+    overlay.id = 'gateOverlay';
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('role', 'dialog');
+    Object.assign(overlay.style, {
+      position: 'fixed',
+      inset: '0',
+      zIndex: '9999',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: 'rgba(0,0,0,.55)'
+    });
+
+    overlay.innerHTML = `
+      <div id="gateCard" style="
+        width: min(92vw, 480px);
+        padding: 20px 22px;
+        border-radius: 14px;
+        background: rgba(255,255,255,.98);
+        border: 1px solid rgba(0,0,0,.08);
+        box-shadow: 0 20px 60px rgba(0,0,0,.6), inset 0 0 0 1px rgba(255,255,255,.6);
+        color: #2f2a24; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Arial, 'Noto Sans', sans-serif;
+      ">
+        <h2 style="margin:0 0 10px 0; font-weight:800; letter-spacing:.02em;">Acesso necessário</h2>
+        <p style="margin:0 0 14px 0; color:#6e5a45;">Digite a sua chave de leitura para continuar.</p>
+
+        <label for="gateInput" style="display:block; font-size:.9rem; margin-bottom:6px; color:#6e5a45;">Chave</label>
+        <input id="gateInput" type="password" autocomplete="off" inputmode="text" spellcheck="false" placeholder="Ex.: AU20-XXXX-XXXX" style="
+          width:100%;
+          padding: 10px 12px;
+          border-radius: 10px;
+          border: 1px solid rgba(0,0,0,.14);
+          background: #ffffff;
+          color: #2f2a24; outline: none;
+        "/>
+
+        <div style="display:flex; gap:10px; margin-top:14px;">
+          <button id="gateConfirm" type="button" style="
+            flex:1; padding: 10px 12px; border-radius: 10px;
+            border: 1px solid rgba(0,0,0,.18);
+            background: linear-gradient(135deg,#f6ead6,#efe2c6);
+            color:#2f2a24; font-weight:700; cursor:pointer;
+          ">Entrar</button>
+          <button id="gateCancel" type="button" style="
+            padding: 10px 12px; border-radius: 10px;
+            border: 1px solid rgba(0,0,0,.12);
+            background: #fff;
+            color:#5b4a3a; cursor:pointer;
+          ">Cancelar</button>
+        </div>
+
+        <p id="gateMsg" aria-live="polite" style="margin:10px 2px 0; font-size:.9rem; color:#b45309; min-height:1.2em;"></p>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+
+    // 3) aplica blur/escurece o conteúdo e bloqueia scroll
+    const prevOverflow = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = 'hidden';
+    wrap.style.filter = 'blur(8px) brightness(0.75)';
+    wrap.style.transition = 'filter .25s ease';
+
+    const input = document.getElementById('gateInput');
+    const btnOk = document.getElementById('gateConfirm');
+    const btnNo = document.getElementById('gateCancel');
+    const msg   = document.getElementById('gateMsg');
+    const card  = document.getElementById('gateCard');
+
+    setTimeout(()=> input.focus(), 60);
+
+    function shake(el){
+      el.animate(
+        [
+          { transform: 'translateX(0)'   },
+          { transform: 'translateX(-6px)'},
+          { transform: 'translateX(6px)' },
+          { transform: 'translateX(-4px)'},
+          { transform: 'translateX(4px)' },
+          { transform: 'translateX(0)'   },
+        ],
+        { duration: 240 }
+      );
+    }
+
+    function validate(){
+      const chave = (input.value || '').trim();
+      if (chave === ACCESS_CODE){
+        overlay.remove();
+        wrap.style.filter = '';
+        document.documentElement.style.overflow = prevOverflow || '';
+      } else {
+        msg.textContent = 'Chave inválida. Tente novamente.';
+        shake(card);
+        input.select();
+        input.focus();
+      }
+    }
+
+    btnOk.addEventListener('click', validate);
+    input.addEventListener('keydown', (e)=> { if(e.key === 'Enter') validate(); });
+    btnNo.addEventListener('click', ()=> { window.location.href = 'index.html#contos'; });
+  });
+})();
+</script>
+<noscript>
+  <div style="position:fixed; inset:0; z-index:9999; display:flex; align-items:center; justify-content:center; background:#000000bb; color:#fff; font: 600 16px system-ui;">
+    Habilite o JavaScript para acessar este conteúdo.
+  </div>
+</noscript>
+
 </body>
 </html>
 

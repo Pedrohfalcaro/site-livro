@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Meus Monstros — Conto</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* ===== Estética sombria ===== */
+    :root{
+      --ink: #e5e5e5;
+      --blood: #b91c1c;
+      --ash: #111111;
+      --stone: #1e1e1e;
+      --smoke: #2d2d2d;
+      --accent: #ef4444;
+    }
+
+    body{
+      color: var(--ink);
+      background:
+        radial-gradient(1200px 600px at 50% -10%, rgba(239,68,68,.08) 0%, transparent 60%),
+        linear-gradient(180deg,var(--ash),var(--stone));
+      font-feature-settings: "liga","onum";
+    }
+
+    /* Textura */
+    body::before{
+      content:"";
+      position:fixed; inset:0; pointer-events:none; z-index:0;
+      background:
+        radial-gradient(1px 1px at 20% 30%, #ffffff08 50%, transparent 51%),
+        radial-gradient(1px 1px at 80% 70%, #00000012 50%, transparent 51%);
+      background-size: 3px 3px, 4px 4px;
+      opacity:.6;
+    }
+
+    /* Barra topo */
+    .top-wrap{
+      position:sticky; top:0; z-index:30;
+      backdrop-filter: blur(6px);
+      background: linear-gradient(180deg, rgba(17,17,17,.92), rgba(17,17,17,.7));
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .progress{ height:3px; background:linear-gradient(90deg,#ef4444,#7f1d1d); width:0%; }
+
+    /* Leitor */
+    .book{
+      position:relative; overflow:hidden;
+      border-radius: 18px;
+      background: linear-gradient(180deg, #1c1c1c, #121212);
+      box-shadow: 0 20px 60px rgba(0,0,0,.65), inset 0 0 0 1px rgba(255,255,255,.04);
+    }
+    .book::after{
+      content:""; position:absolute; inset:0; pointer-events:none;
+      background: repeating-linear-gradient(115deg, rgba(255,255,255,.02) 0 2px, transparent 2px 6px);
+    }
+
+    /* Tabs */
+    .tabs{
+      backdrop-filter: blur(6px);
+      background: rgba(30,30,30,.8);
+      border:1px solid rgba(255,255,255,.06);
+      border-radius: 12px;
+    }
+    .tab-btn{
+      width:100%; text-align:left; padding:.85rem 1rem; border-radius:.75rem;
+      border:1px solid rgba(255,255,255,.06); background:rgba(255,255,255,.02);
+      color:#ddd; transition:.2s;
+      font-weight:600;
+    }
+    .tab-btn:hover{ background:rgba(255,255,255,.05); }
+    .tab-btn.active{
+      background:linear-gradient(135deg,rgba(239,68,68,.25),rgba(127,29,29,.25));
+      border-color:rgba(255,255,255,.2); color:#fff;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.15);
+    }
+
+    /* Tipografia */
+    .script{ font-family: "Georgia", ui-serif, serif; }
+    .title-script{ font-family: "Merriweather", ui-serif, serif; }
+    .subtitle{ color:#aaa; }
+
+    /* Chips */
+    .chip{
+      background: linear-gradient(135deg,rgba(127,29,29,.7),rgba(239,68,68,.5));
+      border:1px solid rgba(255,255,255,.15);
+      border-radius:9999px;
+      padding:.25rem .7rem; font-size:.8rem; color:#f3f3f3;
+    }
+
+    .fade-in{ animation: fade .3s ease; }
+    @keyframes fade{ from{opacity:0; transform:translateY(4px)} to{opacity:1; transform:translateY(0)} }
+  </style>
+</head>
+
+<body>
+  <!-- topo -->
+  <div class="top-wrap">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center gap-3">
+      <a href="index.html#contos" class="px-3 py-1.5 rounded-lg border border-white/10 hover:bg-white/10 transition">Voltar</a>
+      <span class="chip">Conto</span>
+      <span class="chip">Terror Psicológico</span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- header -->
+  <header class="max-w-5xl mx-auto px-4 pt-8">
+    <h1 class="title-script text-4xl md:text-5xl font-extrabold tracking-tight">Meus <span class="text-red-500">Monstros</span></h1>
+    <p class="subtitle mt-2 text-base md:text-lg">Um mergulho sombrio na mente que não consegue escapar de si mesma.</p>
+  </header>
+
+  <!-- grid -->
+  <main class="max-w-5xl mx-auto px-4 mt-8 mb-20 grid grid-cols-1 md:grid-cols-4 gap-6 items-start relative">
+    <!-- tabs -->
+    <aside class="tabs p-3 md:sticky md:top-24 md:col-span-1">
+      <div class="space-y-2">
+        <button id="t1" class="tab-btn active">Parte 1</button>
+        <button id="t2" class="tab-btn">Parte 2</button>
+        <button id="t3" class="tab-btn">Parte 3</button>
+        <button id="t4" class="tab-btn">Parte 4</button>
+      </div>
+    </aside>
+
+    <!-- reader -->
+    <section id="reader" class="md:col-span-3 book rounded-2xl">
+      <article id="content" class="script p-6 md:p-10 leading-relaxed fade-in"></article>
+    </section>
+  </main>
+
+  <footer class="max-w-5xl mx-auto px-4 pb-12 text-sm text-gray-400">
+    <div class="flex items-center justify-between">
+      <span>&copy; 2025 — Pedro Henrique</span>
+      <a href="index.html#contos" class="hover:underline">Voltar para contos</a>
+    </div>
+  </footer>
+
+  <script>
+    // ===== Progresso =====
+    (function(){
+      const bar = document.getElementById('progress');
+      function u(){
+        const d = document.documentElement;
+        const total = d.scrollHeight - d.clientHeight;
+        const pct = total > 0 ? (d.scrollTop / total) * 100 : 0;
+        bar.style.width = pct + '%';
+      }
+      document.addEventListener('scroll', u, {passive:true});
+      addEventListener('resize', u); u();
+    })();
+
+    // ===== Conteúdo (4 partes) =====
+    const P1 = `
+<h2 class="text-2xl md:text-3xl font-extrabold mb-4">Parte 1</h2>
+<p>Já é tarde. Nem sei exatamente que horas são. Basta olhar no relógio: 23h48. Realmente, está tarde. Estou quase em casa, só falta colocar a chave na porta. Que dia cansativo... tudo o que eu queria agora era deitar na cama e descansar. Mas sei que não vai ser simples. Se eu me deitar, eles não vão me deixar levantar cedo amanhã.</p>
+<p>Quem são “eles”? Talvez seja isso que você esteja se perguntando. Pode soar estranho, mas eu vejo monstros. Criaturas que me impedem de levantar, atrapalham meu trabalho, roubam minha felicidade. Cada passo que dou é perseguido por um diferente. Eles me assustam.</p>
+<p>As pessoas dizem: “Pare com isso, você já é adulto. Monstros não existem.” Fácil falar quando não se convive com eles diariamente. Imagine ir ao banheiro apenas para escovar os dentes e ver um monstro horrendo enrolado no seu pescoço, pesando sobre suas costas. Sabe o que é caminhar o dia inteiro sentindo esse fardo?</p>
+<p>O que mais me irrita é que só eu consigo vê-los. Ninguém comenta nada, ninguém percebe. Por quê? Por que apenas eu?</p>
+<p>Entro em casa e penso se há algo para comer. Claro que não. Eles devoram tudo que compro. Doces, refrigerantes... tudo desaparece. A geladeira, como sempre, está vazia. Só água.</p>
+<p>Talvez eu ligue a TV, quem sabe esteja passando uma comédia para distrair. Mas nem aqui tenho paz. Eles atravessam a tela o tempo todo, bloqueando a imagem, rindo do meu esforço em tentar me divertir. E, curiosamente, só fazem isso durante as comédias. Quando é tragédia, quando passam desastres e mortes nos noticiários, eles somem. Então fico sozinho, encarando a TV e me perguntando: por que todos os dias o noticiário só traz desgraças?</p>
+`;
+
+    const P2 = `
+<h2 class="text-2xl md:text-3xl font-extrabold mb-4">Parte 2</h2>
+<p>Meia-noite. Estou exausto, mas não posso dormir. Se eu dormir, eles não me deixam acordar. Pesam sobre mim, esmagam meu corpo, sugam minhas forças até que eu não consiga sequer me levantar da cama. O jeito é fazer como sempre: passar a noite acordado, vigiar cada minuto, para não perder a hora do trabalho.</p>
+<p>Penso em ligar para minha mãe. Pelo menos ouvir sua voz me traria algum alívio. Mas eles não permitem. Quando disquei o número, o que ouvi não foi sua voz doce, mas os grunhidos grotescos dos monstros. Sempre eles. Sempre me cercando.</p>
+<p>00h20. Eu não vou aguentar a madrugada inteira. O sono me corrói, os olhos ardem. Há um mercado próximo... Se eu conseguir chegar lá e comprar alguns energéticos, talvez consiga resistir até o amanhecer.</p>
+<p>As ruas estão desertas. O frio corta como lâmina. A única coisa que ainda desenha o horizonte é a luz fraca de alguns postes — mas nem todos funcionam. E os que funcionam, eles bloqueiam. Os monstros se interpõem, não deixam a luz me tocar, não deixam que eu seja visto.</p>
+<p>Chego ao mercado. É pequeno, silencioso. Apenas a atendente no caixa. Vou até o fundo da loja sem ser notado. Ela não me vê. Como poderia, se os monstros me escondem, cobrem cada passo meu? Ainda assim, reparo nela: bonita, cabelos pretos e curtos. Por que penso nisso agora? Vim apenas por um energético.</p>
+<p>De repente, o som da porta. Alguém entrou. Um estalo metálico ecoa pelo ambiente. Uma arma. Por quê? A atendente sorri, atenciosa, gentil — e em troca recebe o cano frio de uma pistola apontado em seu rosto. O ladrão exige dinheiro.</p>
+<p>Mas ela não pode entregar. Conheço esse mercado, sei como funciona. Se não repassar a renda completa ao chefe, perderá o emprego. Ela hesita. Ele insiste.</p>
+<p>E eu? Estou aqui. Um cliente qualquer. Ou pelo menos deveria ser. Mas ninguém me vê. Os monstros se erguem ao meu redor, me cobrem como um manto de sombras. Talvez eles não sejam tão ruins. Se não fosse por eles, eu já estaria morto.</p>
+<p>Ou talvez não estivesse nem aqui. Talvez estivesse em casa, dormindo.</p>
+`;
+
+    const P3 = `
+<h2 class="text-2xl md:text-3xl font-extrabold mb-4">Parte 3</h2>
+<p>Que sono... o que eu faço agora? Ela não quer entregar o dinheiro, e ele está perdendo a paciência. Só entrega, moça, sua vida vale mais do que alguns míseros reais. Você não merece morrer aqui, assim.</p>
+<p>Mas para quem estou falando? É só a minha voz ecoando dentro da minha cabeça.</p>
+<p>“Pow.”<br>Um disparo seco. Ela cai. Morta. O homem recolhe o dinheiro e vai embora como se nada fosse.</p>
+<p>De que adiantou resistir? No fim, ele saiu com o dinheiro de qualquer jeito. Mas a sua vida, moça... a sua vida não valia isso? Que dor.</p>
+<p>E eu? O que eu poderia fazer? Nada. Não posso fazer nada neste mundo. Sou apenas um espectador. Ninguém me enxerga, mas eu vejo tudo. Vivo preso num eterno drama. Queria, ao menos uma vez, assistir a uma comédia, uma aventura... mas só encontro sangue. Tanto sangue.</p>
+<p>O corpo dela ficará ali, até o amanhecer. Haverá câmeras? Talvez a polícia prenda o assassino. Talvez. Eu mesmo poderia ir à delegacia e testemunhar. Mas claro, esqueci: ninguém me vê.</p>
+<p>Então faço o que vim fazer. Deixo o dinheiro sobre o balcão e sigo em frente. Não é da minha conta. Tudo o que posso sentir é tristeza. Só tristeza.</p>
+<p>Como o mundo é cruel. Ela estava apenas trabalhando. Provavelmente era sua única fonte de renda. Lutava para sobreviver. Talvez, se fosse demitida, não tivesse sequer para onde ir.</p>
+<p>Por que ela? Poderia ter sido eu. Mas será que alguém notaria? Será que alguém se lembraria de mim? Será que alguém sequer sabe que eu existo?</p>
+<p>Os monstros sabem. Eles sempre sabem. Estão comigo, grudados em minhas costas, sugando minhas forças. Quero me deitar. Quero dormir. Mas não posso. Preciso acordar amanhã. Preciso... preciso...</p>
+<p>Que vazio. Já disse isso antes? Talvez. Já nem sei. É sempre tão vazio nessas horas. Uma da manhã.</p>
+<p>De volta em casa. O que eu faço agora? Nada. Não existe nada para fazer. Nada sem eles por perto. Olho ao redor e os vejo em todos os cantos.</p>
+<p>Talvez... talvez eu encontre alguma bola esquecida na gaveta. Pelo menos posso jogá-la para cima e assistir enquanto sobe e desce. Melhor do que assistir o mundo desmoronar.</p>
+`;
+
+    const P4 = `
+<h2 class="text-2xl md:text-3xl font-extrabold mb-4">Parte 4</h2>
+<p>Como imaginei, eles pegaram tudo. Não há mais nada na gaveta.<br>
+Quer dizer... há sim. Uma corda.<br>
+Por que não a levaram?<br>
+Talvez porque não dê para fazer muita coisa com apenas uma corda. Mas talvez dê para fazer... algo.</p>
+<p>Deixei-a em cima da cama. Olho para ela, perdida em pensamentos. O que posso fazer agora? Talvez ver alguma discussão no Twitter. Sempre tem. Sempre.</p>
+<p>Mas não... só vejo morte. Mais mortes. Acidentes. Destinos despedaçados. Onde estão as brigas fúteis, as piadas, as distrações? Ah, até existem... mas os monstros não me deixam vê-las.</p>
+<p>Estou cansando. Por que eles continuam em mim? O que eu fiz para merecer isso? Eu odeio esses monstros.<br>
+Mas... sem eles, o que eu seria? Só. Apenas só.<br>
+Talvez, no fundo, eles sejam minha única companhia.</p>
+<p>Minha visão começa a escurecer. Tudo em preto e branco. Estou cansado. Exausto há muito tempo. E a culpa é deles. Sempre deles. Eles não me deixam dormir.</p>
+<p>Agora são muitos. Mais do que o normal. Estão em toda a casa. Em cada canto. Observando-me em silêncio. Como se fosse minha culpa.<br>
+O que eu fiz de errado, de novo?</p>
+<p>Há apenas um lugar onde não estavam: meu quarto.<br>
+Talvez eu devesse ir para lá.<br>
+Estou com medo. Medo das consequências. Medo desses olhares que me atravessam. Eles me intimidam.</p>
+<p>Entro no quarto. Eles também estão ali. Em todo lugar.<br>
+Bom... quase todo.<br>
+A corda continua intocada. Sozinha. Intocável.</p>
+<p>Devo pegá-la?<br>
+Para quê?<br>
+Ela esteve nas minhas mãos antes. E agora... agora parece esperar por mim.</p>
+<p>Eles me olham fixamente.<br>
+A cadeira. Por que a cadeira?<br>
+Parem. Parem de me olhar assim.</p>
+<p>Não, não são eles. Sou eu. Eu estou fazendo isso.<br>
+A cadeira. O teto. A corda.</p>
+<p>Ah... agora entendi.<br>
+É para isso. Sempre foi para isso.<br>
+Vocês estavam me salvando.</p>
+<p>É só amarrar a corda ali. Subir na cadeira.<br>
+A visão daqui de cima é ampla. Consigo ver todos vocês...<br>
+Mas não. Eu não vejo nada.<br>
+Não tem ninguém aqui.</p>
+<p>Não existem monstros.<br>
+Nunca existiram.<br>
+Quem estava aqui...<br>
+Sempre fui eu.<br>
+Eu sou meus monstros.</p>
+`;
+
+    const parts = [P1, P2, P3, P4];
+    const tabs = [document.getElementById('t1'), document.getElementById('t2'), document.getElementById('t3'), document.getElementById('t4')];
+    const content = document.getElementById('content');
+
+    function setPart(i){
+      tabs.forEach(t=>t.classList.remove('active'));
+      tabs[i].classList.add('active');
+      content.classList.remove('fade-in'); void content.offsetWidth;
+      content.innerHTML = parts[i];
+      content.classList.add('fade-in');
+      document.getElementById('reader').scrollIntoView({behavior:'smooth', block:'start'});
+    }
+
+    tabs.forEach((btn,i)=> btn.addEventListener('click', ()=> setPart(i)));
+    setPart(0);
+  </script>
+  <script>
+  // Bloqueia seleção de texto
+  document.addEventListener('selectstart', e => e.preventDefault());
+
+  // Bloqueia clique com botão direito
+  document.addEventListener('contextmenu', e => e.preventDefault());
+
+  // Bloqueia atalhos de cópia
+  document.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && ['c', 'x', 'u', 's', 'p'].includes(e.key.toLowerCase())) {
+      e.preventDefault();
+    }
+  });
+</script>
+
+<style>
+  /* Remove seleção de texto */
+  body, * {
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+  }
+</style>
+</body>
+</html>
