@@ -352,7 +352,13 @@
                   preco: 52.9,
                   imagem: 'imagens/LdC1.png',
                   youtube: null,
-                  tipo: 'livro'
+                  tipo: 'livro',
+                  info: {
+                        páginas: '390',
+                        temática: 'Fantasia / Aventura',
+                        idioma: 'Português',
+                        extras: 'Marca-páginas + Conto exclusivo'
+                        }
                 })"
                 class="w-full bg-purple-600 text-white py-2 rounded-full hover:bg-purple-700 transition mt-4">
                 Ver Detalhes
@@ -375,7 +381,12 @@
                   descricao: 'Além dos Céus é uma áudio série focada em aventuras e viagens espaciais. Leonardo é o protagonista desta história, onde sua tarefa é liderar uma equipe em uma missão rumo a um sistema solar longínquo. Ele irá lidar, com sentimentos, conflitos internos e decisões difíceis a tomar, além de muita ação e determinação. Como será a aventura desta tripulação? Isso você só descobrirá em Além dos Céus',
                   imagem: 'imagens/AdC1.jpg',
                   youtube: 'https://youtube.com/playlist?list=PLVQe8695upyjlnarF121CIlis7cCW6-n1&si=Ly59Vjxq5-M0a6tf',
-                  tipo: 'audio'
+                  tipo: 'audio',
+                  info: {
+                        Episódios: '8 Ep divididos em 17 partes',
+                        temática: 'Viagem espacial / Aventura',
+                        idioma: 'Português'
+                        }
                 })"
                 class="w-full bg-purple-600 text-white py-2 rounded-full hover:bg-purple-700 transition mt-4">
                 Ver Detalhes
@@ -391,19 +402,24 @@
             <img src="imagens/IdW.jpg" class="w-full aspect-[2/3] object-cover rounded-2xl mb-4 transform group-hover:scale-105 transition-all" alt="O Incidente de Willowbrook capa"/>
             <h3 class="text-lg sm:text-xl font-bold text-center mb-1">O Incidente de Willowbrook</h3>
             <p class="text-base mt-2 text-center text-gray-800">
-              <strong class="text-indigo-600 text-xl font-bold">R$ 7,50</strong>
+              <strong class="text-indigo-600 text-xl font-bold">R$ 5,90</strong>
             </p>
             <div class="mt-auto pt-4">
               <button 
                 onclick="abrirDetalhes({
                   nome: 'O Incidente de Willowbrook',
                   descricao: 'Em um Reino Unido envolto em mistérios e segredos, Emily Holwes, uma investigadora surda, recebe uma carta de um antigo amigo propondo um trabalho intrigante: investigar o misterioso vilarejo de Willowbrook, onde todos os habitantes morreram repentinamente. Determinada a desvendar o que aconteceu, Emily embarca em uma jornada que a leva por caminhos obscuros e inesperados. Enquanto ela explora as ruas desertas e os edifícios abandonados de Willowbrook, Emily descobre pistas que a levam a confrontar seu próprio passado doloroso e a enfrentar segredos há muito enterrados. Cada descoberta traz novas perguntas, e a verdade se revela mais sinistra do que ela jamais poderia imaginar.O Incidente de Willowbrook é uma história de suspense e investigação que prende o leitor desde a primeira página, mergulhando-o em um enredo repleto de mistério, intriga e revelações chocantes. Acompanhe Emily enquanto ela luta para descobrir a verdade por trás das mortes no vilarejo e enfrenta seus próprios demônios ao longo do caminho.',
-                  preco: 7.5,
+                  preco: 5.9,
                   imagem: 'imagens/IdW.jpg',
                   youtube: null,
                   tipo: 'weblivro',
                   accessCode: 'ID10-W7BK-EMHW',
-                  accessUrl: 'WebLivroIdW.html?from=index'
+                  accessUrl: 'WebLivroIdW.html?from=index',
+                  info: {
+                        palavras: '13558',
+                        temática: 'Suspense / Investigação',
+                        idioma: 'Português'
+                        }
                 })"
                 class="w-full bg-purple-600 text-white py-2 rounded-full hover:bg-purple-700 transition mt-4">
                 Ver Detalhes
@@ -431,7 +447,12 @@
                   youtube: null,
                   tipo: 'weblivro',
                   accessCode: 'AU20-C7TA-ELSA',
-                  accessUrl: 'WebLivroAUC.html'
+                  accessUrl: 'WebLivroAUC.html',
+                  info: {
+                        palavras: '5693',
+                        temática: 'Horror / Gore',
+                        idioma: 'Português'
+                        }
                 })"
                 class="w-full bg-purple-600 text-white py-2 rounded-full hover:bg-purple-700 transition mt-4">
                 Ver Detalhes
@@ -534,20 +555,33 @@
   </section>
 
   <!-- POPUP DE DETALHES -->
-  <div id="popupDetalhes" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-5xl h-[90vh] flex flex-col-reverse sm:flex-row overflow-hidden animate-fade relative border-t-4 border-purple-700">
-      <button onclick="fecharDetalhes()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-3xl font-bold z-10 transition" aria-label="Fechar">&times;</button>
-      <div class="flex-1 p-6 sm:p-10 overflow-y-auto flex flex-col">
-        <h2 id="detalheTitulo" class="text-2xl sm:text-3xl font-bold text-purple-700 mb-4"></h2>
-        <p id="detalhePreco" class="text-xl font-bold text-green-700 mb-4 hidden"></p>
-        <div id="detalheDescricao" class="text-gray-800 leading-relaxed whitespace-pre-line max-h-[50vh] overflow-y-auto mb-6 text-sm sm:text-base"></div>
-        <div id="botoesDetalhes" class="mt-auto flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center pt-6 border-t border-gray-200"></div>
+<div id="popupDetalhes" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl shadow-2xl w-full max-w-5xl h-[90vh] flex flex-col-reverse sm:flex-row overflow-hidden animate-fade relative border-t-4 border-purple-700">
+    <button onclick="fecharDetalhes()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-3xl font-bold z-10 transition" aria-label="Fechar">&times;</button>
+    
+    <!-- Texto -->
+    <div class="flex-1 p-6 sm:p-10 overflow-y-auto flex flex-col">
+      <h2 id="detalheTitulo" class="text-2xl sm:text-3xl font-bold text-purple-700 mb-4"></h2>
+      <p id="detalhePreco" class="text-xl font-bold text-green-700 mb-4 hidden"></p>
+      
+      <!-- NOVO: Informações técnicas -->
+      <div id="detalheInfo" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 hidden">
+        <!-- Exemplo de item -->
+        <!-- <p><span class="font-semibold">Páginas:</span> 390</p> -->
       </div>
-      <div class="w-full sm:w-1/3 bg-gray-100 p-4 sm:p-6 flex items-center justify-center border-t sm:border-t-0 sm:border-l border-gray-200">
-        <img id="detalheImagem" src="" alt="Capa da Obra" class="w-40 sm:w-full h-auto max-h-52 sm:max-h-[80vh] object-contain rounded-2xl shadow-lg"/>
-      </div>
+
+      <div id="detalheDescricao" class="text-gray-800 leading-relaxed whitespace-pre-line max-h-[50vh] overflow-y-auto mb-6 text-sm sm:text-base"></div>
+      
+      <div id="botoesDetalhes" class="mt-auto flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center pt-6 border-t border-gray-200"></div>
+    </div>
+
+    <!-- Imagem -->
+    <div class="w-full sm:w-1/3 bg-gray-100 p-4 sm:p-6 flex items-center justify-center border-t sm:border-t-0 sm:border-l border-gray-200">
+      <img id="detalheImagem" src="" alt="Capa da Obra" class="w-40 sm:w-full h-auto max-h-52 sm:max-h-[80vh] object-contain rounded-2xl shadow-lg"/>
     </div>
   </div>
+</div>
+
 
   <!-- Scripts base -->
   <script>
@@ -694,6 +728,35 @@
       const precoEl  = document.getElementById("detalhePreco");
       const imgEl    = document.getElementById("detalheImagem");
       const btnsEl   = document.getElementById("botoesDetalhes");
+
+      // === Informações técnicas ===
+const infoEl = document.getElementById("detalheInfo");
+infoEl.innerHTML = ""; // limpa antes
+
+if (detalhes.info) {
+  Object.entries(detalhes.info).forEach(([chave, valor]) => {
+    const div = document.createElement("div");
+    div.className = "flex items-center gap-3 bg-purple-50 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-700 rounded-xl px-3 py-2 shadow-sm";
+
+    // Ícone (pode personalizar por chave)
+    let icone = "📘";
+    if (chave.toLowerCase().includes("página")) icone = "📖";
+    else if (chave.toLowerCase().includes("temática")) icone = "🎭";
+    else if (chave.toLowerCase().includes("idioma")) icone = "🌐";
+    else if (chave.toLowerCase().includes("extra")) icone = "✨";
+
+    div.innerHTML = `
+      <span class="text-xl">${icone}</span>
+      <p class="text-sm sm:text-base">
+        <span class="font-semibold text-purple-700 dark:text-purple-300">${chave}:</span> ${valor}
+      </p>
+    `;
+    infoEl.appendChild(div);
+  });
+  infoEl.classList.remove("hidden");
+} else {
+  infoEl.classList.add("hidden");
+}
 
       // Cabeçalho
       tituloEl.textContent = nome;
