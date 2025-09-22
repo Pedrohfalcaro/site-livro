@@ -185,9 +185,11 @@
 
       <!-- Sacola/Menu no mobile -->
       <div class="flex items-center gap-2 md:hidden">
-        <button onclick="toggleEstante()" class="px-3 py-1 rounded-full bg-white/15 hover:bg-white/25 border border-white/20 text-sm">
-          Sacola
-        </button>
+        <button onclick="toggleEstante()" class="px-3 py-1 rounded-full bg-white/15 hover:bg-white/25 border border-white/20 text-sm relative">
+  Sacola
+  <span id="sacolaContadorMobile" class="hidden absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full px-1.5 py-0.5 shadow">0</span>
+</button>
+
       </div>
     </div>
 
@@ -245,18 +247,19 @@
         <span class="absolute bottom-[-2rem] left-1/2 -translate-x-1/2 text-xs bg-black/80 text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">Contos</span>
       </div>
 
-      <!-- Sacola -->
-      <div class="relative group">
-        <button onclick="toggleEstante()" class="p-3 rounded-full bg-sky-400 hover:bg-sky-500 text-white border border-white/20 shadow-md transition" aria-label="Sacola">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-            <path d="M16 11V8a4 4 0 0 0-8 0v3"/>
-            <path d="M5 11h14l1 9H4l1-9z"/>
-          </svg>
-        </button>
-        <span class="absolute bottom-[-2rem] left-1/2 -translate-x-1/2 text-xs bg-black/80 text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">Sacola</span>
-      </div>
-    </div>
-  </div>
+      <!-- Sacola no desktop -->
+<div class="relative group">
+  <button onclick="toggleEstante()" class="p-3 rounded-full bg-sky-400 hover:bg-sky-500 text-white border border-white/20 shadow-md transition relative" aria-label="Sacola">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+      <path d="M16 11V8a4 4 0 0 0-8 0v3"/>
+      <path d="M5 11h14l1 9H4l1-9z"/>
+    </svg>
+    <!-- Contador -->
+    <span id="sacolaContador" class="hidden absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full px-1.5 py-0.5 shadow">0</span>
+  </button>
+  <span class="absolute bottom-[-2rem] left-1/2 -translate-x-1/2 text-xs bg-black/80 text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">Sacola</span>
+</div>
+
 </nav>
 
 
@@ -586,14 +589,15 @@
 
     /* ===== Sacola ===== */
     function adicionarLivro(nome, preco, imagem) {
-      const estante = JSON.parse(localStorage.getItem("estante")) || [];
-      const index = estante.findIndex(l => l.nome === nome);
-      if (index !== -1) estante[index].quantidade++;
-      else estante.push({ nome, preco, imagem, quantidade: 1 });
-      localStorage.setItem("estante", JSON.stringify(estante));
-      mostrarMensagem();
-      atualizarPopupEstante();
-    }
+  const estante = JSON.parse(localStorage.getItem("estante")) || [];
+  const index = estante.findIndex(l => l.nome === nome);
+  if (index !== -1) estante[index].quantidade++;
+  else estante.push({ nome, preco, imagem, quantidade: 1 });
+  localStorage.setItem("estante", JSON.stringify(estante));
+  mostrarMensagem();
+  atualizarPopupEstante();
+  atualizarContadorSacola(); // <--- aqui
+}
 
     function mostrarMensagem() {
       const msg = document.getElementById("mensagemSucesso");
@@ -602,11 +606,32 @@
     }
 
     function removerLivro(index) {
-      const estante = JSON.parse(localStorage.getItem("estante")) || [];
-      estante.splice(index, 1);
-      localStorage.setItem("estante", JSON.stringify(estante));
-      atualizarPopupEstante();
+  const estante = JSON.parse(localStorage.getItem("estante")) || [];
+  estante.splice(index, 1);
+  localStorage.setItem("estante", JSON.stringify(estante));
+  atualizarPopupEstante();
+  atualizarContadorSacola(); // <--- aqui
+}
+  
+function atualizarContadorSacola() {
+  const estante = JSON.parse(localStorage.getItem("estante")) || [];
+  const totalItens = estante.reduce((soma, l) => soma + l.quantidade, 0);
+
+  const contadorDesktop = document.getElementById("sacolaContador");
+  const contadorMobile = document.getElementById("sacolaContadorMobile");
+
+  if (totalItens > 0) {
+    contadorDesktop.textContent = totalItens;
+    contadorDesktop.classList.remove("hidden");
+    if (contadorMobile) {
+      contadorMobile.textContent = totalItens;
+      contadorMobile.classList.remove("hidden");
     }
+  } else {
+    contadorDesktop.classList.add("hidden");
+    if (contadorMobile) contadorMobile.classList.add("hidden");
+  }
+}
 
     function atualizarPopupEstante() {
       const lista = document.getElementById("listaEstante");
@@ -657,7 +682,10 @@
       }
     }
 
-    document.addEventListener("DOMContentLoaded", atualizarPopupEstante);
+    document.addEventListener("DOMContentLoaded", () => {
+  atualizarPopupEstante();
+  atualizarContadorSacola(); // inicializa ao carregar a página
+});
 
     /* ===== Filtros ===== */
     function filtrarObras() {
