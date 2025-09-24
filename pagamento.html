@@ -34,9 +34,9 @@
     ✅ Pagamento enviado com sucesso!
   </div>
   <!-- Mensagem de aguarde -->
-    <p id="mensagemAguarde" class="hidden fixed top-6 left-6 bg-yellow-200 text-yellow-900 px-6 py-3 rounded shadow-lg z-50 animate-fade">
-  ⏳ Enviando... Isso pode levar até 1 minuto se o servidor estiver inativo.
-    </p>
+  <p id="mensagemAguarde" class="hidden fixed top-6 left-6 bg-yellow-200 text-yellow-900 px-6 py-3 rounded shadow-lg z-50 animate-fade">
+    ⏳ Enviando... Isso pode levar até 1 minuto se o servidor estiver inativo.
+  </p>
 
   <!-- Container -->
   <div class="max-w-2xl mx-auto bg-white rounded-3xl shadow-xl p-6 sm:p-8 mt-10 animate-fade">
@@ -104,8 +104,8 @@
     chave.select();
     chave.setSelectionRange(0, 99999); // suporte mobile
     navigator.clipboard.writeText(chave.value)
-      .then(() => alert("📋 Chave Pix copiada com sucesso!"))
-      .catch(() => alert("⚠️ Não foi possível copiar a chave Pix."));
+      .then(() => console.log("Chave Pix copiada"))
+      .catch(() => console.warn("Não foi possível copiar a chave Pix."));
   }
 
   async function enviarPagamento() {
@@ -120,7 +120,7 @@
     const comprovante = document.querySelector('input[type="file"]').files[0];
 
     if (!nome || !email || !comprovante) {
-      alert("⚠️ Preencha nome, e-mail e selecione o comprovante.");
+      console.warn("Formulário incompleto: nome, e-mail ou comprovante não preenchidos.");
       return;
     }
 
@@ -169,30 +169,28 @@
         document.getElementById("mensagemSucesso").classList.remove("hidden");
         localStorage.removeItem("estante");
         setTimeout(() => window.location.href = "index.html", 5000);
-      } else {
-        alert("❌ Não conseguimos processar seu pedido agora. Tente novamente em alguns minutos.");
       }
     } catch (error) {
       console.error("Erro no envio:", error);
-      alert("⚠️ Ocorreu um erro de conexão. Verifique sua internet ou tente mais tarde.");
     } finally {
       // Oculta mensagem de aguarde
       aguarde.classList.add("hidden");
     }
   }
-    // Resumo na tela
-    const resumo = document.getElementById("resumo");
-    const estante = JSON.parse(localStorage.getItem("estante")) || [];
-    let total = 0, totalLivros = 0;
-    estante.forEach(l => {
-      total += l.preco * l.quantidade;
-      totalLivros += l.quantidade;
-    });
 
-    resumo.innerHTML = `
-      📚 Você está comprando <strong>${totalLivros}</strong> livro(s).<br>
-      💰 Total a pagar: <strong class="text-green-700">R$ ${total.toFixed(2)}</strong>
-    `;
+  // Resumo na tela
+  const resumo = document.getElementById("resumo");
+  const estante = JSON.parse(localStorage.getItem("estante")) || [];
+  let total = 0, totalLivros = 0;
+  estante.forEach(l => {
+    total += l.preco * l.quantidade;
+    totalLivros += l.quantidade;
+  });
+
+  resumo.innerHTML = `
+    📚 Você está comprando <strong>${totalLivros}</strong> livro(s).<br>
+    💰 Total a pagar: <strong class="text-green-700">R$ ${total.toFixed(2)}</strong>
+  `;
   </script>
 </body>
 </html>
