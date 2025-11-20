@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>A voz do Vazio — Conto</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* ========= Tema Hollow Knight / Silksong ========= */
+    :root{
+      /* Hollow Knight base */
+      --hk-ink:   #020617; /* slate-950 */
+      --hk-deep:  #020617;
+      --hk-mid:   #0f172a; /* slate-900 */
+      --hk-cyan:  #38bdf8; /* sky-400 */
+      --hk-teal:  #2dd4bf; /* teal-400 */
+      --hk-bone:  #e5e7eb; /* gray-200 */
+
+      /* Silksong overlay */
+      --hk-silk-gold: #f59e0b; /* amber-500 */
+      --hk-silk-red:  #b91c1c; /* red-700 */
+      --hk-silk-deep: #18040a;
+    }
+
+    body{
+      background:
+        radial-gradient(1000px 600px at 70% -10%, #1d3557 0%, rgba(29,53,87,0) 60%),
+        radial-gradient(700px 400px at 10% -5%, #0ea5e9 0%, rgba(14,165,233,0) 55%),
+        linear-gradient(180deg, var(--hk-deep), var(--hk-mid));
+    }
+
+    /* Silksong “modo parte 2” */
+    body.silksong-mode{
+      background:
+        radial-gradient(1100px 650px at 70% -10%, rgba(245,158,11,0.35) 0%, rgba(185,28,28,0) 60%),
+        radial-gradient(800px 450px at 20% -5%, rgba(248,113,113,0.35) 0%, rgba(127,29,29,0) 55%),
+        linear-gradient(180deg, var(--hk-silk-deep), #020617);
+    }
+
+    /* Partículas (estrelas / poeira) */
+    .stars, .stars2, .stars3 {
+      position: fixed; inset:0; pointer-events:none; z-index:0;
+      background-repeat: repeat;
+      background-size: 200px 200px;
+      opacity: .6;
+      animation: drift linear infinite;
+    }
+    .stars  {
+      background-image:
+        radial-gradient(2px 2px at 40px 60px, #ffffff 0, transparent 60%),
+        radial-gradient(1.4px 1.4px at 120px 80px, #cbd5f5 0, transparent 60%),
+        radial-gradient(1.2px 1.2px at 90px 140px, #e2e8f0 0, transparent 60%);
+      animation-duration: 180s;
+    }
+    .stars2 {
+      background-image:
+        radial-gradient(1.6px 1.6px at 30px 50px, #a5f3fc 0, transparent 60%),
+        radial-gradient(1px 1px at 150px 110px, #f9fafb 0, transparent 60%);
+      animation-duration: 240s; opacity:.45;
+    }
+    .stars3 {
+      background-image:
+        radial-gradient(1.1px 1.1px at 70px 30px, #e0f2fe 0, transparent 60%),
+        radial-gradient(1.2px 1.2px at 10px 160px, #f8fafc 0, transparent 60%);
+      animation-duration: 320s; opacity:.34;
+    }
+
+    @keyframes drift {
+      from { background-position: 0 0, 0 0, 0 0; }
+      to   { background-position: 2000px 0, -2000px 0, 1000px 0; }
+    }
+
+    /* Máscara / “planeta” meio máscara Hollow Knight */
+    .planet {
+      position: absolute; right: -120px; top: -60px;
+      width: 320px; height: 320px; opacity:.45;
+      filter: drop-shadow(0 18px 45px rgba(0,0,0,.6));
+      z-index:1;
+    }
+    body.silksong-mode .planet{
+      opacity:.55;
+      filter: drop-shadow(0 20px 55px rgba(0,0,0,.8));
+    }
+
+    /* Card de leitura */
+    .reading-card{
+      backdrop-filter: blur(10px);
+      background: rgba(15,23,42,.82);
+      border: 1px solid rgba(148,163,184,.5);
+    }
+    body.light-mode .reading-card{
+      background: rgba(255,255,255,.9);
+      border-color: rgba(15,23,42,.1);
+    }
+    body.silksong-mode .reading-card{
+      background: radial-gradient(circle at top, rgba(248,250,252,0.06), rgba(15,23,42,0.9));
+      border-color: rgba(248,113,113,.6);
+    }
+
+    /* Barra de progresso */
+    .progress-wrap{
+      position: sticky; top:0; z-index:30; backdrop-filter: blur(6px);
+      background: linear-gradient(180deg, rgba(2,6,23,.88), rgba(2,6,23,.55));
+      border-bottom: 1px solid rgba(148,163,184,.4);
+    }
+    body.light-mode .progress-wrap{
+      background: linear-gradient(180deg, rgba(255,255,255,.88), rgba(255,255,255,.65));
+      border-bottom-color: rgba(15,23,42,.12);
+    }
+    body.silksong-mode .progress-wrap{
+      background: linear-gradient(180deg, rgba(24,4,10,.95), rgba(24,4,10,.7));
+      border-bottom-color: rgba(248,113,113,.6);
+    }
+
+    .progress-bar{
+      height: 3px;
+      background: linear-gradient(90deg, var(--hk-cyan), var(--hk-teal));
+      width: 0%;
+    }
+    body.silksong-mode .progress-bar{
+      background: linear-gradient(90deg, var(--hk-silk-gold), var(--hk-silk-red));
+    }
+
+    /* Controles de leitura */
+    .ctl-btn{
+      border: 1px solid rgba(148,163,184,.6);
+      background: rgba(15,23,42,.8);
+    }
+    .ctl-btn:hover{ background: rgba(30,64,175,.8); }
+    body.light-mode .ctl-btn{
+      border-color: rgba(15,23,42,.16);
+      background: rgba(15,23,42,.04);
+    }
+    body.light-mode .ctl-btn:hover{ background: rgba(15,23,42,.08); }
+    body.silksong-mode .ctl-btn{
+      border-color: rgba(248,113,113,.7);
+      background: rgba(24,4,10,.9);
+    }
+    body.silksong-mode .ctl-btn:hover{
+      background: rgba(127,29,29,.9);
+    }
+
+    /* Links / realces */
+    .accent { color: var(--hk-cyan); }
+    body.silksong-mode .accent{ color: var(--hk-silk-gold); }
+
+    .pill {
+      background: radial-gradient(circle at top left, rgba(56,189,248,.25), rgba(15,23,42,.85));
+      border: 1px solid rgba(148,163,184,.7);
+    }
+    body.light-mode .pill{
+      background: radial-gradient(circle at top left, rgba(56,189,248,.15), rgba(226,232,240,1));
+      border-color: rgba(148,163,184,.6);
+    }
+    body.silksong-mode .pill{
+      background: radial-gradient(circle at top left, rgba(245,158,11,.24), rgba(88,28,28,1));
+      border-color: rgba(248,113,113,.8);
+    }
+
+    /* ====== Tabs laterais do conto ====== */
+    .side-tabs{
+      backdrop-filter: blur(10px);
+      background: rgba(15,23,42,.85);
+      border: 1px solid rgba(148,163,184,.7);
+      border-radius: 12px;
+    }
+    body.light-mode .side-tabs{
+      background: rgba(255,255,255,.9);
+      border-color: rgba(148,163,184,.5);
+    }
+    body.silksong-mode .side-tabs{
+      background: rgba(24,4,10,.9);
+      border-color: rgba(248,113,113,.7);
+    }
+
+    .side-btn{
+      width: 100%;
+      text-align: left;
+      padding: .875rem 1rem;
+      border-radius: .65rem;
+      border: 1px solid rgba(148,163,184,.7);
+      background: rgba(15,23,42,.95);
+      color: #e5e7eb;
+      transition: background .2s, transform .15s, border-color .2s, box-shadow .2s;
+    }
+    .side-btn:hover{
+      background: rgba(30,64,175,.9);
+      transform: translateX(2px);
+      box-shadow: 0 0 18px rgba(56,189,248,.35);
+    }
+    .side-btn.active{
+      background: radial-gradient(circle at left, rgba(56,189,248,.35), rgba(15,23,42,1));
+      border-color: rgba(94,234,212,.9);
+      color: #f9fafb;
+      box-shadow: 0 0 30px rgba(56,189,248,.45);
+    }
+
+    body.light-mode .side-btn{
+      color:#0f172a;
+      border-color: rgba(148,163,184,.7);
+      background: rgba(226,232,240,.75);
+    }
+    body.light-mode .side-btn:hover{
+      background: rgba(209,213,219,.9);
+      box-shadow: none;
+    }
+    body.light-mode .side-btn.active{
+      background: radial-gradient(circle at left, rgba(56,189,248,.25), rgba(255,255,255,1));
+      border-color: rgba(37,99,235,.7);
+    }
+
+    body.silksong-mode .side-btn{
+      background: rgba(24,4,10,.95);
+      border-color: rgba(248,113,113,.6);
+    }
+    body.silksong-mode .side-btn:hover{
+      background: rgba(127,29,29,.9);
+      box-shadow: 0 0 24px rgba(248,113,113,.55);
+    }
+    body.silksong-mode .side-btn.active{
+      background: radial-gradient(circle at left, rgba(245,158,11,.3), rgba(88,28,28,1));
+      border-color: rgba(245,158,11,.9);
+      box-shadow: 0 0 34px rgba(248,113,113,.65);
+    }
+
+    .fade-in{ animation: fadeIn .28s ease; }
+    @keyframes fadeIn{
+      from{opacity:0; transform:translateY(4px)}
+      to{opacity:1; transform:translateY(0)}
+    }
+
+    /* Remove seleção de texto (reforçado depois) */
+    body, * {
+      user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+    }
+  </style>
+</head>
+
+<body class="text-slate-100 selection:bg-sky-400/30">
+  <!-- partículas -->
+  <div class="stars"></div>
+  <div class="stars2"></div>
+  <div class="stars3"></div>
+
+  <!-- progresso + controles -->
+  <div class="progress-wrap">
+    <div class="max-w-4xl mx-auto px-4">
+      <div class="flex items-center gap-3 py-3">
+        <a href="index.html#contos"
+           class="px-3 py-1.5 rounded-lg border border-white/20 hover:bg-white/10 transition text-sm">
+          Voltar
+        </a>
+        <div class="pill px-3 py-1.5 rounded-full text-xs uppercase tracking-wide">
+          A voz do Vazio
+        </div>
+        <div class="ml-auto flex flex-wrap items-center gap-2">
+          <button id="wNarrow"  class="ctl-btn text-xs px-2 py-1 rounded">Narrow</button>
+          <button id="wNormal"  class="ctl-btn text-xs px-2 py-1 rounded">Normal</button>
+          <button id="wWide"    class="ctl-btn text-xs px-2 py-1 rounded">Wide</button>
+          <span class="mx-2 text-xs opacity-70">•</span>
+          <button id="fzDown"   class="ctl-btn text-xs px-2 py-1 rounded">A−</button>
+          <button id="fzReset"  class="ctl-btn text-xs px-2 py-1 rounded">A</button>
+          <button id="fzUp"     class="ctl-btn text-xs px-2 py-1 rounded">A+</button>
+          <span class="mx-2 text-xs opacity-70">•</span>
+          <button id="lhDown"   class="ctl-btn text-xs px-2 py-1 rounded">LH−</button>
+          <button id="lhReset"  class="ctl-btn text-xs px-2 py-1 rounded">LH</button>
+          <button id="lhUp"     class="ctl-btn text-xs px-2 py-1 rounded">LH+</button>
+          <span class="mx-2 text-xs opacity-70">•</span>
+          <button id="musicToggle" class="ctl-btn text-xs px-2 py-1 rounded">Música: Off</button>
+          <input id="musicVol" type="range" min="0" max="1" step="0.01" value="0.15"
+                 class="ml-2 w-24 align-middle" title="Volume">
+        </div>
+      </div>
+    </div>
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <!-- topo visual com “máscara/planeta” -->
+  <svg class="planet" viewBox="0 0 200 200" aria-hidden="true">
+    <defs>
+      <radialGradient id="hkMaskGrad" cx="50%" cy="35%">
+        <stop offset="0%" stop-color="#e5f4ff"/>
+        <stop offset="55%" stop-color="#38bdf8"/>
+        <stop offset="100%" stop-color="#020617"/>
+      </radialGradient>
+      <linearGradient id="hkHornGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#e5e7eb"/>
+        <stop offset="100%" stop-color="#94a3b8"/>
+      </linearGradient>
+    </defs>
+    <!-- “cabeça” -->
+    <circle cx="100" cy="105" r="70" fill="url(#hkMaskGrad)"/>
+    <!-- chifres estilo cavaleiro -->
+    <path d="M55 70 Q40 15 75 20" fill="none" stroke="url(#hkHornGrad)" stroke-width="10" stroke-linecap="round"/>
+    <path d="M145 70 Q160 15 125 20" fill="none" stroke="url(#hkHornGrad)" stroke-width="10" stroke-linecap="round"/>
+    <!-- olhos vazios -->
+    <ellipse cx="80" cy="110" rx="11" ry="15" fill="#020617"/>
+    <ellipse cx="120" cy="110" rx="11" ry="15" fill="#020617"/>
+  </svg>
+
+  <!-- conteúdo -->
+  <main class="relative z-10">
+    <header class="max-w-4xl mx-auto px-4 pt-10">
+      <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight">
+        A voz do <span class="accent">Vazio</span>
+      </h1>
+      <p class="mt-3 text-slate-300">
+        Um conto sobre reinos que desabam por dentro, fios que controlam destinos,
+        e o sussurro silencioso de um vazio que também acolhe.
+      </p>
+      <div class="mt-4 flex flex-wrap items-center gap-3 text-xs">
+        <span class="pill px-3 py-1 rounded-full">Leitura ~ 7-9 min</span>
+        <span class="pill px-3 py-1 rounded-full">Melancolia</span>
+        <span class="pill px-3 py-1 rounded-full">luto</span>
+      </div>
+    </header>
+
+    <!-- CONTAINER leitor + sidebar -->
+    <div class="relative z-10 max-w-5xl mx-auto px-4 mt-8 mb-20 grid grid-cols-1 md:grid-cols-4 gap-6 items-start">
+
+      <!-- Barra lateral (tabs) -->
+      <aside class="side-tabs p-3 md:sticky md:top-24 md:col-span-1">
+        <div class="space-y-2">
+          <button id="tab1" class="side-btn active">
+            Parte 1 — Almas em Ruína
+          </button>
+          <button id="tab2" class="side-btn">
+            Parte 2 — Fios do Destino
+          </button>
+        </div>
+      </aside>
+
+      <!-- Leitor -->
+      <section id="reader" class="md:col-span-3 reading-card rounded-2xl shadow-xl">
+        <article id="conteudo" class="prose prose-invert max-w-none p-6 md:p-8 leading-relaxed fade-in">
+          <!-- Conteúdo inicial será injetado via JS -->
+        </article>
+      </section>
+    </div>
+  </main>
+
+  <footer class="relative z-10 pb-12">
+    <div class="max-w-4xl mx-auto px-4 text-sm text-slate-400">
+      <div class="flex items-center justify-between">
+        <span>&copy; 2025 — Pedro Henrique</span>
+        <a class="text-sky-400 hover:text-sky-300 transition" href="index.html#contos">
+          Voltar para contos
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ====== Tema salvo (claro/escuro) ====== -->
+  <script>
+    (function(){
+      const saved = localStorage.getItem('tema'); // mesmo nome do seu site
+      if(saved === 'claro'){
+        document.body.classList.add('light-mode');
+        document.body.classList.remove('text-slate-100');
+      } else {
+        document.body.classList.remove('light-mode');
+      }
+    })();
+  </script>
+
+  <!-- ====== Barra de progresso ====== -->
+  <script>
+    (function(){
+      const bar = document.getElementById('progressBar');
+      function update(){
+        const doc = document.documentElement;
+        const total = doc.scrollHeight - doc.clientHeight;
+        const pct = total > 0 ? (doc.scrollTop / total) * 100 : 0;
+        bar.style.width = pct + '%';
+      }
+      document.addEventListener('scroll', update, { passive:true });
+      window.addEventListener('resize', update);
+      update();
+    })();
+  </script>
+
+  <!-- ====== Controles de leitura ====== -->
+  <script>
+    (function(){
+      const reader = document.getElementById('reader');
+      const content = document.getElementById('conteudo');
+
+      // largura
+      document.getElementById('wNarrow').addEventListener('click', ()=> {
+        reader.classList.remove('max-w-4xl','max-w-3xl'); reader.classList.add('max-w-2xl');
+      });
+      document.getElementById('wNormal').addEventListener('click', ()=> {
+        reader.classList.remove('max-w-4xl','max-w-2xl'); reader.classList.add('max-w-3xl');
+      });
+      document.getElementById('wWide').addEventListener('click', ()=> {
+        reader.classList.remove('max-w-3xl','max-w-2xl'); reader.classList.add('max-w-4xl');
+      });
+
+      // font-size
+      let size = 1; // em
+      const applySize = ()=> { content.style.fontSize = size + 'em'; };
+      document.getElementById('fzUp').addEventListener('click', ()=> {
+        size = Math.min(size + 0.05, 1.5); applySize();
+      });
+      document.getElementById('fzDown').addEventListener('click', ()=> {
+        size = Math.max(size - 0.05, 0.85); applySize();
+      });
+      document.getElementById('fzReset').addEventListener('click', ()=> { size = 1; applySize(); });
+
+      // line-height
+      let lh = 1.8;
+      const applyLH = ()=> { content.style.lineHeight = lh; };
+      document.getElementById('lhUp').addEventListener('click', ()=> {
+        lh = Math.min(lh + 0.1, 2.2); applyLH();
+      });
+      document.getElementById('lhDown').addEventListener('click', ()=> {
+        lh = Math.max(lh - 0.1, 1.3); applyLH();
+      });
+      document.getElementById('lhReset').addEventListener('click', ()=> { lh = 1.8; applyLH(); });
+
+      applySize(); applyLH();
+    })();
+  </script>
+
+  <!-- ====== Música de fundo ====== -->
+  <audio id="bgm" src="coralchamber.mp3" loop preload="auto"></audio>
+  <script>
+    (function() {
+      const audio = document.getElementById('bgm');
+      const toggle = document.getElementById('musicToggle');
+      const vol = document.getElementById('musicVol');
+
+      if (!audio || !toggle || !vol) return;
+
+      const savedVol = parseFloat(localStorage.getItem('bgmVol') || '0.15');
+      const savedPlay = localStorage.getItem('bgmPlay') === '1';
+
+      audio.volume = isNaN(savedVol) ? 0.15 : savedVol;
+      vol.value = audio.volume.toString();
+
+      function updateLabel() {
+        toggle.textContent = audio.paused ? 'Música: Off' : 'Música: On';
+      }
+
+      toggle.addEventListener('click', async () => {
+        try {
+          if (audio.paused) {
+            await audio.play();
+            localStorage.setItem('bgmPlay', '1');
+          } else {
+            audio.pause();
+            localStorage.setItem('bgmPlay', '0');
+          }
+          updateLabel();
+        } catch (e) {
+          console.warn('Playback bloqueado:', e);
+        }
+      });
+
+      vol.addEventListener('input', () => {
+        audio.volume = parseFloat(vol.value);
+        localStorage.setItem('bgmVol', audio.volume.toString());
+      });
+
+      if (savedPlay) {
+        const oneShot = async () => {
+          try { await audio.play(); updateLabel(); }
+          catch (e) {}
+          finally { window.removeEventListener('pointerdown', oneShot); }
+        };
+        window.addEventListener('pointerdown', oneShot, { once: true });
+      }
+      updateLabel();
+    })();
+  </script>
+
+  <!-- ====== Textos das 2 partes + tabs com tema HK/Silksong ====== -->
+  <script>
+    const TEXTO_PARTE_1 = `
+      <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-sky-300 mb-4">
+        Almas em Ruína
+      </h1>
+      <p>Há reinos que tombam para sempre, e outros que continuam caindo dentro de nós, mesmo quando o mundo parece seguir intacto. Alguns chamam esses lugares internos de Hallownest: vastos, silenciosos, esquecidos. Territórios onde o tempo se acumula como poeira antiga, onde ecos persistem mesmo depois que a última voz se dissolve — como em certas cidades onde as lágrimas caem incessantes, confundindo-se com a própria chuva.</p>
+      <br>
+      <p>A queda raramente começa com um estrondo. Muitas vezes nasce de um brilho que se apaga devagar — uma luz pálida, teimosa, que se fragmenta até restar apenas um sopro fraco. Assim se dispersam esperanças que pareciam eternas, consumidas por claridades que ferem mais do que iluminam. Há melancolias que se infiltram como uma infecção tênue, dourada, delicada demais para ser notada no início, mas poderosa o suficiente para remodelar tudo o que repousa à sua volta.</p>
+      <br>
+      <p>Entre as ruínas, permanecem fragmentos: restos de sonhos que ninguém mais lembra, traços de sentidos que já não encontram lugar, sombras de versões abandonadas de nós mesmos. São como vestígios esquecidos em antigas encruzilhadas, aguardando olhos que nunca voltam. Ruínas guardam verdades incômodas: lembram que até a luz pode se tornar dura demais, e que até aquilo que parecia puro pode lentamente adoecer.</p>
+      <br>
+      <p>Nas profundezas mais silenciosas, onde o escuro se torna misericordioso, existe um espaço onde nada exige brilho. Um vazio antigo, não ameaçador, mas acolhedor. Ali, a tristeza repousa como um viajante cansado; ali, a dor deixa de ser inimiga e transforma-se em parte da paisagem. Esse vazio não é ausência: é pausa. É o ponto onde o coração, exausto de batalhas invisíveis, enfim encontra chão, como quem alcança uma terra preparada apenas para o descanso.</p>
+      <br>
+      <p>Sob as camadas escuras, pequenos pulsos persistem, semelhantes a ecos vindos de uma bacia de almas esquecidas. Surgem fagulhas onde tudo parecia morto; brotam flores tímidas entre rachaduras ocultas. Assim o renascimento se anuncia — não com clarões, mas com gestos discretos. A esperança raramente aparece como sol; ela chega como um lampejo escondido, quase imperceptível, mas capaz de transformar o interior inteiro.</p>
+      <br>
+      <p>As almas feridas acreditam que nada floresce em terrenos devastados. Mas a ruína nunca é total. Em cada pedra quebrada repousa uma lembrança; em cada lembrança, o embrião de um novo caminho. Há força no que resiste. Há beleza nas estruturas que, mesmo partidas, continuam de pé. A dor não apaga: revela. Mostra o que caiu, o que permaneceu e o que ainda pode emergir de um ninho profundo onde tudo parecia perdido.</p>
+      <br>
+      <p>A tristeza profunda é parecida com um reino antigo: vasta, subterrânea, cheia de corredores onde é fácil se perder. Mas a travessia nunca é definitiva. Sempre existe um ponto onde a decadência encontra fresta; onde a luz, mesmo fraca, alcança; onde o coração, mesmo cansado, ainda se move um pequeno passo à frente.</p>
+      <br>
+      <p>A ruína é onde a queda termina.<br/>
+      E onde o renascimento começa.<br><br>
+      Pois mesmo quando tudo parece consumido, quando a memória pesa como pedra e o mundo interno se desmorona, há algo que ninguém consegue extinguir:<br/>
+      nas profundezas do vazio, um brilho ainda persiste.<br/><br>
+      E enquanto esse brilho — tímido, oculto, silencioso — continuar respirando,<br/>
+      haverá caminho.<br/>
+      Haverá retorno.<br/>
+      Haverá vida.</p>
+    `;
+
+    const TEXTO_PARTE_2 = `
+      <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-amber-300 mb-4">
+        Fios do Destino
+      </h1>
+      <p>Há reinos que não caem — eles são puxados.<br/>
+      Eram mantidos vivos por fios tão finos que, de perto, revelavam-se correntes invisíveis. Em certas terras elevadas, onde a seda vibra como músculo vivo, o poder não nasce do mérito, mas do entrelaçar habilidoso de memórias manipuladas. É ali que os destinos são tecidos, e é ali que tantos se perdem.</p>
+      <br><p>A desigualdade se ergue como parede.<br/>
+      Nos salões acima do reino, a seda brilha como ouro, tecida por mãos que nunca tocaram o chão. Abaixo, entre caminhos de pecadores, a poeira sobe como prece sufocada; peregrinos cambaleiam, carregando seus fragmentos de esperança enquanto trilham caminhos que os levam sempre para baixo, mesmo quando acreditam estar subindo.</p>
+      <br><p>Nos corredores daquele reino, cada fio guarda uma intenção.<br/>
+      Alguns conduzem suavemente, outros puxam com violência — todos, porém, obedecem às tecelãs e à sua matriarca, cuja arte não cria apenas tecido, mas realidades. Ali, as memórias não pertencem a quem as viveu. São desfiadas, rearranjadas, costuradas de volta com significados novos, moldadas para servir à ordem que reina nos salões supremos.</p>
+      <br><p>E assim, a manipulação não vem na forma de grito, mas de sutileza:<br/>
+      um impulso sutil direciona um passo,<br/>
+      uma lembrança distorcida altera uma escolha,<br/>
+      um fio apertado demais transforma coragem em servidão.</p>
+      <br><p>Nos salões superiores, onde tudo parece perfeito demais, harmônico pelas músicas e silencioso pelo controle. Ali, as melodias entrelaçadas à seda carregam lembranças antigas, como se cada nota fosse um fio capaz de despertar ou aprisionar memórias adormecidas. Cada gesto, cada som, cada brilho está preso a uma estrutura maior, feita para manter os altos no alto e os baixos sempre mais profundos. A Cidadela observa tudo, imponente, como se julgasse o valor de cada alma que tenta ascender por entre seus degraus quebrados.</p>
+      <br><p>Mas nem todo fio permanece preso para sempre.<br/>
+      Nas trilhas esquecidas, onde o vento corta mais fundo e os passos ecoam sem direção, existe espaço para aquilo que escapa. Fragmentos de histórias não registradas, memórias que a seda não conseguiu capturar totalmente, pequenas verdades que resistiram ao toque das tecelãs. Ali, onde a manipulação não alcança, surgem vidas que não aceitam o destino imposto, e tentam tecer seus próprios caminhos — mesmo que com mãos trêmulas.</p>
+      <br><p>No fim de cada caminho imposto há sempre uma queda.<br/>
+      E no fundo dessa queda, tão profundo quanto o próprio Abismo, descobre-se que nem toda vida nasce da luz. Algumas surgem da seda que um dia caiu, perdeu o brilho, encontrou o escuro e ali aprendeu a respirar.<br/>
+      A resistência também se tece.</p>
+      <br><p>Há peregrinos que jamais chegam aos salões supremos, mas encontram força nos degraus devastados onde tropeçaram. Há memórias que, mesmo rearranjadas, sussurram sua forma original a quem tiver coragem de escutá-las. Há destinos que, mesmo puxados por mãos invisíveis, rompem sua própria linha e revelam para onde realmente querem ir.</p>
+      <br><p>Os fios que controlam também podem libertar.<br/>
+      Tudo depende de quem os toca, como uma música libertadora.</p>
+      <br><p>E quando o tecido finalmente se desfaz, quando a seda já não aprisiona, quando as estruturas deixam de impor quem deve subir e quem deve cair, revela-se uma verdade simples:<br/>
+      nenhum reino, por mais elevado, é indestrutível.<br/>
+      Nenhum destino é fixo.<br/>
+      Nenhuma manipulação dura para sempre.</p>
+      <br><p>Na dança silenciosa dos fios, o poder tenta se impor.<br/>
+      Mas é no gesto de rompê-los — suave, decidido, inevitável —<br/>
+      que uma alma encontra seu próprio caminho.</p>
+    `;
+
+    (function(){
+      const conteudo = document.getElementById('conteudo');
+      const tabs = [document.getElementById('tab1'), document.getElementById('tab2')];
+      const textos = [TEXTO_PARTE_1, TEXTO_PARTE_2];
+
+      function setParte(i){
+        tabs.forEach(t=>t.classList.remove('active'));
+        tabs[i].classList.add('active');
+
+        // Tema: HK (parte 1) / Silksong (parte 2)
+        if(i === 0){
+          document.body.classList.remove('silksong-mode');
+        } else {
+          document.body.classList.add('silksong-mode');
+        }
+
+        conteudo.classList.remove('fade-in');
+        void conteudo.offsetWidth;
+        conteudo.innerHTML = textos[i];
+        conteudo.classList.add('fade-in');
+
+        // reseta scroll pro topo do texto
+        const reader = document.getElementById('reader');
+        if(reader) reader.scrollIntoView({ behavior:'smooth', block:'start' });
+      }
+
+      // inicial: parte 1 (HK)
+      setParte(0);
+
+      tabs[0].addEventListener('click', ()=> setParte(0));
+      tabs[1].addEventListener('click', ()=> setParte(1));
+    })();
+  </script>
+
+  <!-- ====== Bloqueios de cópia/seleção (como na sua outra página) ====== -->
+  <script>
+    document.addEventListener('selectstart', e => e.preventDefault());
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('keydown', e => {
+      if ((e.ctrlKey || e.metaKey) && ['c', 'x', 'u', 's', 'p'].includes(e.key.toLowerCase())) {
+        e.preventDefault();
+      }
+    });
+  </script>
+</body>
+</html>
