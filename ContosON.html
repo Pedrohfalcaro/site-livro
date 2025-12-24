@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>O Natal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* ========= Tema Natal (mais natalino: pinheiro + vinho + dourado) ========= */
+    :root{
+      --x-ink:  #05060a;
+      --x-deep: #05060a;
+
+      --x-mid:  #07130f;  /* verde bem escuro */
+      --x-pine: #062018;  /* pinheiro */
+      --x-wine: #1a0508;  /* vermelho vinho */
+
+      --x-snow: #f8fafc;
+      --x-mint: #22c55e;  /* green-500 */
+      --x-red:  #dc2626;  /* red-600 */
+      --x-gold: #fbbf24;  /* amber-400 (dourado quente) */
+      --x-ice:  #93c5fd;
+    }
+
+    body{
+      /* Fundo: pinheiro + vinho + brilho dourado */
+      background:
+        radial-gradient(900px 520px at 70% -12%, rgba(251,191,36,0.28) 0%, rgba(251,191,36,0) 60%),
+        radial-gradient(760px 460px at 18% -10%, rgba(220,38,38,0.20) 0%, rgba(220,38,38,0) 58%),
+        radial-gradient(900px 600px at 10% 110%, rgba(34,197,94,0.18) 0%, rgba(34,197,94,0) 60%),
+        linear-gradient(180deg, var(--x-wine) 0%, var(--x-pine) 55%, var(--x-mid) 100%);
+    }
+
+    /* ===== Partículas: neve (3 camadas) ===== */
+    .snow, .snow2, .snow3{
+      position: fixed; inset:0; pointer-events:none; z-index:0;
+      background-repeat: repeat;
+      background-size: 220px 220px;
+      opacity: .65;
+      animation: fall linear infinite;
+      filter: drop-shadow(0 10px 30px rgba(0,0,0,.35));
+    }
+    .snow{
+      background-image:
+        radial-gradient(2px 2px at 40px 60px, rgba(248,250,252,.95) 0, transparent 62%),
+        radial-gradient(1.6px 1.6px at 120px 90px, rgba(226,232,240,.9) 0, transparent 62%),
+        radial-gradient(1.2px 1.2px at 90px 150px, rgba(255,255,255,.85) 0, transparent 62%);
+      animation-duration: 18s;
+    }
+    .snow2{
+      background-image:
+        radial-gradient(1.6px 1.6px at 30px 40px, rgba(224,242,254,.75) 0, transparent 62%),
+        radial-gradient(1.1px 1.1px at 150px 120px, rgba(248,250,252,.75) 0, transparent 62%),
+        radial-gradient(1.3px 1.3px at 70px 190px, rgba(241,245,249,.65) 0, transparent 62%);
+      animation-duration: 26s; opacity:.45;
+    }
+    .snow3{
+      background-image:
+        radial-gradient(1.1px 1.1px at 70px 30px, rgba(255,255,255,.55) 0, transparent 62%),
+        radial-gradient(1.2px 1.2px at 10px 160px, rgba(224,242,254,.55) 0, transparent 62%),
+        radial-gradient(1px 1px at 190px 80px, rgba(248,250,252,.45) 0, transparent 62%);
+      animation-duration: 34s; opacity:.30;
+    }
+    @keyframes fall{
+      from{ background-position: 0 -200px, 0 -200px, 0 -200px; }
+      to  { background-position: 0 2000px, 0 2400px, 0 1800px; }
+    }
+
+    /* ===== “Enfeite” topo: ornamento / estrela ===== */
+    .ornament{
+      position:absolute; right:-120px; top:-70px;
+      width: 340px; height: 340px; opacity:.58;
+      filter: drop-shadow(0 18px 45px rgba(0,0,0,.6));
+      z-index:1;
+    }
+
+    /* ===== Card de leitura ===== */
+    .reading-card{
+      backdrop-filter: blur(10px);
+      background:
+        radial-gradient(circle at top, rgba(251,191,36,0.08), rgba(15,23,42,0.82));
+      border: 1px solid rgba(251,191,36,.22);
+    }
+    body.light-mode .reading-card{
+      background: rgba(255,255,255,.92);
+      border-color: rgba(15,23,42,.10);
+    }
+
+    /* ===== Barra de progresso ===== */
+    .progress-wrap{
+      position: sticky; top:0; z-index:30; backdrop-filter: blur(6px);
+      background: linear-gradient(180deg, rgba(10,6,10,.92), rgba(10,6,10,.55));
+      border-bottom: 1px solid rgba(251,191,36,.18);
+    }
+    body.light-mode .progress-wrap{
+      background: linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,.65));
+      border-bottom-color: rgba(15,23,42,.12);
+    }
+
+    .progress-bar{
+      height: 3px;
+      background: linear-gradient(90deg, var(--x-mint), var(--x-gold), var(--x-red));
+      width: 0%;
+    }
+
+    /* ===== Controles de leitura ===== */
+    .ctl-btn{
+      border: 1px solid rgba(251,191,36,.22);
+      background: rgba(15,23,42,.72);
+    }
+    .ctl-btn:hover{ background: rgba(185,28,28,.70); } /* red-700 */
+    body.light-mode .ctl-btn{
+      border-color: rgba(15,23,42,.16);
+      background: rgba(15,23,42,.04);
+    }
+    body.light-mode .ctl-btn:hover{ background: rgba(15,23,42,.08); }
+
+    /* ===== Realces ===== */
+    .accent{ color: var(--x-gold); }
+    .pill{
+      background: radial-gradient(circle at top left, rgba(251,191,36,.18), rgba(15,23,42,.86));
+      border: 1px solid rgba(251,191,36,.22);
+    }
+    body.light-mode .pill{
+      background: radial-gradient(circle at top left, rgba(251,191,36,.18), rgba(226,232,240,1));
+      border-color: rgba(148,163,184,.55);
+    }
+
+    /* ===== Tabs laterais (3 atos) ===== */
+    .side-tabs{
+      backdrop-filter: blur(10px);
+      background: rgba(15,23,42,.78);
+      border: 1px solid rgba(251,191,36,.20);
+      border-radius: 12px;
+    }
+    body.light-mode .side-tabs{
+      background: rgba(255,255,255,.9);
+      border-color: rgba(148,163,184,.5);
+    }
+
+    .side-btn{
+      width:100%;
+      text-align:left;
+      padding:.875rem 1rem;
+      border-radius:.65rem;
+      border:1px solid rgba(251,191,36,.18);
+      background: rgba(15,23,42,.90);
+      color:#e5e7eb;
+      transition: background .2s, transform .15s, border-color .2s, box-shadow .2s;
+    }
+    .side-btn:hover{
+      background: rgba(185,28,28,.72);
+      transform: translateX(2px);
+      box-shadow: 0 0 18px rgba(251,191,36,.16);
+    }
+    .side-btn.active{
+      background: radial-gradient(circle at left, rgba(34,197,94,.22), rgba(251,191,36,.16), rgba(15,23,42,1));
+      border-color: rgba(251,191,36,.55);
+      color:#f9fafb;
+      box-shadow: 0 0 30px rgba(251,191,36,.16);
+    }
+
+    body.light-mode .side-btn{
+      color:#0f172a;
+      border-color: rgba(148,163,184,.7);
+      background: rgba(226,232,240,.75);
+    }
+    body.light-mode .side-btn:hover{
+      background: rgba(209,213,219,.9);
+      box-shadow:none;
+    }
+    body.light-mode .side-btn.active{
+      background: radial-gradient(circle at left, rgba(251,191,36,.22), rgba(255,255,255,1));
+      border-color: rgba(217,119,6,.55);
+    }
+
+    .fade-in{ animation: fadeIn .28s ease; }
+    @keyframes fadeIn{ from{opacity:0; transform:translateY(4px)} to{opacity:1; transform:translateY(0)} }
+
+    /* Bloqueio seleção (reforçado depois) */
+    body, *{
+      user-select:none;
+      -webkit-user-select:none;
+      -ms-user-select:none;
+    }
+  </style>
+</head>
+
+<body class="text-slate-100 selection:bg-amber-400/30">
+  <!-- neve -->
+  <div class="snow"></div>
+  <div class="snow2"></div>
+  <div class="snow3"></div>
+
+  <!-- progresso + controles -->
+  <div class="progress-wrap">
+    <div class="max-w-4xl mx-auto px-4">
+      <div class="flex items-center gap-3 py-3">
+        <a href="index.html#contos"
+           class="px-3 py-1.5 rounded-lg border border-white/20 hover:bg-white/10 transition text-sm">
+          Voltar
+        </a>
+        <div class="pill px-3 py-1.5 rounded-full text-xs uppercase tracking-wide">
+          O Natal
+        </div>
+        <div class="ml-auto flex flex-wrap items-center gap-2">
+          <button id="wNarrow" class="ctl-btn text-xs px-2 py-1 rounded">Narrow</button>
+          <button id="wNormal" class="ctl-btn text-xs px-2 py-1 rounded">Normal</button>
+          <button id="wWide"   class="ctl-btn text-xs px-2 py-1 rounded">Wide</button>
+          <span class="mx-2 text-xs opacity-70">•</span>
+          <button id="fzDown"  class="ctl-btn text-xs px-2 py-1 rounded">A−</button>
+          <button id="fzReset" class="ctl-btn text-xs px-2 py-1 rounded">A</button>
+          <button id="fzUp"    class="ctl-btn text-xs px-2 py-1 rounded">A+</button>
+          <span class="mx-2 text-xs opacity-70">•</span>
+          <button id="lhDown"  class="ctl-btn text-xs px-2 py-1 rounded">LH−</button>
+          <button id="lhReset" class="ctl-btn text-xs px-2 py-1 rounded">LH</button>
+          <button id="lhUp"    class="ctl-btn text-xs px-2 py-1 rounded">LH+</button>
+          <span class="mx-2 text-xs opacity-70">•</span>
+          <button id="musicToggle" class="ctl-btn text-xs px-2 py-1 rounded">Música: Off</button>
+          <input id="musicVol" type="range" min="0" max="1" step="0.01" value="0.15"
+                 class="ml-2 w-24 align-middle" title="Volume">
+        </div>
+      </div>
+    </div>
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <!-- ornamento -->
+  <svg class="ornament" viewBox="0 0 220 220" aria-hidden="true">
+    <defs>
+      <radialGradient id="ornGrad" cx="45%" cy="35%">
+        <stop offset="0%"  stop-color="#fff7ed"/>
+        <stop offset="55%" stop-color="#fbbf24"/>
+        <stop offset="100%" stop-color="#05060a"/>
+      </radialGradient>
+      <linearGradient id="shine" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#e5e7eb"/>
+        <stop offset="100%" stop-color="#94a3b8"/>
+      </linearGradient>
+    </defs>
+
+    <!-- topo do enfeite -->
+    <path d="M110 18 C100 28 100 40 110 48 C120 40 120 28 110 18Z" fill="url(#shine)" opacity=".95"/>
+    <rect x="98" y="46" width="24" height="10" rx="4" fill="url(#shine)" opacity=".9"/>
+
+    <!-- bola -->
+    <circle cx="110" cy="125" r="70" fill="url(#ornGrad)"/>
+
+    <!-- estrela simples dentro -->
+    <path d="M110 78 L120 105 L148 106 L126 123 L134 150 L110 136 L86 150 L94 123 L72 106 L100 105 Z"
+          fill="rgba(248,250,252,.14)" stroke="rgba(251,191,36,.55)" stroke-width="2"/>
+
+    <!-- faixas “doces” -->
+    <path d="M60 135 C85 125 135 125 160 135" fill="none" stroke="rgba(220,38,38,.48)" stroke-width="10" stroke-linecap="round"/>
+    <path d="M62 155 C88 145 132 145 158 155" fill="none" stroke="rgba(34,197,94,.40)" stroke-width="10" stroke-linecap="round"/>
+  </svg>
+
+  <!-- conteúdo -->
+  <main class="relative z-10">
+    <header class="max-w-4xl mx-auto px-4 pt-10">
+      <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight">
+        O <span class="accent">Natal</span>
+      </h1>
+      <p class="mt-3 text-slate-300">
+       Um conto sobre o tempo que passa e o que se recusa a mudar, contado através de um Natal que permanece.
+      </p>
+      <div class="mt-4 flex flex-wrap items-center gap-3 text-xs">
+        <span class="pill px-3 py-1 rounded-full">Leitura ~ 6-8 min</span>
+        <span class="pill px-3 py-1 rounded-full">melancolia</span>
+        <span class="pill px-3 py-1 rounded-full">natal</span>
+      </div>
+    </header>
+
+    <!-- CONTAINER leitor + sidebar -->
+    <div class="relative z-10 max-w-5xl mx-auto px-4 mt-8 mb-20 grid grid-cols-1 md:grid-cols-4 gap-6 items-start">
+      <!-- tabs -->
+      <aside class="side-tabs p-3 md:sticky md:top-24 md:col-span-1">
+        <div class="space-y-2">
+          <button id="tab1" class="side-btn active">ATO I — Antes</button>
+          <button id="tab2" class="side-btn">ATO II — Durante</button>
+          <button id="tab3" class="side-btn">ATO III — Depois</button>
+        </div>
+      </aside>
+
+      <!-- leitor -->
+      <section id="reader" class="md:col-span-3 reading-card rounded-2xl shadow-xl">
+        <article id="conteudo" class="prose prose-invert max-w-none p-6 md:p-8 leading-relaxed fade-in">
+          <!-- Conteúdo será injetado via JS -->
+        </article>
+      </section>
+    </div>
+  </main>
+
+  <footer class="relative z-10 pb-12">
+    <div class="max-w-4xl mx-auto px-4 text-sm text-slate-400">
+      <div class="flex items-center justify-between">
+        <span>&copy; 2025 — Pedro Henrique</span>
+        <a class="text-amber-300 hover:text-amber-200 transition" href="index.html#contos">
+          Voltar para contos
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ====== Tema salvo (claro/escuro) ====== -->
+  <script>
+    (function(){
+      const saved = localStorage.getItem('tema');
+      if(saved === 'claro'){
+        document.body.classList.add('light-mode');
+        document.body.classList.remove('text-slate-100');
+      } else {
+        document.body.classList.remove('light-mode');
+      }
+    })();
+  </script>
+
+  <!-- ====== Barra de progresso ====== -->
+  <script>
+    (function(){
+      const bar = document.getElementById('progressBar');
+      function update(){
+        const doc = document.documentElement;
+        const total = doc.scrollHeight - doc.clientHeight;
+        const pct = total > 0 ? (doc.scrollTop / total) * 100 : 0;
+        bar.style.width = pct + '%';
+      }
+      document.addEventListener('scroll', update, { passive:true });
+      window.addEventListener('resize', update);
+      update();
+    })();
+  </script>
+
+  <!-- ====== Controles de leitura ====== -->
+  <script>
+    (function(){
+      const reader = document.getElementById('reader');
+      const content = document.getElementById('conteudo');
+
+      // largura
+      document.getElementById('wNarrow').addEventListener('click', ()=> {
+        reader.classList.remove('max-w-4xl','max-w-3xl'); reader.classList.add('max-w-2xl');
+      });
+      document.getElementById('wNormal').addEventListener('click', ()=> {
+        reader.classList.remove('max-w-4xl','max-w-2xl'); reader.classList.add('max-w-3xl');
+      });
+      document.getElementById('wWide').addEventListener('click', ()=> {
+        reader.classList.remove('max-w-3xl','max-w-2xl'); reader.classList.add('max-w-4xl');
+      });
+
+      // font-size
+      let size = 1;
+      const applySize = ()=> { content.style.fontSize = size + 'em'; };
+      document.getElementById('fzUp').addEventListener('click', ()=> {
+        size = Math.min(size + 0.05, 1.5); applySize();
+      });
+      document.getElementById('fzDown').addEventListener('click', ()=> {
+        size = Math.max(size - 0.05, 0.85); applySize();
+      });
+      document.getElementById('fzReset').addEventListener('click', ()=> { size = 1; applySize(); });
+
+      // line-height
+      let lh = 1.8;
+      const applyLH = ()=> { content.style.lineHeight = lh; };
+      document.getElementById('lhUp').addEventListener('click', ()=> {
+        lh = Math.min(lh + 0.1, 2.2); applyLH();
+      });
+      document.getElementById('lhDown').addEventListener('click', ()=> {
+        lh = Math.max(lh - 0.1, 1.3); applyLH();
+      });
+      document.getElementById('lhReset').addEventListener('click', ()=> { lh = 1.8; applyLH(); });
+
+      applySize(); applyLH();
+    })();
+  </script>
+
+  <!-- ====== Música de fundo (coloque seu arquivo .mp3 na pasta) ====== -->
+  <audio id="bgm" src="natal-ambient.mp3" loop preload="auto"></audio>
+  <script>
+    (function() {
+      const audio = document.getElementById('bgm');
+      const toggle = document.getElementById('musicToggle');
+      const vol = document.getElementById('musicVol');
+      if (!audio || !toggle || !vol) return;
+
+      const savedVol = parseFloat(localStorage.getItem('bgmVol') || '0.15');
+      const savedPlay = localStorage.getItem('bgmPlay') === '1';
+
+      audio.volume = isNaN(savedVol) ? 0.15 : savedVol;
+      vol.value = audio.volume.toString();
+
+      function updateLabel(){ toggle.textContent = audio.paused ? 'Música: Off' : 'Música: On'; }
+
+      toggle.addEventListener('click', async () => {
+        try{
+          if(audio.paused){ await audio.play(); localStorage.setItem('bgmPlay','1'); }
+          else{ audio.pause(); localStorage.setItem('bgmPlay','0'); }
+          updateLabel();
+        }catch(e){ console.warn('Playback bloqueado:', e); }
+      });
+
+      vol.addEventListener('input', () => {
+        audio.volume = parseFloat(vol.value);
+        localStorage.setItem('bgmVol', audio.volume.toString());
+      });
+
+      if(savedPlay){
+        const oneShot = async () => {
+          try{ await audio.play(); updateLabel(); }
+          catch(e){}
+          finally{ window.removeEventListener('pointerdown', oneShot); }
+        };
+        window.addEventListener('pointerdown', oneShot, { once:true });
+      }
+      updateLabel();
+    })();
+  </script>
+
+  <!-- ====== Textos (3 atos) + tabs ====== -->
+  <script>
+    const TEXTO_ATO_1 = `
+      <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-amber-300 mb-4">
+        Antes
+      </h1>
+
+      <p>O Natal estava ali antes de quase tudo.</p>
+      <p>Não se sabe quando começou, apenas que nunca terminou. As luzes permanecem presas aos mesmos fios, atravessando paredes que já foram pintadas outras vezes. Piscam com atraso, como se carregassem um ritmo próprio, aprendido em um tempo em que ninguém tinha pressa.</p>
+
+      <br>
+
+      <p>A árvore ocupa o mesmo espaço. Sempre o mesmo canto. Seus galhos artificiais não envelhecem; apenas acumulam poeira nos lugares onde o toque deixou de alcançar. Os enfeites repetem histórias que já não são contadas. Alguns perderam partes. Outros foram consertados com cuidado excessivo, como se o defeito fosse parte da memória.</p>
+
+      <br>
+
+      <p>O calendário avançou muitas vezes.</p>
+      <p>Mudaram os móveis. Mudaram os nomes nas caixas de correio. Mudaram os rostos nas fotografias penduradas na parede. Mas o Natal ficou. Intocado. Como um marco fixo em um território que se transforma ao redor.</p>
+
+      <br>
+
+      <p>As músicas retornam todos os anos.</p>
+      <p>Não porque alguém as escolha, mas porque sempre tocaram. O som preenche o espaço sem ocupar verdadeiramente o ambiente. É ouvido sem ser escutado. Uma presença constante que já não provoca reação.</p>
+
+      <br>
+
+      <p>Do lado de fora, o mundo se atualiza.</p>
+      <p>Novas palavras surgem. Novos gestos. Novas urgências. O tempo acelera. Tudo aprende a mudar para sobreviver. Aqui dentro, o Natal observa. Não se adapta. Não acompanha. Ele permanece.</p>
+
+      <br>
+
+      <p>E essa permanência é tratada como virtude.</p>
+      <p>Como se manter-se igual fosse sinal de fidelidade. Como se repetir fosse o mesmo que lembrar.</p>
+
+      <br>
+
+      <p>O brilho ainda existe.</p>
+      <p>Mas não aquece.</p>
+    `;
+
+    const TEXTO_ATO_2 = `
+      <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-red-300 mb-4">
+        Durante
+      </h1>
+
+      <p>Lá fora, as ruas se transformam.</p>
+      <p>As vitrines mudam de cor, de linguagem, de promessa. As pessoas atravessam dezembro carregando anos inteiros nos olhos. O mundo avança com ruído, com falhas, com tentativas. Ele erra, corrige, recomeça.</p>
+
+      <br>
+
+      <p>O Natal, não.</p>
+      <p>Ele aguarda.</p>
+
+      <br>
+
+      <p>As mesmas luzes acesas. As mesmas canções toleradas. As mesmas frases repetidas com pequenas variações, como se o tempo tivesse aprendido a falar apenas em ecos.</p>
+
+      <br>
+
+      <p>As decorações resistem.</p>
+      <p>Não por força, mas por recusa. Nada é substituído. Nada é questionado. O desgaste vira prova de autenticidade. O antigo se confunde com o verdadeiro.</p>
+
+      <br>
+
+      <p>Há um conforto nisso.</p>
+      <p>Enquanto tudo muda, algo permanece previsível. Algo que não exige escolha. Não exige atualização. Basta montar da mesma forma, no mesmo dia, no mesmo lugar.</p>
+
+      <br>
+
+      <p>O Natal vira abrigo.</p>
+      <p>Contra o movimento.</p>
+
+      <br>
+
+      <p>Mas o mundo não espera.</p>
+      <p>As pessoas mudam fora do enquadramento. Aprendem novas formas de existir, novas maneiras de olhar, novas perguntas. Quando retornam, encontram o mesmo cenário, intacto, como se o tempo tivesse sido proibido de entrar.</p>
+
+      <br>
+
+      <p>A repetição começa a pesar.</p>
+      <p>As luzes piscam mais fracas. O vermelho escurece. O dourado perde o brilho. Mas nada disso é visto como sinal de esgotamento. Apenas como tradição.</p>
+
+      <br>
+
+      <p>E tradição, ali, é sinônimo de imobilidade.</p>
+      <p>O Natal não acompanha as mudanças.</p>
+      <p>Ele sobrevive a elas.</p>
+    `;
+
+    const TEXTO_ATO_3 = `
+      <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-emerald-300 mb-4">
+        Depois
+      </h1>
+
+      <p>Com o passar dos anos, algo se torna evidente.</p>
+      <p>Não é o Natal que preserva a memória — é a memória que impede o Natal de mudar. O que permanece não é cuidado, é apego. Um apego que confunde constância com sentido.</p>
+
+      <br>
+
+      <p>As luzes continuam acesas mesmo quando já não iluminam. As músicas tocam mesmo quando ninguém presta atenção. O ritual se cumpre sem presença verdadeira.</p>
+
+      <br>
+
+      <p>O mundo, lá fora, segue adiante.</p>
+      <p>Constrói novas formas. Derruba antigas. Aprende com o erro. O movimento deixa marcas, mas também abre espaço.</p>
+
+      <br>
+
+      <p>Aqui, o espaço já está ocupado.</p>
+      <p>O Natal ocupa tudo.</p>
+      <p>Não sobra lugar para o novo, apenas para a repetição. Para a ideia de que antes era melhor. Para a segurança de um passado que não precisa ser confrontado.</p>
+
+      <br>
+
+      <p>O tempo passa.</p>
+      <p>E o Natal permanece como um objeto esquecido em exposição permanente.</p>
+      <p>Intocável. Respeitado. Fora de uso.</p>
+
+      <br>
+
+      <p>Não há ruptura.</p>
+      <p>Não há fim.</p>
+      <p>Apenas a constatação silenciosa de que aquilo que se recusa a mudar não permanece vivo — apenas continua existindo.</p>
+
+      <br>
+
+      <p>As luzes seguem piscando.</p>
+      <p>Mas agora é possível perceber: não é brilho.</p>
+      <p>É inércia.</p>
+
+      <br>
+
+      <p>E enquanto o mundo segue, aprendendo a mudar, o Natal permanece.</p>
+    `;
+
+    (function(){
+      const conteudo = document.getElementById('conteudo');
+      const tabs = [
+        document.getElementById('tab1'),
+        document.getElementById('tab2'),
+        document.getElementById('tab3')
+      ];
+      const textos = [TEXTO_ATO_1, TEXTO_ATO_2, TEXTO_ATO_3];
+
+      function setAto(i){
+        tabs.forEach(t => t.classList.remove('active'));
+        tabs[i].classList.add('active');
+
+        conteudo.classList.remove('fade-in');
+        void conteudo.offsetWidth;
+        conteudo.innerHTML = textos[i];
+        conteudo.classList.add('fade-in');
+
+        const reader = document.getElementById('reader');
+        if(reader) reader.scrollIntoView({ behavior:'smooth', block:'start' });
+      }
+
+      setAto(0);
+      tabs[0].addEventListener('click', () => setAto(0));
+      tabs[1].addEventListener('click', () => setAto(1));
+      tabs[2].addEventListener('click', () => setAto(2));
+    })();
+  </script>
+
+  <!-- ====== Bloqueios de cópia/seleção ====== -->
+  <script>
+    document.addEventListener('selectstart', e => e.preventDefault());
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('keydown', e => {
+      if ((e.ctrlKey || e.metaKey) && ['c','x','u','s','p'].includes(e.key.toLowerCase())) {
+        e.preventDefault();
+      }
+    });
+  </script>
+</body>
+</html>
