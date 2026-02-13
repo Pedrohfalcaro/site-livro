@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <link rel="icon" type="image/png" href="../imagens/favicon.png">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pagamento pendente — Estante de Histórias</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <meta property="og:title" content="Pagamento pendente — Estante de Histórias" />
+  <meta property="og:description" content="Seu pagamento está pendente. Assim que aprovado, seu pedido será confirmado." />
+  <meta property="og:image" content="../imagens/favicon.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="pt_BR" />
+
+  <style>
+    :root{
+      --bg:#f8fafc; --card:#ffffff; --text:#0f172a; --muted:#475569; --muted2:#64748b;
+      --border:#e2e8f0; --accent:#14b8a6; --accent2:#0ea5e9;
+      --shadow2:0 8px 18px rgba(15,23,42,.08); --radius:18px;
+    }
+    body{ background:var(--bg); color:var(--text); }
+    body.dark-mode{
+      --bg:#0b1220; --card:#111827; --text:#e5e7eb; --muted:#cbd5e1; --muted2:#9ca3af;
+      --border:#263244; --accent:#34d399; --accent2:#38bdf8;
+      --shadow2:0 10px 22px rgba(0,0,0,.35);
+    }
+    .surface{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow2); }
+    .muted{ color:var(--muted); } .muted2{ color:var(--muted2); }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
+      border-radius:9999px; padding:.75rem 1.1rem; font-weight:800;
+      transition:.15s ease; user-select:none;
+    }
+    .btn-primary{ background:var(--accent); color:#fff; }
+    .btn-primary:hover{ opacity:.95; }
+    .btn-ghost{ background:transparent; border:1px solid var(--border); color:var(--text); }
+    .btn-ghost:hover{ background:rgba(15,23,42,.05); }
+    body.dark-mode .btn-ghost:hover{ background:rgba(255,255,255,.06); }
+    .glass{ background:rgba(255,255,255,.85); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); }
+    body.dark-mode .glass{ background:rgba(11,18,32,.7); }
+    .theme-dot{ width:22px; height:22px; border-radius:9999px; cursor:pointer; border:1px solid var(--border); }
+    #temaClaro { background:linear-gradient(90deg,#fff 50%, #14b8a6 50%); }
+    #temaEscuro{ background:linear-gradient(90deg,#0b1220 50%, #38bdf8 50%); }
+    .chip{
+      display:inline-flex; align-items:center; gap:.5rem;
+      border:1px solid var(--border);
+      border-radius:9999px;
+      padding:.55rem .9rem;
+      font-weight:800;
+      font-size:.875rem;
+      background:transparent;
+      color:var(--text);
+    }
+    .note{
+      border:1px dashed var(--border);
+      border-radius:16px;
+      padding:1rem;
+      background: rgba(14,165,233,.06);
+    }
+    body.dark-mode .note{ background: rgba(56,189,248,.10); }
+  </style>
+</head>
+
+<body class="font-sans min-h-screen">
+
+  <nav class="glass sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <a href="../index.html" class="inline-flex items-center gap-2">
+          <img src="../imagens/LogoSite.png" class="h-9" alt="Logo">
+        </a>
+        <button id="temaClaro" class="theme-dot" title="Tema claro" aria-label="Tema claro"></button>
+        <button id="temaEscuro" class="theme-dot" title="Tema escuro" aria-label="Tema escuro"></button>
+      </div>
+
+      <div class="hidden md:flex items-center gap-2">
+        <a href="../index.html" class="btn btn-ghost">Início</a>
+        <a href="../loja.html" class="btn btn-ghost">Loja</a>
+        <a href="../sobreautor.html" class="btn btn-ghost">Sobre</a>
+        <a href="../contos.html" class="btn btn-ghost">Contos</a>
+      </div>
+
+      <a href="../loja.html" class="btn btn-primary">Voltar pra loja</a>
+    </div>
+
+    <div class="md:hidden max-w-6xl mx-auto px-4 pb-3">
+      <div class="flex flex-wrap gap-2">
+        <a href="../index.html" class="btn btn-ghost !py-2">Início</a>
+        <a href="../loja.html" class="btn btn-ghost !py-2">Loja</a>
+        <a href="../sobreautor.html" class="btn btn-ghost !py-2">Sobre</a>
+        <a href="../contos.html" class="btn btn-ghost !py-2">Contos</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-6xl mx-auto px-4 py-10">
+    <div class="surface p-6 sm:p-10">
+      <span class="chip" style="background: rgba(14,165,233,.10); border-color: rgba(14,165,233,.22); color: var(--accent2);">
+        ⏳ Pagamento pendente
+      </span>
+
+      <h1 class="mt-4 text-2xl sm:text-3xl font-extrabold">Estamos aguardando a confirmação</h1>
+      <p class="mt-2 muted">
+        Seu pagamento ainda não foi confirmado. Isso pode acontecer em pagamentos via Pix ou em análises do cartão.
+      </p>
+
+      <div class="note mt-6">
+        <p class="font-extrabold">O que fazer agora?</p>
+        <p class="text-sm muted2 mt-1">
+          • Se você pagou via Pix, aguarde alguns minutos e verifique o app do seu banco.<br>
+          • Assim que o Mercado Pago aprovar, você receberá confirmação por e-mail.
+        </p>
+      </div>
+
+      <div class="mt-8 flex flex-col sm:flex-row gap-3">
+        <a href="../loja.html" class="btn btn-primary w-full sm:w-auto">📚 Voltar pra loja</a>
+        <a href="../index.html" class="btn btn-ghost w-full sm:w-auto">🏠 Ir para o início</a>
+      </div>
+
+      <p class="mt-6 text-xs muted2">
+        Se você precisar de ajuda, envie mensagem para o e-mail de contato.
+      </p>
+    </div>
+  </main>
+
+  <footer class="max-w-6xl mx-auto px-4 pb-10">
+    <div class="surface p-6 sm:p-8 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
+      <div>
+        <h3 class="text-lg font-extrabold">Contato</h3>
+        <p class="text-sm muted2">Se tiver qualquer problema, fale comigo por e-mail:</p>
+      </div>
+      <a href="mailto:pedrofalcari@gmail.com" class="btn btn-ghost w-full sm:w-auto">pedrofalcari@gmail.com</a>
+    </div>
+  </footer>
+
+<script>
+(function(){
+  const KEY='theme';
+  const b=document.body;
+  function apply(t){ b.classList.toggle('dark-mode', t==='dark'); }
+  apply(localStorage.getItem(KEY)||'light');
+  temaClaro.onclick=()=>{ localStorage.setItem(KEY,'light'); apply('light'); }
+  temaEscuro.onclick=()=>{ localStorage.setItem(KEY,'dark');  apply('dark');  }
+})();
+</script>
+
+</body>
+</html>
