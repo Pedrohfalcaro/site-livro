@@ -186,7 +186,7 @@
   <nav class="glass sticky top-0 z-50">
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
       <div class="flex items-center gap-3">
-        <a href="../docs/index.html" class="inline-flex items-center gap-2">
+        <a href="../index.html" class="inline-flex items-center gap-2">
           <img src="../imagens/LogoSite.png" alt="Logo - Estante de Histórias" class="h-10 w-auto select-none" />
         </a>
 
@@ -216,12 +216,12 @@
           <button id="temaEscuroM" class="theme-dot" title="Tema escuro" aria-label="Tema escuro"></button>
         </div>
 
-        <a href="../docs/index.html" class="btn btn-ghost hidden md:inline-flex">Início</a>
-        <a href="../docs/loja.html" class="btn btn-ghost hidden md:inline-flex">Loja</a>
-        <a href="../docs/sobreautor.html" class="btn btn-ghost hidden md:inline-flex">Sobre</a>
-        <a href="../docs/contos.html" class="btn btn-ghost hidden md:inline-flex">Contos</a>
+        <a href="../index.html" class="btn btn-ghost hidden md:inline-flex">Início</a>
+        <a href="../loja.html" class="btn btn-ghost hidden md:inline-flex">Loja</a>
+        <a href="../sobreautor.html" class="btn btn-ghost hidden md:inline-flex">Sobre</a>
+        <a href="../contos.html" class="btn btn-ghost hidden md:inline-flex">Contos</a>
 
-        <a href="../docs/index.html#obrasProjetos" class="btn btn-primary !px-4 !py-2">Voltar</a>
+        <a href="../index.html#obrasProjetos" class="btn btn-primary !px-4 !py-2">Voltar</a>
       </div>
     </div>
   </nav>
@@ -356,8 +356,8 @@
           <div class="mt-6 hint">
             <p class="font-extrabold">Atalhos</p>
             <div class="mt-3 flex flex-col sm:flex-row gap-3">
-              <a class="btn btn-ghost w-full sm:w-auto" href="../docs/loja.html">🛍️ Ir pra Loja</a>
-              <a class="btn btn-ghost w-full sm:w-auto" href="../docs/index.html#obrasProjetos">📚 Ver outras obras</a>
+              <a class="btn btn-ghost w-full sm:w-auto" href="../loja.html">🛍️ Ir pra Loja</a>
+              <a class="btn btn-ghost w-full sm:w-auto" href="../index.html#obrasProjetos">📚 Ver outras obras</a>
               <button class="btn btn-primary w-full sm:w-auto" onclick="adicionarAoCarrinhoEIr()">💳 Pagamento</button>
             </div>
           </div>
@@ -676,12 +676,12 @@ trim();
     function adicionarAtualNaSacola(irPagamento=false){
       if(!produtoAtual) return;
       addToEstante(produtoAtual, 1);
-      if(irPagamento) window.location.href = "../docs/pagamento.html";
+      if(irPagamento) window.location.href = "../pagamento.html";
     }
 
     function adicionarAoCarrinhoEIr(){
       addToEstante(LIVRO, 1);
-      window.location.href = "../docs/pagamento.html";
+      window.location.href = "../pagamento.html";
     }
 
     /* ===== Capítulo ===== */
