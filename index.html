@@ -2,16 +2,21 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
-  <meta http-equiv="refresh" content="0; url=paginasprincipais/index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Estante de Histórias</title>
-  <link rel="canonical" href="paginasprincipais/index.html" />
+
+  <!-- sempre absoluto -->
+  <meta http-equiv="refresh" content="0; url=/paginasprincipais/index.html" />
+  <link rel="canonical" href="https://estantedehistorias.com/paginasprincipais/index.html" />
+
   <script>
-    // fallback melhor que refresh
-    window.location.replace("paginasprincipais/index.html");
+    // evita duplicar /paginasprincipais
+    if (!location.pathname.startsWith("/paginasprincipais/")) {
+      location.replace("/paginasprincipais/index.html");
+    }
   </script>
 </head>
 <body>
-  <p>Redirecionando… Se não redirecionar, <a href="paginasprincipais/index.html">clique aqui</a>.</p>
+  <p>Redirecionando… Se não redirecionar, <a href="/paginasprincipais/index.html">clique aqui</a>.</p>
 </body>
 </html>
