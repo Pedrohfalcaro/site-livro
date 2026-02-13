@@ -1,511 +1,163 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <link rel="icon" type="image/png" href="imagens/favicon.png">
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pagamento — Estante de Histórias</title>
-
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <meta property="og:title" content="Pagamento — Estante de Histórias" />
-  <meta property="og:description" content="Finalize sua compra e envie o comprovante." />
-  <meta property="og:image" content="imagens/favicon.png" />
-  <meta property="og:type" content="website" />
-  <meta property="og:locale" content="pt_BR" />
-
-  <style>
-    :root{
-      --bg:#f8fafc; --card:#ffffff; --text:#0f172a; --muted:#475569; --muted2:#64748b;
-      --border:#e2e8f0; --accent:#14b8a6; --accent2:#0ea5e9;
-      --shadow2:0 8px 18px rgba(15,23,42,.08); --radius:18px;
-    }
-    body{ background:var(--bg); color:var(--text); }
-
-    body.dark-mode{
-      --bg:#0b1220; --card:#111827; --text:#e5e7eb; --muted:#cbd5e1; --muted2:#9ca3af;
-      --border:#263244; --accent:#34d399; --accent2:#38bdf8;
-      --shadow2:0 10px 22px rgba(0,0,0,.35);
-    }
-
-    .surface{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow2); }
-    .muted{ color:var(--muted); }
-    .muted2{ color:var(--muted2); }
-
-    .btn{
-      display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
-      border-radius:9999px; padding:.75rem 1.1rem; font-weight:800;
-      transition:.15s ease; user-select:none;
-    }
-    .btn-primary{ background:var(--accent); color:#fff; }
-    .btn-primary:hover{ opacity:.95; }
-    .btn-ghost{ background:transparent; border:1px solid var(--border); color:var(--text); }
-    .btn-ghost:hover{ background:rgba(15,23,42,.05); }
-    body.dark-mode .btn-ghost:hover{ background:rgba(255,255,255,.06); }
-
-    .glass{ background:rgba(255,255,255,.85); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); }
-    body.dark-mode .glass{ background:rgba(11,18,32,.7); }
-
-    .theme-dot{
-      width:22px; height:22px; border-radius:9999px; cursor:pointer;
-      border:1px solid var(--border);
-    }
-    #temaClaro { background:linear-gradient(90deg,#fff 50%, #14b8a6 50%); }
-    #temaEscuro{ background:linear-gradient(90deg,#0b1220 50%, #38bdf8 50%); }
-
-    .field{
-      width:100%;
-      background:var(--card);
-      border:1px solid var(--border);
-      border-radius:9999px;
-      padding:.85rem 1.05rem;
-      color:var(--text);
-      outline:none;
-    }
-    .field:focus{
-      border-color: rgba(20,184,166,.55);
-      box-shadow: 0 0 0 4px rgba(20,184,166,.14);
-    }
-
-    .chip{
-      display:inline-flex; align-items:center; gap:.5rem;
-      border:1px solid var(--border);
-      border-radius:9999px;
-      padding:.55rem .9rem;
-      font-weight:800;
-      font-size:.875rem;
-      background:transparent;
-      color:var(--text);
-    }
-
-    .toast{
-      position:fixed;
-      top:84px;
-      right:18px;
-      z-index:60;
-      padding:.85rem 1rem;
-      border-radius:16px;
-      background:var(--card);
-      border:1px solid var(--border);
-      box-shadow:var(--shadow2);
-      display:none;
-      max-width:min(420px, calc(100vw - 36px));
-    }
-    .toast.show{ display:block; }
-
-    .note{
-      border:1px dashed var(--border);
-      border-radius:16px;
-      padding:1rem;
-      background: rgba(14,165,233,.06);
-    }
-    body.dark-mode .note{ background: rgba(56,189,248,.10); }
-
-    .danger{
-      background: rgba(239,68,68,.10);
-      border: 1px solid rgba(239,68,68,.25);
-      color: #b91c1c;
-      border-radius: 16px;
-      padding: .9rem 1rem;
-    }
-    body.dark-mode .danger{
-      color:#fecaca;
-      border-color: rgba(239,68,68,.35);
-      background: rgba(239,68,68,.12);
-    }
-  </style>
-</head>
-
-<body class="font-sans min-h-screen">
-
-  <!-- Toasts -->
-  <div id="toastOk" class="toast">
-    <div class="flex items-start gap-2">
-      <span class="text-emerald-500">✔</span>
-      <div>
-        <p class="font-extrabold leading-tight">Enviado!</p>
-        <p class="text-sm muted2 mt-1">Pagamento enviado com sucesso. Você será redirecionado.</p>
-      </div>
-    </div>
-  </div>
-
-  <div id="toastWait" class="toast">
-    <div class="flex items-start gap-2">
-      <span>⏳</span>
-      <div>
-        <p class="font-extrabold leading-tight">Enviando…</p>
-        <p class="text-sm muted2 mt-1">Pode demorar até 1 minuto se o servidor estiver inativo.</p>
-      </div>
-    </div>
-  </div>
-
-  <div id="toastCopy" class="toast">
-    <div class="flex items-start gap-2">
-      <span>📋</span>
-      <div>
-        <p class="font-extrabold leading-tight">Pix copiado</p>
-        <p class="text-sm muted2 mt-1">A chave foi copiada para a área de transferência.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- NAV -->
-  <nav class="glass sticky top-0 z-40">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
-      <div class="flex items-center gap-3">
-        <a href="index.html" class="inline-flex items-center gap-2">
-          <img src="imagens/LogoSite.png" class="h-9" alt="Logo">
-        </a>
-
-        <button id="temaClaro" class="theme-dot" title="Tema claro" aria-label="Tema claro"></button>
-        <button id="temaEscuro" class="theme-dot" title="Tema escuro" aria-label="Tema escuro"></button>
-      </div>
-
-      <div class="hidden md:flex items-center gap-2">
-        <a href="index.html" class="btn btn-ghost">Início</a>
-        <a href="loja.html" class="btn btn-ghost">Loja</a>
-        <a href="sobreautor.html" class="btn btn-ghost">Sobre</a>
-        <a href="contos.html" class="btn btn-ghost">Contos</a>
-      </div>
-
-      <a href="loja.html" class="btn btn-primary">Voltar pra loja</a>
-    </div>
-
-    <!-- menu mobile -->
-    <div class="md:hidden max-w-6xl mx-auto px-4 pb-3">
-      <div class="flex flex-wrap gap-2">
-        <a href="index.html" class="btn btn-ghost !py-2">Início</a>
-        <a href="loja.html" class="btn btn-ghost !py-2">Loja</a>
-        <a href="sobreautor.html" class="btn btn-ghost !py-2">Sobre</a>
-        <a href="contos.html" class="btn btn-ghost !py-2">Contos</a>
-      </div>
-    </div>
-  </nav>
-
-  <!-- HEADER -->
-  <header class="max-w-6xl mx-auto px-4 pt-8">
-    <div class="surface p-6 sm:p-8">
-      <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-        <div>
-          <span class="chip" style="background: rgba(20,184,166,.10); border-color: rgba(20,184,166,.22); color: var(--accent);">
-            ✅ Pagamento
-          </span>
-          <h1 class="mt-3 text-2xl sm:text-3xl font-extrabold">Finalizar compra</h1>
-          <p class="mt-2 muted">
-            Preencha seus dados e envie o comprovante do Pix. (Por enquanto, essa é a forma de pagamento.)
-          </p>
-        </div>
-
-        <div class="note w-full md:max-w-[420px]">
-          <p class="font-extrabold">Resumo do pedido</p>
-          <p id="resumoTop" class="text-sm muted2 mt-1">Carregando…</p>
-          <div class="mt-3 flex items-center gap-2">
-            <button class="btn btn-ghost !py-2" onclick="limparSacola()">Limpar sacola</button>
-            <button class="btn btn-ghost !py-2" onclick="verItens()">Ver itens</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <!-- MAIN -->
-  <main class="max-w-6xl mx-auto px-4 py-10">
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-      <!-- FORM -->
-      <section class="surface p-6 sm:p-8 lg:col-span-2">
-        <h2 class="text-xl font-extrabold">Seus dados</h2>
-        <p class="text-sm muted2 mt-1">Campos mínimos: nome, e-mail e comprovante.</p>
-
-        <div id="alertaVazio" class="hidden danger mt-5">
-          Sua sacola está vazia. Volte para a loja e adicione um item antes de enviar.
-        </div>
-
-        <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div class="sm:col-span-2">
-            <label class="block text-sm font-extrabold mb-2">Seu nome completo</label>
-            <input id="nome" class="field" placeholder="Nome completo" autocomplete="name" />
-          </div>
-
-          <div class="sm:col-span-2">
-            <label class="block text-sm font-extrabold mb-2">Seu e-mail</label>
-            <input id="email" type="email" class="field" placeholder="exemplo@dominio.com" autocomplete="email" />
-          </div>
-
-          <div class="sm:col-span-2">
-            <label class="block text-sm font-extrabold mb-2">Endereço (opcional por enquanto)</label>
-            <input id="rua" class="field" placeholder="Rua" autocomplete="address-line1" />
-          </div>
-
-          <div>
-            <input id="numero" class="field" placeholder="Número" autocomplete="address-line2" />
-          </div>
-          <div>
-            <input id="bairro" class="field" placeholder="Bairro" autocomplete="address-level3" />
-          </div>
-
-          <div class="sm:col-span-1">
-            <input id="cidade" class="field" placeholder="Cidade" autocomplete="address-level2" />
-          </div>
-          <div class="sm:col-span-1">
-            <input id="estado" class="field" placeholder="Estado" autocomplete="address-level1" />
-          </div>
-
-          <div class="sm:col-span-2">
-            <input id="cep" class="field" placeholder="CEP" autocomplete="postal-code" />
-          </div>
-        </div>
-
-        <div class="mt-8">
-          <h3 class="text-lg font-extrabold">Comprovante</h3>
-          <p class="text-sm muted2 mt-1">Envie uma imagem ou PDF do comprovante do Pix.</p>
-
-          <div class="mt-4">
-            <label class="block text-sm font-extrabold mb-2">Arquivo</label>
-            <input id="comprovante" type="file" accept="image/*,.pdf"
-                   class="w-full border rounded-2xl p-3"
-                   style="border-color:var(--border); background:var(--card); color:var(--text);" />
-            <p id="arquivoInfo" class="text-xs muted2 mt-2">Nenhum arquivo selecionado.</p>
-          </div>
-        </div>
-
-        <div class="mt-8 flex flex-col sm:flex-row gap-3">
-          <button id="btnEnviar" onclick="enviarPagamento()" class="btn btn-primary w-full sm:w-auto">
-            ✅ Enviar comprovante
-          </button>
-          <a href="loja/loja.html" class="btn btn-ghost w-full sm:w-auto">Voltar pra loja</a>
-        </div>
-
-        <p id="mensagemSucesso" class="hidden mt-5 text-sm font-extrabold" style="color: var(--accent);">
-          🎉 Pedido enviado! Você será redirecionado em instantes…
-        </p>
-      </section>
-
-      <!-- PIX / RESUMO DETALHADO -->
-      <aside class="surface p-6 sm:p-8">
-        <h2 class="text-xl font-extrabold">Pague via Pix</h2>
-        <p class="text-sm muted2 mt-1">Copie a chave abaixo e faça o pagamento no seu banco.</p>
-
-        <div class="mt-5">
-          <label class="block text-sm font-extrabold mb-2">Chave Pix</label>
-          <div class="flex flex-col gap-2">
-            <input id="chave" type="text" readonly value="pedrofalcari@gmail.com"
-                   class="w-full rounded-2xl p-3 font-mono"
-                   style="border:1px solid var(--border); background: rgba(20,184,166,.10); color: var(--text);" />
-            <button onclick="copiarPix()" class="btn btn-primary w-full">📋 Copiar chave</button>
-          </div>
-        </div>
-
-        <div class="mt-8">
-          <h3 class="text-lg font-extrabold">Itens</h3>
-          <div id="listaItens" class="mt-3 space-y-3"></div>
-
-          <div class="mt-6 pt-4 border-t" style="border-color:var(--border)">
-            <div class="flex items-center justify-between">
-              <span class="font-extrabold">Total</span>
-              <span id="totalValor" class="text-lg font-extrabold" style="color:var(--accent2)">R$ 0,00</span>
-            </div>
-          </div>
-
-          <div class="mt-5 note">
-            <p class="font-extrabold">Entrega / Acesso</p>
-            <p class="text-sm muted2 mt-1">
-              WebLivros: você recebe uma chave por e-mail.<br>
-              Livros: a entrega/combinação será confirmada por e-mail (por enquanto).
-            </p>
-          </div>
-        </div>
-      </aside>
-    </div>
-  </main>
-
-  <footer class="max-w-6xl mx-auto px-4 pb-10">
-    <div class="surface p-6 sm:p-8 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
-      <div>
-        <h3 class="text-lg font-extrabold">Contato</h3>
-        <p class="text-sm muted2">Se tiver qualquer problema, fale comigo por e-mail:</p>
-      </div>
-      <a href="mailto:pedrofalcari@gmail.com" class="btn btn-ghost w-full sm:w-auto">pedrofalcari@gmail.com</a>
-    </div>
-  </footer>
-
-<script>
-/* ===== Tema ===== */
-(function(){
-  const KEY='theme';
-  const b=document.body;
-  function apply(t){ b.classList.toggle('dark-mode', t==='dark'); }
-  apply(localStorage.getItem(KEY)||'light');
-  temaClaro.onclick=()=>{ localStorage.setItem(KEY,'light'); apply('light'); }
-  temaEscuro.onclick=()=>{ localStorage.setItem(KEY,'dark');  apply('dark');  }
-})();
-
-/* ===== Util ===== */
-function brl(v){ return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); }
-
-function showToast(id, ms=2200){
-  const t=document.getElementById(id);
-  if(!t) return;
-  t.classList.add('show');
-  clearTimeout(t._timer);
-  t._timer=setTimeout(()=>t.classList.remove('show'), ms);
-}
-
-/* ===== Sacola ===== */
-function getEstante(){
-  return JSON.parse(localStorage.getItem('estante')||'[]');
-}
-
-function renderResumo(){
-  const estante=getEstante();
-  const totalItens=estante.reduce((s,x)=>s+x.quantidade,0);
-  const totalValor=estante.reduce((s,x)=>s+(x.preco*x.quantidade),0);
-
-  document.getElementById('resumoTop').innerHTML =
-    `📚 <strong>${totalItens}</strong> item(ns) • 💰 <strong>${brl(totalValor)}</strong>`;
-
-  document.getElementById('totalValor').textContent = brl(totalValor);
-
-  const lista=document.getElementById('listaItens');
-  if(estante.length===0){
-    lista.innerHTML = `
-      <div class="text-center py-6">
-        <div class="text-4xl mb-2">📭</div>
-        <p class="font-extrabold">Sacola vazia</p>
-        <p class="text-sm muted2 mt-1">Volte para a loja e adicione um item.</p>
-      </div>
-    `;
-    return;
-  }
-
-  lista.innerHTML = estante.map(x=>`
-    <div class="border rounded-2xl p-3" style="border-color:var(--border)">
-      <p class="font-extrabold text-sm">${x.nome}</p>
-      <p class="text-xs muted2 mt-1">${x.quantidade}× • ${brl(x.preco)} (un.)</p>
-      <p class="text-sm font-extrabold mt-2">${brl(x.preco*x.quantidade)}</p>
-    </div>
-  `).join('');
-}
-
-function limparSacola(){
-  localStorage.removeItem('estante');
-  renderResumo();
-  validarSacolaVazia();
-}
-
-function verItens(){
-  const el=document.getElementById('listaItens');
-  el?.scrollIntoView({behavior:'smooth', block:'start'});
-}
-
-function validarSacolaVazia(){
-  const estante=getEstante();
-  const alerta=document.getElementById('alertaVazio');
-  alerta.classList.toggle('hidden', estante.length!==0);
-  document.getElementById('btnEnviar').disabled = (estante.length===0);
-  document.getElementById('btnEnviar').style.opacity = (estante.length===0) ? '.6' : '1';
-}
-
-/* ===== Pix ===== */
-function copiarPix(){
-  const chave=document.getElementById('chave');
-  navigator.clipboard.writeText(chave.value)
-    .then(()=>showToast('toastCopy'))
-    .catch(()=>{ /* sem barulho */ });
-}
-
-/* ===== Upload / envio ===== */
-document.getElementById('comprovante')?.addEventListener('change', (e)=>{
-  const f=e.target.files?.[0];
-  document.getElementById('arquivoInfo').textContent = f ? `Selecionado: ${f.name}` : 'Nenhum arquivo selecionado.';
-});
-
-async function enviarPagamento(){
-  const nome = (document.getElementById("nome").value || "").trim();
-  const email = (document.getElementById("email").value || "").trim();
-  const rua = (document.getElementById("rua").value || "").trim();
-  const numero = (document.getElementById("numero").value || "").trim();
-  const bairro = (document.getElementById("bairro").value || "").trim();
-  const cidade = (document.getElementById("cidade").value || "").trim();
-  const estado = (document.getElementById("estado").value || "").trim();
-  const cep = (document.getElementById("cep").value || "").trim();
-  const comprovante = document.getElementById("comprovante").files?.[0];
-
-  const estante = getEstante();
-  if(estante.length===0){
-    validarSacolaVazia();
-    return;
-  }
-
-  if(!nome || !email || !comprovante){
-    // por enquanto: sem modal, só feedback simples
-    alert("Preencha Nome, E-mail e anexe o Comprovante.");
-    return;
-  }
-
-  // Monta resumo texto (pro backend)
-  let resumo = "";
-  let total = 0;
-  estante.forEach(l => {
-    resumo += `• ${l.nome} - ${l.quantidade}x - R$ ${(l.preco * l.quantidade).toFixed(2)}\n`;
-    total += l.preco * l.quantidade;
-  });
-  resumo += `\nTOTAL: R$ ${total.toFixed(2)}`;
-
-  const formData = new FormData();
-  formData.append("nome", nome);
-  formData.append("email", email);
-  formData.append("rua", rua);
-  formData.append("numero", numero);
-  formData.append("bairro", bairro);
-  formData.append("cidade", cidade);
-  formData.append("estado", estado);
-  formData.append("cep", cep);
-  formData.append("resumo", resumo);
-  formData.append("comprovante", comprovante);
-
-  showToast('toastWait', 60000);
-
-  const btn = document.getElementById('btnEnviar');
-  btn.disabled = true;
-  btn.style.opacity = '.7';
-
-  try{
-    const response = await fetch("https://site-livro-backend.onrender.com/enviar-pagamento", {
+const express = require("express");
+const multer = require("multer");
+const cors = require("cors");
+const fs = require("fs");
+const { Resend } = require("resend");
+
+const app = express();
+const port = process.env.PORT || 3000;
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+// ✅ Parse JSON (IMPORTANTE pro webhook)
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// ✅ CORS (pro seu front do GitHub Pages)
+app.use(
+  cors({
+    origin: "https://pedrohfalcaro.github.io",
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type"],
+  })
+);
+
+// ===== Health check =====
+app.get("/health", (req, res) => res.status(200).send("OK"));
+
+// =========================
+// ✅ MERCADO PAGO
+// =========================
+const SITE_URL = "https://pedrohfalcaro.github.io";
+const API_URL = "https://site-livro-backend.onrender.com";
+const MP_TOKEN = process.env.MP_ACCESS_TOKEN;
+
+// Cria preferência do Checkout Pro
+app.post("/mp/preferencia", async (req, res) => {
+  try {
+    if (!MP_TOKEN) return res.status(500).json({ ok: false, error: "MP_ACCESS_TOKEN ausente no Render" });
+
+    const { nome, email, itens } = req.body;
+
+    const preference = {
+      items: (itens || []).map((i) => ({
+        title: i.title,
+        quantity: Number(i.quantity || 1),
+        unit_price: Number(i.unit_price),
+        currency_id: "BRL",
+      })),
+      payer: { name: nome, email },
+      back_urls: {
+        success: `${SITE_URL}/Site-Estante-de-Historias/pagamento-sucesso.html`,
+        failure: `${SITE_URL}/Site-Estante-de-Historias/pagamento-erro.html`,
+        pending: `${SITE_URL}/Site-Estante-de-Historias/pagamento-pendente.html`,
+      },
+      auto_return: "approved",
+      notification_url: `${API_URL}/mp/webhook`,
+      metadata: { nome, email },
+    };
+
+    const r = await fetch("https://api.mercadopago.com/checkout/preferences", {
       method: "POST",
-      body: formData
+      headers: {
+        Authorization: `Bearer ${MP_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(preference),
     });
 
-    let resultado = {};
-    try { resultado = await response.json(); } catch(e){}
+    const data = await r.json();
+    if (!r.ok) return res.status(400).json({ ok: false, error: data });
 
-    if(response.ok && resultado.sucesso){
-      document.getElementById('toastWait').classList.remove('show');
-      showToast('toastOk', 3000);
-      document.getElementById("mensagemSucesso").classList.remove("hidden");
-      localStorage.removeItem("estante");
-      renderResumo();
-      setTimeout(()=> window.location.href = "index.html", 4500);
-      return;
-    }
-
-    alert("Não foi possível confirmar o envio agora. Tente novamente em instantes.");
-  }catch(err){
-    console.error(err);
-    alert("Erro ao enviar. Verifique sua internet e tente novamente.");
-  }finally{
-    document.getElementById('toastWait').classList.remove('show');
-    btn.disabled = false;
-    btn.style.opacity = '1';
+    return res.json({ ok: true, preference_id: data.id, init_point: data.init_point });
+  } catch (e) {
+    console.error("MP preferencia erro:", e);
+    res.status(500).json({ ok: false, error: "Erro ao criar preferência" });
   }
-}
-
-/* init */
-document.addEventListener('DOMContentLoaded', ()=>{
-  renderResumo();
-  validarSacolaVazia();
 });
-</script>
 
-</body>
-</html>
+// ✅ Webhook: aceita GET/POST/HEAD (para o teste do painel não dar 404)
+app.all("/mp/webhook", async (req, res) => {
+  // responda 200 IMEDIATO (MP precisa disso)
+  res.sendStatus(200);
+
+  try {
+    if (!MP_TOKEN) return;
+
+    console.log("Webhook MP recebido:", req.method, req.body);
+
+    const paymentId = req.body?.data?.id || req.query?.id;
+    if (!paymentId) return;
+
+    const r = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
+      headers: { Authorization: `Bearer ${MP_TOKEN}` },
+    });
+
+    const payment = await r.json();
+    if (!r.ok) return;
+
+    console.log("Pagamento status:", payment.status, "id:", payment.id);
+
+    if (payment.status === "approved") {
+      // aqui depois a gente liga: enviar email, salvar pedido etc.
+      console.log("✅ Pagamento aprovado:", payment.id, payment.transaction_amount);
+    }
+  } catch (e) {
+    console.error("Webhook erro:", e);
+  }
+});
+
+// =========================
+// ✅ SEU FLUXO PIX COM COMPROVANTE (mantido)
+// =========================
+
+// Multer upload
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, "uploads/"),
+  filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname),
+});
+const upload = multer({ storage });
+
+if (!fs.existsSync("uploads")) fs.mkdirSync("uploads");
+
+app.post("/enviar-pagamento", upload.single("comprovante"), async (req, res) => {
+  const { nome, email, rua, numero, bairro, cidade, estado, cep, resumo } = req.body;
+  const comprovante = req.file;
+
+  if (!comprovante) {
+    return res.status(400).json({ sucesso: false, erro: "Comprovante não recebido." });
+  }
+
+  const endereco = `${rua}, ${numero} - ${bairro}, ${cidade} - ${estado}, CEP: ${cep}`;
+
+  try {
+    await resend.emails.send({
+      from: "Pedidos <onboarding@resend.dev>",
+      to: "pedrofalcari@gmail.com",
+      subject: `📚 Novo Pedido de ${nome}`,
+      text: `Nome: ${nome}\nEmail: ${email}\nEndereço: ${endereco}\n\nLivros:\n${resumo}\n\n✔️ Comprovante em anexo.`,
+      attachments: [
+        {
+          filename: comprovante.originalname,
+          content: fs.readFileSync(comprovante.path).toString("base64"),
+          type: comprovante.mimetype,
+        },
+      ],
+    });
+
+    await resend.emails.send({
+      from: "Estante de Histórias <no-reply@estantedehistorias.com>",
+      to: email,
+      subject: "📖 Pedido Recebido com Sucesso!",
+      text: `Olá, ${nome}!\n\nSeu pedido foi recebido com sucesso! 🎉📦\n\n📚 Resumo:\n${resumo}\n\nEm breve você receberá mais informações.\n\nCom carinho,\nPedro Henrique`,
+    });
+
+    res.json({ sucesso: true });
+  } catch (error) {
+    console.error("Erro ao enviar e-mails:", error);
+    res.status(500).json({ sucesso: false, erro: error.message });
+  }
+});
+
+// ✅ por último: iniciar servidor
+app.listen(port, () => console.log(`Servidor rodando na porta ${port}`));
