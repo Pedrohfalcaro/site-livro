@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <link rel="icon" type="image/png" href="../imagens/favicon.png">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Loja de Histórias — Estante de Histórias</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <meta property="og:title" content="Loja de Histórias — Estante de Histórias" />
+  <meta property="og:description" content="Compre livros e WebLivros. Adicione à sacola e finalize sua compra." />
+  <meta property="og:image" content="../imagens/favicon.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="pt_BR" />
+
+  <style>
+    :root{
+      --bg:#f8fafc; --card:#ffffff; --text:#0f172a; --muted:#475569; --muted2:#64748b;
+      --border:#e2e8f0; --accent:#14b8a6; --accent2:#0ea5e9;
+      --shadow2:0 8px 18px rgba(15,23,42,.08); --radius:18px;
+    }
+    body{ background:var(--bg); color:var(--text); }
+
+    body.dark-mode{
+      --bg:#0b1220; --card:#111827; --text:#e5e7eb; --muted:#cbd5e1; --muted2:#9ca3af;
+      --border:#263244; --accent:#34d399; --accent2:#38bdf8;
+      --shadow2:0 10px 22px rgba(0,0,0,.35);
+    }
+
+    .surface{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow2); }
+    .muted{ color:var(--muted); }
+    .muted2{ color:var(--muted2); }
+
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      border-radius:9999px; padding:.7rem 1.05rem; font-weight:800;
+      transition:.15s ease; user-select:none;
+    }
+    .btn-primary{ background:var(--accent); color:#fff; }
+    .btn-primary:hover{ opacity:.95; }
+    .btn-ghost{ background:transparent; border:1px solid var(--border); color:var(--text); }
+    .btn-ghost:hover{ background:rgba(15,23,42,.05); }
+    body.dark-mode .btn-ghost:hover{ background:rgba(255,255,255,.06); }
+
+    .glass{ background:rgba(255,255,255,.85); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); }
+    body.dark-mode .glass{ background:rgba(11,18,32,.7); }
+
+    .theme-dot{
+      width:22px; height:22px; border-radius:9999px; cursor:pointer;
+      border:1px solid var(--border);
+    }
+    #temaClaro { background:linear-gradient(90deg,#fff 50%, #14b8a6 50%); }
+    #temaEscuro{ background:linear-gradient(90deg,#0b1220 50%, #38bdf8 50%); }
+
+    .field{
+      width:100%; background:var(--card); border:1px solid var(--border);
+      border-radius:9999px; padding:.8rem 1rem; color:var(--text);
+      outline:none;
+    }
+
+    .pill{
+      border:1px solid var(--border); border-radius:9999px;
+      padding:.45rem .85rem; font-weight:800; font-size:.85rem;
+      transition:.15s ease;
+    }
+    .pill:hover{ background:rgba(15,23,42,.05); }
+    body.dark-mode .pill:hover{ background:rgba(255,255,255,.06); }
+    .pill.active{
+      background:rgba(20,184,166,.12); border-color:rgba(20,184,166,.35); color:var(--accent);
+    }
+
+    /* Drawer sacola */
+    .drawer{
+      position:fixed;
+      top:0; right:0;
+      height:100vh;
+      width:100%;
+      max-width:420px;
+      transform: translateX(100%);
+      transition: transform .25s ease;
+      z-index:60;
+    }
+    .drawer.open{ transform: translateX(0); }
+
+    .overlay{
+      position:fixed; inset:0;
+      background:rgba(2,6,23,.55);
+      display:none;
+      z-index:50;
+    }
+    .overlay.show{ display:block; }
+  </style>
+</head>
+
+<body class="font-sans min-h-screen">
+
+  <!-- Overlay sacola -->
+  <div id="overlayEstante" class="overlay" onclick="toggleEstante()"></div>
+
+  <!-- Drawer sacola -->
+  <aside id="popupEstante" class="drawer surface p-6 overflow-y-auto">
+    <div class="flex items-center justify-between">
+      <h2 class="text-xl font-extrabold">Sua Sacola</h2>
+      <button class="btn btn-ghost !px-3 !py-2" onclick="toggleEstante()">✕</button>
+    </div>
+
+    <div id="listaEstante" class="mt-5 space-y-4"></div>
+
+    <div class="mt-6 pt-4 border-t" style="border-color:var(--border)">
+      <div class="flex items-center justify-between">
+        <span class="font-bold">Total</span>
+        <span id="totalValor" class="text-lg font-extrabold">R$ 0,00</span>
+      </div>
+
+      <!-- ajuste aqui caso pagamento esteja em outra pasta -->
+      <a href="pagamento.html" class="btn btn-primary w-full mt-4">Finalizar compra</a>
+    </div>
+  </aside>
+
+  <!-- NAV (com menu de páginas) -->
+  <nav class="glass sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="inline-flex items-center gap-2">
+          <img src="../imagens/LogoSite.png" class="h-9" alt="Logo">
+        </a>
+
+        <button id="temaClaro" class="theme-dot" title="Tema claro" aria-label="Tema claro"></button>
+        <button id="temaEscuro" class="theme-dot" title="Tema escuro" aria-label="Tema escuro"></button>
+      </div>
+
+      <div class="hidden md:flex items-center gap-2">
+        <a href="index.html" class="btn btn-ghost">Obras</a>
+        <a href="sobreautor.html" class="btn btn-ghost">Sobre</a>
+        <a href="contos.html" class="btn btn-ghost">Contos</a>
+      </div>
+
+      <button onclick="toggleEstante()" class="btn btn-primary relative">
+        Sacola
+        <span id="sacolaContador" class="hidden absolute -top-2 -right-2 bg-black text-white text-xs px-2 rounded-full">0</span>
+      </button>
+    </div>
+
+    <!-- menu mobile -->
+    <div class="md:hidden max-w-6xl mx-auto px-4 pb-3">
+      <div class="flex flex-wrap gap-2">
+        <a href="../index.html" class="btn btn-ghost !py-2">Início</a>
+        <a href="../sobreautor.html" class="btn btn-ghost !py-2">Sobre</a>
+        <a href="../contos.html" class="btn btn-ghost !py-2">Contos</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HEADER -->
+  <header class="max-w-6xl mx-auto px-4 pt-8">
+    <div class="surface p-6">
+      <h2 class="text-2xl font-extrabold">Escolha suas histórias</h2>
+      <p class="muted mt-1">Livros físicos e WebLivros disponíveis para compra.</p>
+
+      <div class="mt-4 flex flex-col sm:flex-row gap-3">
+        <input id="buscaLoja" class="field" placeholder="Buscar por título…" oninput="aplicarFiltros()">
+        <div class="flex gap-2 flex-wrap">
+          <button class="pill active" data-tipo="todos" onclick="setTipo('todos')">Todos</button>
+          <button class="pill" data-tipo="livro" onclick="setTipo('livro')">Livros</button>
+          <button class="pill" data-tipo="weblivro" onclick="setTipo('weblivro')">WebLivros</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- GRID -->
+  <main class="max-w-6xl mx-auto px-4 py-10">
+    <p class="text-sm muted2 mb-4"><span id="qtdResultados">0</span> itens encontrados</p>
+    <section id="gridProdutos" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4"></section>
+
+    <!-- Tutorial -->
+    <section class="mt-10 surface p-6">
+      <h3 class="text-lg font-extrabold">Como funciona</h3>
+      <div class="mt-3 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="p-4 rounded-2xl border" style="border-color: var(--border);">
+          <p class="font-extrabold">1) Adicione à sacola</p>
+          <p class="text-sm muted mt-1">Escolha o item e clique em “Adicionar”.</p>
+        </div>
+        <div class="p-4 rounded-2xl border" style="border-color: var(--border);">
+          <p class="font-extrabold">2) Confira e finalize</p>
+          <p class="text-sm muted mt-1">Abra a sacola e vá para o pagamento.</p>
+        </div>
+        <div class="p-4 rounded-2xl border" style="border-color: var(--border);">
+          <p class="font-extrabold">3) Acesso ao WebLivro</p>
+          <p class="text-sm muted mt-1">Você recebe uma chave por e-mail para acessar.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+<script>
+/* ===== Tema ===== */
+(function(){
+  const KEY='theme';
+  const b=document.body;
+
+  function apply(t){ b.classList.toggle('dark-mode', t==='dark'); }
+  apply(localStorage.getItem(KEY)||'light');
+
+  temaClaro.onclick=()=>{ localStorage.setItem(KEY,'light'); apply('light'); }
+  temaEscuro.onclick=()=>{ localStorage.setItem(KEY,'dark');  apply('dark');  }
+})();
+
+/* ===== Produtos ===== */
+const PRODUTOS=[
+ {id:'ldc1',tipo:'livro',titulo:'A Lenda do Caos — Tríplice Caótica',preco:57.9,imagem:'../imagens/LdC1.png',link:'../obras/ldc1.html'},
+ {id:'idw',tipo:'weblivro',titulo:'O Incidente de Willowbrook',preco:5.9,imagem:'../imagens/IdW.jpg',link:'../obras/idw.html'},
+ {id:'auc',tipo:'weblivro',titulo:'A Última Colheita',preco:2.5,imagem:'../imagens/AUCcapa.png',link:'../obras/auc.html'}
+];
+
+let filtro='todos';
+
+function setTipo(t){
+  filtro=t;
+  document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
+  document.querySelector(`[data-tipo="${t}"]`)?.classList.add('active');
+  aplicarFiltros();
+}
+
+function aplicarFiltros(){
+  const q=(buscaLoja.value||'').toLowerCase();
+  const lista=PRODUTOS.filter(p =>
+    p.titulo.toLowerCase().includes(q) && (filtro==='todos' || p.tipo===filtro)
+  );
+
+  qtdResultados.textContent=lista.length;
+
+  gridProdutos.innerHTML=lista.map(p=>`
+    <article class="surface p-4 flex flex-col">
+      <img src="${p.imagem}" class="w-full aspect-[3/4] object-cover rounded-xl mb-3" alt="${p.titulo}">
+      <h4 class="text-sm font-extrabold text-center">${p.titulo}</h4>
+      <p class="mt-2 text-center font-extrabold" style="color:var(--accent2)">
+        ${p.preco.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
+      </p>
+      <div class="mt-auto pt-3 flex flex-col gap-2">
+        <a href="${p.link}" class="btn btn-ghost w-full !py-2 !text-sm">Ver obra</a>
+        <button class="btn btn-primary w-full !py-2 !text-sm"
+          onclick="add('${p.titulo.replace(/'/g,"\\'")}',${p.preco},'${p.imagem}')">
+          Adicionar
+        </button>
+      </div>
+    </article>
+  `).join('');
+}
+
+/* ===== Sacola (localStorage: estante) ===== */
+function add(nome, preco, imagem){
+  const e=JSON.parse(localStorage.getItem('estante')||'[]');
+  const f=e.find(x=>x.nome===nome);
+  if(f) f.quantidade++;
+  else e.push({nome,preco,imagem,quantidade:1});
+  localStorage.setItem('estante',JSON.stringify(e));
+  atualizarSacola();
+}
+
+function remover(index){
+  const e=JSON.parse(localStorage.getItem('estante')||'[]');
+  e.splice(index,1);
+  localStorage.setItem('estante',JSON.stringify(e));
+  atualizarSacola();
+}
+
+function atualizarSacola(){
+  const lista=document.getElementById('listaEstante');
+  const totalSpan=document.getElementById('totalValor');
+  const contador=document.getElementById('sacolaContador');
+
+  const e=JSON.parse(localStorage.getItem('estante')||'[]');
+  const totalItens=e.reduce((s,x)=>s+x.quantidade,0);
+  const totalValor=e.reduce((s,x)=>s+(x.preco*x.quantidade),0);
+
+  contador.textContent=totalItens;
+  totalItens ? contador.classList.remove('hidden') : contador.classList.add('hidden');
+
+  if(e.length===0){
+    lista.innerHTML = `
+      <div class="text-center py-10">
+        <div class="text-5xl mb-3">📭</div>
+        <p class="font-semibold">Sua sacola está vazia</p>
+        <p class="text-sm muted2 mt-1">Adicione um item para começar.</p>
+      </div>
+    `;
+    totalSpan.textContent="R$ 0,00";
+    return;
+  }
+
+  lista.innerHTML = e.map((x,i)=>`
+    <div class="flex items-center gap-4 pb-4 border-b" style="border-color:var(--border)">
+      <img src="${x.imagem}" class="w-14 h-20 object-cover rounded-xl border" style="border-color:var(--border)" alt="${x.nome}">
+      <div class="flex-1">
+        <h3 class="font-extrabold text-sm">${x.nome}</h3>
+        <p class="text-xs muted2">R$ ${x.preco.toFixed(2)} × ${x.quantidade}</p>
+        <p class="text-sm font-extrabold mt-1">R$ ${(x.preco*x.quantidade).toFixed(2)}</p>
+      </div>
+      <button class="btn btn-ghost !px-3 !py-2" onclick="remover(${i})">✕</button>
+    </div>
+  `).join('');
+
+  totalSpan.textContent = "R$ " + totalValor.toFixed(2);
+}
+
+function toggleEstante(){
+  const drawer=document.getElementById('popupEstante');
+  const overlay=document.getElementById('overlayEstante');
+  const isOpen = drawer.classList.contains('open');
+
+  if(isOpen){
+    drawer.classList.remove('open');
+    overlay.classList.remove('show');
+    document.body.style.overflow = '';
+  }else{
+    drawer.classList.add('open');
+    overlay.classList.add('show');
+    document.body.style.overflow = 'hidden';
+    atualizarSacola();
+  }
+}
+
+document.addEventListener('keydown', (e)=>{
+  if(e.key==='Escape'){
+    const drawer=document.getElementById('popupEstante');
+    if(drawer.classList.contains('open')) toggleEstante();
+  }
+});
+
+document.addEventListener('DOMContentLoaded',()=>{
+  atualizarSacola();
+  aplicarFiltros();
+});
+</script>
+
+</body>
+</html>

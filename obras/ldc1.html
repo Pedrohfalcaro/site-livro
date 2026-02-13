@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <link rel="icon" type="image/png" href="../imagens/favicon.png">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A Lenda do Caos — Livro 1 | Estante de Histórias</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <meta property="og:title" content="A Lenda do Caos — Livro 1 | Estante de Histórias" />
+  <meta property="og:description" content="Fantasia / Aventura — A história de Arthur e a realidade nascida do Caos." />
+  <meta property="og:image" content="../imagens/LdC1.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="pt_BR" />
+
+  <style>
+    :root{
+      /* Base (padrão do site) */
+      --bg:#f8fafc; --card:#ffffff; --text:#0f172a; --muted:#475569; --muted2:#64748b;
+      --border:#e2e8f0; --shadow2:0 8px 18px rgba(15,23,42,.08); --radius:18px;
+
+      /* Identidade LdC (roxo) */
+      --purple1:#2e1065; /* deep */
+      --purple2:#4c1d95; /* rich */
+      --purple3:#7c3aed; /* accent */
+      --violet:#a78bfa;  /* highlight */
+      --glow: rgba(167,139,250,.22);
+
+      --accent: var(--purple3);
+      --accent2: var(--violet);
+    }
+    body{ background:var(--bg); color:var(--text); }
+
+    body.dark-mode{
+      --bg:#070713; --card:#0b0a16; --text:#e5e7eb; --muted:#cbd5e1; --muted2:#9ca3af;
+      --border:#2a1f44; --shadow2:0 10px 22px rgba(0,0,0,.45);
+    }
+
+    .surface{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow2); }
+    .muted{ color:var(--muted); }
+    .muted2{ color:var(--muted2); }
+
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:.55rem;
+      border-radius:9999px; padding:.75rem 1.1rem; font-weight:900;
+      transition:transform .15s ease, background .15s ease, opacity .15s ease, filter .15s ease;
+      user-select:none;
+    }
+    .btn:active{ transform:translateY(1px) scale(.99); }
+    .btn-primary{ background:var(--accent); color:white; }
+    .btn-primary:hover{ filter:brightness(0.95); }
+    .btn-ghost{ background:transparent; border:1px solid var(--border); color:var(--text); }
+    .btn-ghost:hover{ background:rgba(15,23,42,.05); }
+    body.dark-mode .btn-ghost:hover{ background:rgba(255,255,255,.06); }
+
+    .glass{
+      background:rgba(255,255,255,.82);
+      backdrop-filter:blur(10px);
+      border-bottom:1px solid var(--border);
+    }
+    body.dark-mode .glass{ background:rgba(7,7,19,.70); }
+
+    .theme-dot{
+      width:24px; height:24px; border-radius:9999px; cursor:pointer;
+      border:1px solid rgba(255,255,255,.35);
+      box-shadow:0 0 0 2px rgba(255,255,255,.15) inset;
+      transition:transform .15s ease, opacity .15s ease;
+    }
+    .theme-dot:hover{ transform:translateY(-1px); opacity:.95; }
+    #temaClaro, #temaClaroM { background:linear-gradient(90deg,#ffffff 50%, var(--accent2) 50%); }
+    #temaEscuro, #temaEscuroM { background:linear-gradient(90deg,#0b0a16 50%, var(--accent) 50%); }
+
+    /* HERO */
+    .hero{
+      position:relative;
+      overflow:hidden;
+      border-radius: calc(var(--radius) + 6px);
+    }
+    .hero::before{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        radial-gradient(circle at 20% 25%, rgba(124,58,237,.25), transparent 55%),
+        radial-gradient(circle at 70% 35%, rgba(167,139,250,.18), transparent 55%),
+        radial-gradient(circle at 35% 85%, rgba(124,58,237,.16), transparent 60%),
+        linear-gradient(180deg, rgba(46,16,101,.25), rgba(8,8,18,.70));
+      pointer-events:none;
+      z-index:1;
+    }
+    body.dark-mode .hero::before{
+      background:
+        radial-gradient(circle at 20% 25%, rgba(124,58,237,.22), transparent 55%),
+        radial-gradient(circle at 70% 35%, rgba(167,139,250,.14), transparent 55%),
+        radial-gradient(circle at 35% 85%, rgba(124,58,237,.12), transparent 60%),
+        linear-gradient(180deg, rgba(46,16,101,.30), rgba(0,0,0,.78));
+    }
+
+    .cover{
+      position:absolute; inset:0;
+      background-image:url("../imagens/LdC1.png");
+      background-size:cover;
+      background-position:center;
+      filter:saturate(1.06) contrast(1.05);
+      transform:scale(1.02);
+      z-index:0;
+    }
+
+    .chip{
+      display:inline-flex; align-items:center; gap:.5rem;
+      border:1px solid rgba(167,139,250,.40);
+      border-radius:9999px;
+      padding:.5rem .9rem;
+      font-weight:900;
+      font-size:.85rem;
+      background: rgba(167,139,250,.10);
+      color: var(--accent2);
+    }
+
+    .book-card{
+      background: rgba(8,8,18,.55);
+      border:1px solid rgba(255,255,255,.14);
+      color: rgba(255,255,255,.92);
+    }
+
+    .icon-btn{
+      width:40px; height:40px;
+      border-radius:9999px;
+      display:inline-flex; align-items:center; justify-content:center;
+      border:1px solid var(--border);
+      background:transparent;
+      transition:.15s ease;
+    }
+    .icon-btn:hover{ background:rgba(15,23,42,.05); }
+    body.dark-mode .icon-btn:hover{ background:rgba(255,255,255,.06); }
+
+    .hint{
+      border:1px dashed var(--border);
+      border-radius: 16px;
+      padding: 1rem;
+      background: rgba(167,139,250,.08);
+    }
+    body.dark-mode .hint{ background: rgba(167,139,250,.10); }
+
+    /* Modal */
+    .modal-backdrop{
+      position:fixed; inset:0;
+      background:rgba(0,0,0,.55);
+      display:none;
+      z-index:999;
+      padding: 18px;
+    }
+    .modal-backdrop.show{ display:flex; align-items:center; justify-content:center; }
+    .modal{
+      width:min(980px, 100%);
+      max-height: min(88vh, 900px);
+      overflow:auto;
+      border-radius: 20px;
+      border:1px solid var(--border);
+      background: var(--card);
+      box-shadow: var(--shadow2);
+    }
+    .modal-head{
+      position: sticky;
+      top:0;
+      background: linear-gradient(180deg, var(--card), rgba(255,255,255,.85));
+      border-bottom:1px solid var(--border);
+      padding: 14px 16px;
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+    }
+    body.dark-mode .modal-head{
+      background: linear-gradient(180deg, var(--card), rgba(11,10,22,.92));
+    }
+
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+
+    @media (prefers-reduced-motion: reduce){
+      *{ scroll-behavior:auto !important; transition:none !important; animation:none !important; }
+    }
+  </style>
+</head>
+
+<body class="font-sans relative overflow-x-hidden min-h-screen">
+
+  <!-- NAVBAR -->
+  <nav class="glass sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <a href="../paginasprincipais/index.html" class="inline-flex items-center gap-2">
+          <img src="../imagens/LogoSite.png" alt="Logo - Estante de Histórias" class="h-10 w-auto select-none" />
+        </a>
+
+        <div class="hidden sm:flex items-center gap-2">
+          <button id="temaClaro" class="theme-dot" title="Tema claro" aria-label="Tema claro"></button>
+          <button id="temaEscuro" class="theme-dot" title="Tema escuro" aria-label="Tema escuro"></button>
+        </div>
+
+        <a href="https://instagram.com/pedrohfalcaro" target="_blank" rel="noopener noreferrer"
+           class="hidden sm:inline-flex items-center justify-center w-10 h-10 rounded-full border"
+           style="border-color: var(--border); color: var(--muted);"
+           title="Instagram" aria-label="Instagram">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5a4.25 4.25 0 0 0 4.25-4.25v-8.5A4.25 4.25 0 0 0 16.25 3.5h-8.5zm8.75 2a1 1 0 1 1 0 2 1 1 0 0 1 0-2zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 1.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z"/>
+          </svg>
+        </a>
+      </div>
+
+      <div class="text-center">
+        <h1 class="font-extrabold tracking-tight text-lg sm:text-xl">A Lenda do Caos</h1>
+        <p class="hidden sm:block text-xs muted2">Livro • Tríplice Caótica</p>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <div class="sm:hidden flex items-center gap-2">
+          <button id="temaClaroM" class="theme-dot" title="Tema claro" aria-label="Tema claro"></button>
+          <button id="temaEscuroM" class="theme-dot" title="Tema escuro" aria-label="Tema escuro"></button>
+        </div>
+
+        <a href="../paginasprincipais/index.html" class="btn btn-ghost hidden md:inline-flex">Início</a>
+        <a href="../paginasprincipais/loja.html" class="btn btn-ghost hidden md:inline-flex">Loja</a>
+        <a href="../paginasprincipais/sobreautor.html" class="btn btn-ghost hidden md:inline-flex">Sobre</a>
+        <a href="../paginasprincipais/contos.html" class="btn btn-ghost hidden md:inline-flex">Contos</a>
+
+        <a href="../paginasprincipais/index.html#obrasProjetos" class="btn btn-primary !px-4 !py-2">Voltar</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="max-w-6xl mx-auto px-4 pt-8">
+    <div class="surface hero">
+      <div class="cover" aria-hidden="true"></div>
+
+      <div class="relative z-[2] p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-[1.1fr_.9fr] gap-8">
+        <div>
+          <span class="chip">📖 Livro • Fantasia / Aventura</span>
+
+          <h2 class="mt-4 text-2xl sm:text-3xl font-extrabold leading-tight" style="color: rgba(255,255,255,.92)">
+            A Lenda do Caos — Tríplice Caótica
+          </h2>
+
+          <p class="mt-2 text-sm sm:text-base" style="color: rgba(255,255,255,.80)">
+            “E se cada história que já foi contada existisse de verdade…?”
+          </p>
+
+          <div class="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="surface !shadow-none p-4 book-card">
+              <p class="font-extrabold text-sm">Páginas</p>
+              <p class="text-sm mt-1" style="color: rgba(255,255,255,.74)">390</p>
+            </div>
+            <div class="surface !shadow-none p-4 book-card">
+              <p class="font-extrabold text-sm">Idioma</p>
+              <p class="text-sm mt-1" style="color: rgba(255,255,255,.74)">Português</p>
+            </div>
+            <div class="surface !shadow-none p-4 book-card">
+              <p class="font-extrabold text-sm">Preço</p>
+              <p class="text-sm mt-1" style="color: rgba(255,255,255,.74)">R$ 57,90</p>
+            </div>
+          </div>
+
+          <div class="mt-6 flex flex-col sm:flex-row gap-3">
+            <button class="btn btn-primary w-full sm:w-auto" onclick="abrirDetalhes(LIVRO)">
+              🛒 Ver detalhes do livro
+            </button>
+
+            <button class="btn btn-ghost w-full sm:w-auto"
+              onclick="abrirCapitulo()"
+              style="background: rgba(8,8,18,.35); border-color: rgba(255,255,255,.16); color: rgba(255,255,255,.92)">
+              📄 Ler primeiro capítulo
+            </button>
+          </div>
+        </div>
+
+        <div class="surface p-6 sm:p-7 book-card">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <p class="font-extrabold">Sinopse</p>
+              <p class="text-sm mt-1" style="color: rgba(255,255,255,.74)">Clique no olhinho pra abrir/fechar.</p>
+            </div>
+
+            <button class="icon-btn" id="toggleSinopse" title="Mostrar/ocultar sinopse"
+                    style="border-color: rgba(255,255,255,.18); color: rgba(255,255,255,.92)">
+              <svg id="eyeOpen" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-5 h-5" fill="currentColor">
+                <path d="M12 5c5.5 0 9.7 4.6 10.9 6.2.2.2.2.5 0 .7C21.7 13.4 17.5 18 12 18S2.3 13.4 1.1 11.9a.6.6 0 0 1 0-.7C2.3 9.6 6.5 5 12 5Zm0 11c3 0 5.5-2.5 5.5-5.5S15 5 12 5 6.5 7.5 6.5 10.5 9 16 12 16Zm0-9a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7Z"/>
+              </svg>
+              <svg id="eyeClosed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-5 h-5 hidden" fill="currentColor">
+                <path d="M3.3 5.1 2 6.4l3 3C3.3 10.9 2 12.5 1.1 13.7a.6.6 0 0 0 0 .7C2.3 16 6.5 20.6 12 20.6c2 0 3.8-.6 5.3-1.4l3.3 3.3 1.3-1.3L3.3 5.1Zm8.7 13.5c-3.9 0-7.2-3-9-5.1.9-1.1 2-2.3 3.4-3.3l2.2 2.2a5.5 5.5 0 0 0 7 7l1.8 1.8c-1.2.7-2.6 1.3-4.4 1.3Zm10.9-4.9c-1 1.3-2.5 3-4.6 4.2l-2.1-2.1a5.5 5.5 0 0 0-7.1-7.1L6.9 6.6C8.4 5.8 10.1 5.4 12 5.4c5.5 0 9.7 4.6 10.9 6.2.2.2.2.5 0 .7Z"/>
+              </svg>
+            </button>
+          </div>
+
+          <div id="sinopseBox" class="mt-4">
+            <p class="text-sm leading-relaxed" style="color: rgba(255,255,255,.86)">
+              E se cada história que já foi contada existisse de verdade, em um universo próprio, moldado pela mente de quem a criou?
+              Arthur, um garoto comum de 14 anos, sempre acreditou que histórias eram apenas... histórias. Mas tudo muda quando uma simples
+              narrativa contada pelo seu pai se transforma em algo maior — muito maior. Ele começa a ver coisas que ninguém mais vê. Ouvir
+              vozes que ninguém mais ouve. Sentir um chamado vindo de um lugar que ele nem sabia existir. O que Arthur não sabe é que sua mente
+              se conectou a uma porta — uma ligação entre mundos. Uma passagem entre a realidade que vivemos e outra, nascida do caos primordial:
+              a realidade da história que escutou. Arthur se vê no centro de uma guerra entre mundos, onde criação e destruição são apenas duas
+              faces da mesma força: o Caos.
+            </p>
+          </div>
+
+          <div class="mt-5 hint">
+            <p class="font-extrabold" style="color: rgba(255,255,255,.92)">O que vem com o pacote</p>
+            <p class="text-sm mt-1" style="color: rgba(255,255,255,.74)">
+              Livro físico: A Lenda do Caos - Tríplice Caótica + Marca-páginas
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTEÚDO -->
+  <main class="max-w-6xl mx-auto px-4 py-10">
+    <div class="surface p-6 sm:p-8">
+      <div class="grid grid-cols-1 lg:grid-cols-[.7fr_1.3fr] gap-8">
+        <div class="surface !shadow-none p-5 sm:p-6">
+          <p class="text-xs font-extrabold muted2">Capa</p>
+          <img src="../imagens/LdC1.png" alt="Capa - A Lenda do Caos (Livro 1)"
+               class="mt-3 w-full rounded-2xl border"
+               style="border-color: var(--border);" />
+
+          <div class="mt-5 flex flex-col gap-3">
+            <button class="btn btn-primary w-full" onclick="adicionarAoCarrinhoEIr()">
+              💳 Ir para pagamento com o livro na sacola
+            </button>
+            <button class="btn btn-ghost w-full" onclick="abrirDetalhes(LIVRO)">
+              🧾 Ver detalhes
+            </button>
+            <button class="btn btn-ghost w-full" onclick="abrirCapitulo()">
+              📄 Ler primeiro capítulo
+            </button>
+          </div>
+        </div>
+
+        <div class="surface !shadow-none p-5 sm:p-6">
+          <h3 class="text-xl font-extrabold">Sobre o livro</h3>
+          <p class="muted mt-1">
+            Uma aventura onde criação e destruição se encaram como duas faces da mesma força: o Caos.
+          </p>
+
+          <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="surface !shadow-none p-4">
+              <p class="font-extrabold">Informações</p>
+              <ul class="mt-2 text-sm muted2 space-y-1">
+                <li><span class="font-bold">Páginas:</span> 390</li>
+                <li><span class="font-bold">Temática:</span> Fantasia / Aventura</li>
+                <li><span class="font-bold">Idioma:</span> Português</li>
+              </ul>
+            </div>
+            <div class="surface !shadow-none p-4">
+              <p class="font-extrabold">Preço</p>
+              <p class="mt-2 text-sm muted2">
+                <span class="text-lg font-extrabold" style="color: var(--accent);">R$ 57,90</span><br/>
+                <span class="text-xs">Tríplice Caótica + marca-páginas + conto exclusivo</span>
+              </p>
+            </div>
+          </div>
+
+          <div class="mt-6 hint">
+            <p class="font-extrabold">Atalhos</p>
+            <div class="mt-3 flex flex-col sm:flex-row gap-3">
+              <a class="btn btn-ghost w-full sm:w-auto" href="../paginasprincipais/loja.html">🛍️ Ir pra Loja</a>
+              <a class="btn btn-ghost w-full sm:w-auto" href="../paginasprincipais/index.html#obrasProjetos">📚 Ver outras obras</a>
+              <button class="btn btn-primary w-full sm:w-auto" onclick="adicionarAoCarrinhoEIr()">💳 Pagamento</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="w-full">
+    <div class="max-w-6xl mx-auto px-4 pb-10">
+      <div class="surface p-6 sm:p-8 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
+        <div>
+          <h3 class="text-lg font-extrabold">Estante de Histórias</h3>
+          <p class="text-sm muted2">A Lenda do Caos • Livro 1</p>
+        </div>
+        <a href="mailto:pedrofalcari@gmail.com" class="btn btn-ghost w-full sm:w-auto">pedrofalcari@gmail.com</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- MODAL: DETALHES -->
+  <div id="modalDetalhes" class="modal-backdrop" role="dialog" aria-modal="true" aria-label="Detalhes do produto">
+    <div class="modal">
+      <div class="modal-head">
+        <div>
+          <p class="text-xs font-extrabold muted2">Detalhes</p>
+          <h4 id="mdTitulo" class="text-lg font-extrabold">—</h4>
+        </div>
+        <button class="btn btn-ghost !py-2 !px-4" onclick="fecharModal('modalDetalhes')">✕ Fechar</button>
+      </div>
+
+      <div class="p-5 sm:p-6 grid grid-cols-1 lg:grid-cols-[.85fr_1.15fr] gap-6">
+        <div>
+          <img id="mdImagem" src="" alt="Imagem do produto" class="w-full rounded-2xl border" style="border-color: var(--border);" />
+          <div class="mt-4 surface !shadow-none p-4">
+            <p class="text-xs font-extrabold muted2">Preço</p>
+            <p id="mdPreco" class="mt-1 text-xl font-extrabold" style="color: var(--accent);">—</p>
+            <div class="mt-3 flex flex-col gap-2">
+              <button class="btn btn-primary w-full" onclick="adicionarAtualNaSacola()">🛒 Adicionar na sacola</button>
+              <button class="btn btn-ghost w-full" onclick="adicionarAtualNaSacola(true)">💳 Adicionar e ir para pagamento</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <p class="text-xs font-extrabold muted2">Descrição</p>
+          <p id="mdDescricao" class="mt-2 text-sm muted leading-relaxed">—</p>
+
+          <div class="mt-5 surface !shadow-none p-4">
+            <p class="text-xs font-extrabold muted2">Informações do livro</p>
+            <ul class="mt-2 text-sm muted2 space-y-1">
+              <li><span class="font-bold">Páginas:</span> <span id="mdPaginas">—</span></li>
+              <li><span class="font-bold">Temática:</span> <span id="mdTematica">—</span></li>
+              <li><span class="font-bold">Idioma:</span> <span id="mdIdioma">—</span></li>
+            </ul>
+          </div>
+
+          <div class="mt-5 hint">
+            <p class="font-extrabold">Sacola</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CAPÍTULO 1 -->
+  <div id="modalCapitulo" class="modal-backdrop" role="dialog" aria-modal="true" aria-label="Leitor do primeiro capítulo">
+    <div class="modal">
+      <div class="modal-head">
+        <div>
+          <p class="text-xs font-extrabold muted2">Leitura</p>
+          <h4 class="text-lg font-extrabold">A Lenda do Caos — Capítulo 1</h4>
+        </div>
+        <div class="flex gap-2">
+          <button class="btn btn-ghost !py-2 !px-4" onclick="fecharModal('modalCapitulo')">✕ Fechar</button>
+        </div>
+      </div>
+
+      <div class="p-5 sm:p-6">
+        <div class="surface !shadow-none p-4 sm:p-5">
+          <p class="text-xs font-extrabold muted2">Texto</p>
+          <pre id="capTexto" class="mt-3 text-sm leading-relaxed whitespace-pre-wrap"
+               style="font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;">
+          </pre>
+        </div>
+
+        <div class="mt-5 flex flex-col sm:flex-row gap-3">
+          <button class="btn btn-primary w-full sm:w-auto" onclick="adicionarAoCarrinhoEIr()">
+            💳 Comprar agora (ir para pagamento)
+          </button>
+          <button class="btn btn-ghost w-full sm:w-auto" onclick="abrirDetalhes(LIVRO)">
+            🛒 Ver detalhes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ===== Tema ===== */
+    (function () {
+      const BODY = document.body;
+      const KEY = 'theme';
+      const btnClaro  = document.getElementById('temaClaro');
+      const btnEscuro = document.getElementById('temaEscuro');
+      const btnClaroM  = document.getElementById('temaClaroM');
+      const btnEscuroM = document.getElementById('temaEscuroM');
+
+      function apply(theme) {
+        if (theme === 'dark') BODY.classList.add('dark-mode');
+        else BODY.classList.remove('dark-mode');
+      }
+      apply(localStorage.getItem(KEY) || 'light');
+
+      function setTheme(t){ localStorage.setItem(KEY, t); apply(t); }
+      btnClaro?.addEventListener('click', () => setTheme('light'));
+      btnEscuro?.addEventListener('click', () => setTheme('dark'));
+      btnClaroM?.addEventListener('click', () => setTheme('light'));
+      btnEscuroM?.addEventListener('click', () => setTheme('dark'));
+    })();
+
+    /* ===== Dados do livro (como você mandou, só corrigindo o path) ===== */
+    const LIVRO = {
+      nome: 'A Lenda do Caos - Tríplice Caótica + Marca-páginas + Conto exclusivo',
+      descricao: 'E se cada história que já foi contada existisse de verdade, em um universo próprio, moldado pela mente de quem a criou? Arthur, um garoto comum de 14 anos, sempre acreditou que histórias eram apenas... histórias. Mas tudo muda quando uma simples narrativa contada pelo seu pai se transforma em algo maior — muito maior. Ele começa a ver coisas que ninguém mais vê. Ouvir vozes que ninguém mais ouve. Sentir um chamado vindo de um lugar que ele nem sabia existir. O que Arthur não sabe é que sua mente se conectou a uma porta — uma ligação entre mundos. Uma passagem entre a realidade que vivemos e outra, nascida do caos primordial: a realidade da história que escutou. Arthur se vê no centro de uma guerra entre mundos, onde criação e destruição são apenas duas faces da mesma força: o Caos.',
+      preco: 57.9,
+      imagem: '../imagens/LdC1.png',
+      youtube: null,
+      tipo: 'livro',
+      info: { páginas: '390', temática: 'Fantasia / Aventura', idioma: 'Português' }
+    };
+
+    /* ===== Capítulo 1 =====
+       Cole aqui o texto do capítulo 1 (inteiro). */
+    const CAPITULO_1 = `Capítulo I- A Garota e o Espelho
+Há muito tempo, nasceu uma garota em uma família
+real. Seu nome era Dinna. Seus cabelos dourados e olhos
+penetrantes tinham um encanto hipnotizante, fazendo com
+que todos ao seu redor se rendessem ao seu olhar. O rei Linus
+II, seu pai, enxergava nela uma oportunidade para fortalecer
+sua influência. Assim, decidiu usá-la como moeda de troca,
+selando um casamento arranjado com o príncipe de um reino
+vizinho.
+O noivo era cobiçado por muitas mulheres, mas nunca
+dera atenção a esses interesses. Seu mundo era feito de
+páginas e histórias, e ele preferia a companhia dos livros à de
+pretendentes.
+Na véspera do casamento, Dinna, inconformada, pôs
+em prática seu plano de fuga. Com todos os preparativos
+prontos, esperou a noite cair e, sob o manto da escuridão,
+desceu pela janela de seus aposentos. Seus pés tocaram a terra
+fria, e ela correu sem olhar para trás, indo cada vez mais
+fundo na noite, até que se viu diante de uma floresta.
+A lua mal conseguia atravessar a copa densa das
+árvores, tornando o ambiente opressor. Mas ela não tinha
+escolha. Continuou seguindo.
+Foi então que, entre os troncos retorcidos, avistou a
+boca de uma caverna. Seu interior era escuro, mas parecia um
+abrigo melhor do que o meio da floresta. Ao entrar, esperou
+seus olhos se adaptarem à escuridão. O que viu fez seu
+coração disparar.
+No fundo da caverna, um portão dourado reluzia à
+pouca luz que entrava. Diante dele, um pedestal sustentava
+um livro de capa vermelha com detalhes prateados. As letras
+na capa eram indecifráveis, escritas em um idioma que ela
+jamais vira antes. Hesitante, Dinna estendeu a mão e tocou a
+capa do livro...
+— E então, pai? O que acontece depois? — perguntou
+uma voz infantil.
+O homem sorriu.
+— Isso, meu filho, ninguém sabe. É aqui que a história
+termina.
+— Mas e a garota? E o pai dela? O que acontece com
+eles? Isso não faz sentido! — protestou o garoto.
+O pai soltou uma risada baixa e bagunçou os cabelos
+do filho.
+— Algumas histórias não precisam de respostas
+imediatas. Agora vá dormir.
+O despertador tocou às 7h10 da manhã. Arthur, um
+garoto de cabelos castanhos claros e olhos cor de mel,
+despertou num sobressalto. Olhou para o relógio e sentiu o
+coração disparar.
+— Droga! — resmungou, pulando da cama.
+Sua aula começava em vinte minutos. Jogou a roupa
+do uniforme, agarrou a mochila e saiu disparado de casa,
+pegando a bicicleta e pedalando o mais rápido que pôde.
+Na escola, sua mente ainda estava presa à história que
+ouvira na noite anterior. Ele precisava de um desfecho. Um
+final digno para Dinna. Mas por mais que imaginasse
+diferentes possibilidades, nada parecia certo.
+— Arthur! — A voz firme o fez despertar.
+Levantou os olhos e viu sua professora o encarando,
+impaciente.
+— Se continuar distraído, vai mesmo precisar da prova
+de recuperação na sexta-feira.
+Ele engoliu em seco.
+Durante o intervalo, ainda perdido em seus
+pensamentos, foi surpreendido por Lisa, sua amiga de cabelos
+ruivos e olhos azuis.
+— Você fez a gente perder nota, sabia? — reclamou,
+cruzando os braços. — Sem você, não conseguimos
+apresentar o trabalho de história, e o professor simplesmente
+zerou a atividade!
+Arthur suspirou e deu dois tapinhas no ombro dela.
+— Eu vou falar com ele.
+O resultado da conversa, no entanto, não foi como
+esperava. Quando voltou para a sala, apenas se jogou na
+cadeira, frustrado.
+Quando a aula terminou, ele não perdeu tempo. Pegou
+sua bicicleta e foi direto para seu lugar favorito: um parque
+próximo ao centro da cidade. Sentou-se em um banco, tirou
+um caderno da mochila e começou a desenhar.
+Enquanto esboçava uma árvore, sentiu algo estranho.
+O vento cessou de repente. As folhas, que antes dançavam no
+ar, caíam pesadamente ao chão.
+E então, ele ouviu uma voz doce e melodiosa, quase um
+sussurro, o chamava.
+Curioso e inquieto, seguiu o som até encontrar algo
+inesperado: um buraco enorme no solo, como uma escadaria
+que não deveria estar ali.
+Hesitante, começou a descer.
+Com cada passo, o canto ficava mais alto. Até que
+chegou ao fim da escada e se viu diante de um portão
+dourado.
+Ao abri-lo, encontrou apenas uma sala vazia, exceto
+por uma caixa dourada no centro. Aproximou-se e a abriu.
+Dentro, havia um espelho.
+Mas quando o ergueu para ver seu reflexo, viu... nada.
+O espelho escorregou de suas mãos e se espatifou no
+chão.
+E então, um furacão de vento e risadas assustadoras o
+envolveram.
+Arthur abriu os olhos, de volta ao banco do parque.
+Tudo havia sido um sonho?`;
+trim();
+
+    /* ===== Sinopse (olhinho) ===== */
+    (function(){
+      const btn = document.getElementById("toggleSinopse");
+      const box = document.getElementById("sinopseBox");
+      const eyeOpen = document.getElementById("eyeOpen");
+      const eyeClosed = document.getElementById("eyeClosed");
+
+      let open = true;
+      btn?.addEventListener("click", ()=>{
+        open = !open;
+        box.classList.toggle("hidden", !open);
+        eyeOpen.classList.toggle("hidden", !open);
+        eyeClosed.classList.toggle("hidden", open);
+      });
+    })();
+
+    /* ===== Modal helpers ===== */
+    function abrirModal(id){ document.getElementById(id)?.classList.add("show"); }
+    function fecharModal(id){ document.getElementById(id)?.classList.remove("show"); }
+
+    // fechar clicando fora
+    ["modalDetalhes","modalCapitulo"].forEach(id=>{
+      const el = document.getElementById(id);
+      el?.addEventListener("click", (e)=>{
+        if(e.target === el) fecharModal(id);
+      });
+    });
+
+    /* ===== Detalhes ===== */
+    let produtoAtual = null;
+
+    function abrirDetalhes(prod){
+      produtoAtual = prod;
+
+      document.getElementById("mdTitulo").textContent = prod.nome;
+      document.getElementById("mdImagem").src = prod.imagem;
+      document.getElementById("mdPreco").textContent = formatBRL(prod.preco);
+      document.getElementById("mdDescricao").textContent = prod.descricao;
+
+      document.getElementById("mdPaginas").textContent = prod.info?.páginas || "—";
+      document.getElementById("mdTematica").textContent = prod.info?.temática || "—";
+      document.getElementById("mdIdioma").textContent  = prod.info?.idioma  || "—";
+
+      abrirModal("modalDetalhes");
+    }
+
+    function formatBRL(v){
+      try{ return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); }
+      catch(e){ return `R$ ${String(v).replace('.',',')}`; }
+    }
+
+    /* ===== Sacola (mesmo padrão do seu pagamento.html: chave "estante") ===== */
+    function getEstante(){
+      try{ return JSON.parse(localStorage.getItem('estante') || '[]'); }
+      catch(e){ return []; }
+    }
+    function setEstante(arr){
+      localStorage.setItem('estante', JSON.stringify(arr));
+    }
+
+    function addToEstante(item, qtd=1){
+      const estante = getEstante();
+      const idx = estante.findIndex(x => x.nome === item.nome);
+      if(idx >= 0){
+        estante[idx].quantidade = (estante[idx].quantidade || 1) + qtd;
+      }else{
+        estante.push({
+          nome: item.nome,
+          descricao: item.descricao,
+          preco: item.preco,
+          imagem: item.imagem,
+          youtube: item.youtube || null,
+          tipo: item.tipo || 'livro',
+          info: item.info || {},
+          quantidade: qtd
+        });
+      }
+      setEstante(estante);
+    }
+
+    function adicionarAtualNaSacola(irPagamento=false){
+      if(!produtoAtual) return;
+      addToEstante(produtoAtual, 1);
+      if(irPagamento) window.location.href = "../paginasprincipais/pagamento.html";
+    }
+
+    function adicionarAoCarrinhoEIr(){
+      addToEstante(LIVRO, 1);
+      window.location.href = "../paginasprincipais/pagamento.html";
+    }
+
+    /* ===== Capítulo ===== */
+    function abrirCapitulo(){
+      document.getElementById("capTexto").textContent = CAPITULO_1;
+      abrirModal("modalCapitulo");
+    }
+
+    async function copiarCapitulo(){
+      try{
+        await navigator.clipboard.writeText(CAPITULO_1);
+        alert("Capítulo copiado!");
+      }catch(e){
+        alert("Não consegui copiar automaticamente. Selecione o texto e copie manualmente.");
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <link rel="icon" type="image/png" href="../imagens/favicon.png">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>O Incidente de Willowbrook | Estante de Histórias</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <meta property="og:title" content="O Incidente de Willowbrook | Estante de Histórias" />
+  <meta property="og:description" content="WebLivro de suspense e investigação. Leia online com chave de acesso." />
+  <meta property="og:image" content="../imagens/IdW.jpg" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="pt_BR" />
+
+  <style>
+    :root{
+      /* Base (cinza) */
+      --bg:#f1f5f9;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#475569;
+      --muted2:#64748b;
+      --border:#e2e8f0;
+      --shadow2:0 10px 22px rgba(15,23,42,.10);
+      --radius:18px;
+
+      /* Identidade IdW (cinza) */
+      --accent:#64748b;   /* slate-500 */
+      --accent2:#94a3b8;  /* slate-400 */
+      --glow:rgba(148,163,184,.25);
+    }
+
+    body{ background:var(--bg); color:var(--text); }
+
+    body.dark-mode{
+      --bg:#0b1220;
+      --card:#0f172a;
+      --text:#e5e7eb;
+      --muted:#cbd5e1;
+      --muted2:#9ca3af;
+      --border:#223044;
+      --shadow2:0 12px 26px rgba(0,0,0,.45);
+      --glow:rgba(148,163,184,.18);
+    }
+
+    .surface{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow2); }
+    .muted{ color:var(--muted); }
+    .muted2{ color:var(--muted2); }
+
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:.55rem;
+      border-radius:9999px; padding:.75rem 1.1rem; font-weight:900;
+      transition:transform .15s ease, background .15s ease, opacity .15s ease;
+      user-select:none;
+    }
+    .btn:active{ transform:translateY(1px) scale(.99); }
+    .btn-primary{ background:var(--accent); color:#0b1220; }
+    body.dark-mode .btn-primary{ color:#0b1220; }
+    .btn-primary:hover{ opacity:.95; }
+    .btn-ghost{ background:transparent; border:1px solid var(--border); color:var(--text); }
+    .btn-ghost:hover{ background:rgba(15,23,42,.05); }
+    body.dark-mode .btn-ghost:hover{ background:rgba(255,255,255,.06); }
+
+    .glass{
+      background:rgba(255,255,255,.82);
+      backdrop-filter:blur(10px);
+      border-bottom:1px solid var(--border);
+    }
+    body.dark-mode .glass{ background:rgba(11,18,32,.72); }
+
+    .theme-dot{
+      width:24px; height:24px; border-radius:9999px; cursor:pointer;
+      border:1px solid rgba(255,255,255,.35);
+      box-shadow:0 0 0 2px rgba(255,255,255,.15) inset;
+      transition:transform .15s ease, opacity .15s ease;
+    }
+    .theme-dot:hover{ transform:translateY(-1px); opacity:.95; }
+    #temaClaro, #temaClaroM { background:linear-gradient(90deg,#ffffff 50%, var(--accent) 50%); }
+    #temaEscuro, #temaEscuroM { background:linear-gradient(90deg,#0f172a 50%, var(--accent2) 50%); }
+
+    .hero{
+      position:relative;
+      overflow:hidden;
+      border-radius: calc(var(--radius) + 6px);
+      background:linear-gradient(180deg, rgba(100,116,139,.10), transparent 65%);
+    }
+    .hero::before{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        radial-gradient(circle at 18% 22%, rgba(148,163,184,.22), transparent 58%),
+        radial-gradient(circle at 78% 28%, rgba(100,116,139,.18), transparent 60%),
+        radial-gradient(circle at 45% 90%, rgba(148,163,184,.14), transparent 62%),
+        linear-gradient(180deg, rgba(2,6,23,.20), rgba(2,6,23,.55));
+      pointer-events:none;
+      z-index:1;
+    }
+    body.dark-mode .hero::before{
+      background:
+        radial-gradient(circle at 18% 22%, rgba(148,163,184,.16), transparent 60%),
+        radial-gradient(circle at 78% 28%, rgba(100,116,139,.12), transparent 60%),
+        radial-gradient(circle at 45% 90%, rgba(148,163,184,.10), transparent 62%),
+        linear-gradient(180deg, rgba(2,6,23,.35), rgba(2,6,23,.85));
+    }
+
+    .cover{
+      position:absolute; inset:0;
+      background-image:url("../imagens/IdW.jpg");
+      background-size:cover;
+      background-position:center;
+      filter:contrast(1.05) saturate(.95);
+      transform:scale(1.02);
+      z-index:0;
+    }
+
+    .chip{
+      display:inline-flex; align-items:center; gap:.5rem;
+      border:1px solid rgba(148,163,184,.45);
+      border-radius:9999px;
+      padding:.5rem .9rem;
+      font-weight:900;
+      font-size:.85rem;
+      background: rgba(148,163,184,.12);
+      color: rgba(255,255,255,.90);
+    }
+
+    .meta-grid{
+      display:grid;
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+      gap:.75rem;
+    }
+    @media (min-width: 640px){
+      .meta-grid{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+
+    .meta-card{
+      border-radius:16px;
+      padding:1rem;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(2,6,23,.50);
+      color: rgba(255,255,255,.92);
+    }
+    .meta-card p:last-child{ color: rgba(255,255,255,.74); }
+
+    .icon-btn{
+      width:40px; height:40px;
+      border-radius:9999px;
+      display:inline-flex; align-items:center; justify-content:center;
+      border:1px solid rgba(255,255,255,.18);
+      background:transparent;
+      transition:.15s ease;
+      color: rgba(255,255,255,.92);
+    }
+    .icon-btn:hover{ background:rgba(255,255,255,.08); }
+
+    .hint{
+      border:1px dashed var(--border);
+      border-radius: 16px;
+      padding: 1rem;
+      background: rgba(148,163,184,.10);
+    }
+    body.dark-mode .hint{ background: rgba(148,163,184,.08); }
+
+    /* Modal (Detalhes) */
+    .modal-backdrop{
+      position:fixed; inset:0;
+      background:rgba(2,6,23,.70);
+      display:none;
+      align-items:center; justify-content:center;
+      padding: 1rem;
+      z-index: 80;
+    }
+    .modal-backdrop.show{ display:flex; }
+
+    .modal{
+      width: min(920px, 100%);
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      box-shadow: 0 18px 40px rgba(0,0,0,.35);
+      overflow:hidden;
+    }
+    .modal-header{
+      display:flex; align-items:flex-start; justify-content:space-between;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(148,163,184,.10), transparent);
+    }
+    .modal-body{
+      padding: 1.25rem;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+    }
+    @media (min-width: 900px){
+      .modal-body{ grid-template-columns: 320px 1fr; }
+    }
+    .modal-cover{
+      width:100%;
+      border-radius: 16px;
+      border:1px solid var(--border);
+      overflow:hidden;
+      background: rgba(0,0,0,.05);
+    }
+    .modal-cover img{ width:100%; height:auto; display:block; }
+
+    .close-x{
+      width:42px; height:42px; border-radius:9999px;
+      border:1px solid var(--border);
+      display:inline-flex; align-items:center; justify-content:center;
+      background: transparent;
+      transition:.15s ease;
+    }
+    .close-x:hover{ background: rgba(15,23,42,.06); }
+    body.dark-mode .close-x:hover{ background: rgba(255,255,255,.06); }
+
+    @media (prefers-reduced-motion: reduce){
+      *{ scroll-behavior:auto !important; transition:none !important; animation:none !important; }
+    }
+  </style>
+</head>
+
+<body class="font-sans relative overflow-x-hidden min-h-screen">
+
+  <!-- NAVBAR -->
+  <nav class="glass sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <a href="../paginasprincipais/index.html" class="inline-flex items-center gap-2">
+          <img src="../imagens/LogoSite.png" alt="Logo - Estante de Histórias" class="h-10 w-auto select-none" />
+        </a>
+
+        <div class="hidden sm:flex items-center gap-2">
+          <button id="temaClaro" class="theme-dot" title="Tema claro" aria-label="Tema claro"></button>
+          <button id="temaEscuro" class="theme-dot" title="Tema escuro" aria-label="Tema escuro"></button>
+        </div>
+
+        <a href="https://instagram.com/pedrohfalcaro" target="_blank" rel="noopener noreferrer"
+           class="hidden sm:inline-flex items-center justify-center w-10 h-10 rounded-full border"
+           style="border-color: var(--border); color: var(--muted);"
+           title="Instagram" aria-label="Instagram">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5a4.25 4.25 0 0 0 4.25-4.25v-8.5A4.25 4.25 0 0 0 16.25 3.5h-8.5zm8.75 2a1 1 0 1 1 0 2 1 1 0 0 1 0-2zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 1.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z"/>
+          </svg>
+        </a>
+      </div>
+
+      <div class="text-center">
+        <h1 class="font-extrabold tracking-tight text-lg sm:text-xl">Estante de Histórias</h1>
+        <p class="hidden sm:block text-xs muted2">WebLivro • Suspense / Investigação</p>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <div class="sm:hidden flex items-center gap-2">
+          <button id="temaClaroM" class="theme-dot" title="Tema claro" aria-label="Tema claro"></button>
+          <button id="temaEscuroM" class="theme-dot" title="Tema escuro" aria-label="Tema escuro"></button>
+        </div>
+
+        <a href="../paginasprincipais/index.html" class="btn btn-ghost hidden md:inline-flex">Início</a>
+        <a href="../paginasprincipais/loja.html" class="btn btn-ghost hidden md:inline-flex">Loja</a>
+        <a href="../paginasprincipais/sobreautor.html" class="btn btn-ghost hidden md:inline-flex">Sobre</a>
+        <a href="../paginasprincipais/contos.html" class="btn btn-ghost hidden md:inline-flex">Contos</a>
+
+        <a href="../paginasprincipais/index.html#obrasProjetos" class="btn btn-primary !px-4 !py-2">Voltar</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="max-w-6xl mx-auto px-4 pt-8">
+    <div class="surface hero">
+      <div class="cover" aria-hidden="true"></div>
+
+      <div class="relative z-[2] p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-[1.15fr_.85fr] gap-8">
+        <div>
+          <span class="chip">📖 WebLivro</span>
+
+          <h2 class="mt-4 text-2xl sm:text-3xl font-extrabold leading-tight text-white">
+            O Incidente de Willowbrook
+          </h2>
+
+          <p class="mt-2 text-sm sm:text-base" style="color: rgba(255,255,255,.86)">
+            Mistério, investigação e segredos enterrados sob os céus do Reino Unido.
+          </p>
+
+          <div class="mt-5 meta-grid">
+            <div class="meta-card">
+              <p class="font-extrabold text-sm">Palavras</p>
+              <p class="text-sm mt-1">13558</p>
+            </div>
+            <div class="meta-card">
+              <p class="font-extrabold text-sm">Temática</p>
+              <p class="text-sm mt-1">Suspense / Investigação</p>
+            </div>
+            <div class="meta-card">
+              <p class="font-extrabold text-sm">Idioma</p>
+              <p class="text-sm mt-1">Português</p>
+            </div>
+          </div>
+
+          <div class="mt-6 flex flex-col sm:flex-row gap-3">
+            <button class="btn btn-primary w-full sm:w-auto" onclick="lerLivro()">
+              📖 Ler o livro
+            </button>
+
+            <button class="btn btn-ghost w-full sm:w-auto"
+              onclick="abrirDetalhes(OBRA)"
+              style="background: rgba(2,6,23,.35); border-color: rgba(255,255,255,.16); color: rgba(255,255,255,.92)">
+              ℹ Ver detalhes
+            </button>
+          </div>
+
+          <p class="mt-3 text-xs" style="color: rgba(255,255,255,.78)">
+            Nota: para ler, é necessário informar a chave de acesso.
+          </p>
+        </div>
+
+        <aside class="surface p-6 sm:p-7"
+             style="background: rgba(2,6,23,.55); border-color: rgba(255,255,255,.14); color: rgba(255,255,255,.92)">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <p class="font-extrabold">Sinopse</p>
+              <p class="text-sm mt-1" style="color: rgba(255,255,255,.74)">Clique no olhinho pra abrir/fechar.</p>
+            </div>
+
+            <button class="icon-btn" id="toggleSinopse" title="Mostrar/ocultar sinopse" aria-label="Mostrar/ocultar sinopse">
+              <svg id="eyeOpen" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-5 h-5" fill="currentColor">
+                <path d="M12 5c5.5 0 9.7 4.6 10.9 6.2.2.2.2.5 0 .7C21.7 13.4 17.5 18 12 18S2.3 13.4 1.1 11.9a.6.6 0 0 1 0-.7C2.3 9.6 6.5 5 12 5Zm0 11c3 0 5.5-2.5 5.5-5.5S15 5 12 5 6.5 7.5 6.5 10.5 9 16 12 16Zm0-9a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7Z"/>
+              </svg>
+              <svg id="eyeClosed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-5 h-5 hidden" fill="currentColor">
+                <path d="M3.3 5.1 2 6.4l3 3C3.3 10.9 2 12.5 1.1 13.7a.6.6 0 0 0 0 .7C2.3 16 6.5 20.6 12 20.6c2 0 3.8-.6 5.3-1.4l3.3 3.3 1.3-1.3L3.3 5.1Zm8.7 13.5c-3.9 0-7.2-3-9-5.1.9-1.1 2-2.3 3.4-3.3l2.2 2.2a5.5 5.5 0 0 0 7 7l1.8 1.8c-1.2.7-2.6 1.3-4.4 1.3Zm10.9-4.9c-1 1.3-2.5 3-4.6 4.2l-2.1-2.1a5.5 5.5 0 0 0-7.1-7.1L6.9 6.6C8.4 5.8 10.1 5.4 12 5.4c5.5 0 9.7 4.6 10.9 6.2.2.2.2.5 0 .7Z"/>
+              </svg>
+            </button>
+          </div>
+
+          <div id="sinopseBox" class="mt-4">
+            <p class="text-sm leading-relaxed" style="color: rgba(255,255,255,.86)">
+              Em um Reino Unido envolto em mistérios e segredos, Emily Holwes, uma investigadora surda, recebe uma carta
+              de um antigo amigo propondo um trabalho intrigante: investigar o misterioso vilarejo de Willowbrook, onde todos
+              os habitantes morreram repentinamente. Determinada a desvendar o que aconteceu, Emily embarca em uma jornada
+              que a leva por caminhos obscuros e inesperados. Enquanto ela explora as ruas desertas e os edifícios abandonados
+              de Willowbrook, Emily descobre pistas que a levam a confrontar seu próprio passado doloroso e a enfrentar segredos
+              há muito enterrados. Cada descoberta traz novas perguntas, e a verdade se revela mais sinistra do que ela jamais
+              poderia imaginar. O Incidente de Willowbrook é uma história de suspense e investigação que prende o leitor desde
+              a primeira página, mergulhando-o em um enredo repleto de mistério, intriga e revelações chocantes.
+            </p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </header>
+
+  <!-- AÇÕES -->
+  <section class="max-w-6xl mx-auto px-4 py-10">
+    <div class="surface p-6 sm:p-8">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <h3 class="text-xl font-extrabold">Acesso rápido</h3>
+          <p class="muted mt-1">Leia o WebLivro ou veja os detalhes do produto.</p>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-3">
+          <button class="btn btn-primary w-full sm:w-auto" onclick="lerLivro()">📖 Ler o livro</button>
+          <button class="btn btn-ghost w-full sm:w-auto" onclick="irPagamento()">💳 Ir para pagamento</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="w-full">
+    <div class="max-w-6xl mx-auto px-4 pb-10">
+      <div class="surface p-6 sm:p-8 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
+        <div>
+          <h3 class="text-lg font-extrabold">Estante de Histórias</h3>
+          <p class="text-sm muted2">O Incidente de Willowbrook • WebLivro</p>
+        </div>
+        <a href="mailto:pedrofalcari@gmail.com" class="btn btn-ghost w-full sm:w-auto">pedrofalcari@gmail.com</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- MODAL DETALHES -->
+  <div id="modalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-label="Detalhes do produto">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <p class="text-xs font-extrabold muted2">Detalhes</p>
+          <h4 id="modalTitle" class="mt-1 text-lg sm:text-xl font-extrabold">—</h4>
+        </div>
+        <button class="close-x" onclick="fecharDetalhes()" aria-label="Fechar">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M18.3 5.7 12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7 2.9 18.3 9.2 12 2.9 5.7 4.3 4.3l6.3 6.3 6.3-6.3z"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="modal-cover">
+          <img id="modalImg" src="" alt="Capa do WebLivro">
+        </div>
+
+        <div>
+          <div class="grid gap-3">
+            <div class="surface !shadow-none p-4">
+              <p class="text-xs font-extrabold muted2">Descrição</p>
+              <p id="modalDesc" class="mt-2 text-sm leading-relaxed muted">—</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div class="surface !shadow-none p-4">
+                <p class="text-xs font-extrabold muted2">Palavras</p>
+                <p id="modalWords" class="mt-1 font-extrabold">—</p>
+              </div>
+              <div class="surface !shadow-none p-4">
+                <p class="text-xs font-extrabold muted2">Temática</p>
+                <p id="modalTheme" class="mt-1 font-extrabold">—</p>
+              </div>
+              <div class="surface !shadow-none p-4">
+                <p class="text-xs font-extrabold muted2">Idioma</p>
+                <p id="modalLang" class="mt-1 font-extrabold">—</p>
+              </div>
+            </div>
+
+            <div class="surface !shadow-none p-4">
+              <div class="flex items-center justify-between gap-3">
+                <div>
+                  <p class="text-xs font-extrabold muted2">Preço</p>
+                  <p id="modalPrice" class="mt-1 text-lg font-extrabold">—</p>
+                </div>
+                <button class="btn btn-primary" onclick="irPagamento()">
+                  Comprar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ===== Tema ===== */
+    (function () {
+      const BODY = document.body;
+      const KEY = 'theme';
+      const btnClaro  = document.getElementById('temaClaro');
+      const btnEscuro = document.getElementById('temaEscuro');
+      const btnClaroM  = document.getElementById('temaClaroM');
+      const btnEscuroM = document.getElementById('temaEscuroM');
+
+      function apply(theme) {
+        if (theme === 'dark') BODY.classList.add('dark-mode');
+        else BODY.classList.remove('dark-mode');
+      }
+      apply(localStorage.getItem(KEY) || 'light');
+
+      function setTheme(t){ localStorage.setItem(KEY, t); apply(t); }
+      btnClaro?.addEventListener('click', () => setTheme('light'));
+      btnEscuro?.addEventListener('click', () => setTheme('dark'));
+      btnClaroM?.addEventListener('click', () => setTheme('light'));
+      btnEscuroM?.addEventListener('click', () => setTheme('dark'));
+    })();
+
+    const OBRA = {
+      nome: 'O Incidente de Willowbrook',
+      descricao: 'Em um Reino Unido envolto em mistérios e segredos, Emily Holwes, uma investigadora surda, recebe uma carta de um antigo amigo propondo um trabalho intrigante: investigar o misterioso vilarejo de Willowbrook, onde todos os habitantes morreram repentinamente. Determinada a desvendar o que aconteceu, Emily embarca em uma jornada que a leva por caminhos obscuros e inesperados. Enquanto ela explora as ruas desertas e os edifícios abandonados de Willowbrook, Emily descobre pistas que a levam a confrontar seu próprio passado doloroso e a enfrentar segredos há muito enterrados. Cada descoberta traz novas perguntas, e a verdade se revela mais sinistra do que ela jamais poderia imaginar.O Incidente de Willowbrook é uma história de suspense e investigação que prende o leitor desde a primeira página, mergulhando-o em um enredo repleto de mistério, intriga e revelações chocantes. Acompanhe Emily enquanto ela luta para descobrir a verdade por trás das mortes no vilarejo e enfrenta seus próprios demônios ao longo do caminho.',
+      preco: 5.9,
+      imagem: 'imagens/IdW.jpg',
+      youtube: null,
+      tipo: 'weblivro',
+      accessUrl: 'WebLivroIdW.html?from=index',
+      info: {
+        palavras: '13558',
+        temática: 'Suspense / Investigação',
+        idioma: 'Português'
+      }
+    };
+
+    function lerLivro(){
+      window.location.href = `../webLivros/${OBRA.accessUrl}`;
+    }
+
+    function irPagamento(){
+  const item = encodeURIComponent(JSON.stringify({
+    nome: OBRA.nome,
+    preco: OBRA.preco,
+    imagem: OBRA.imagem,
+    tipo: OBRA.tipo,
+    accessUrl: OBRA.accessUrl
+  }));
+  window.location.href = `../paginasprincipais/pagamento.html?add=${item}`;
+}
+
+
+    /* ===== Modal ===== */
+    const modalBackdrop = document.getElementById('modalBackdrop');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalImg = document.getElementById('modalImg');
+    const modalDesc = document.getElementById('modalDesc');
+    const modalWords = document.getElementById('modalWords');
+    const modalTheme = document.getElementById('modalTheme');
+    const modalLang = document.getElementById('modalLang');
+    const modalPrice = document.getElementById('modalPrice');
+
+
+    function abrirDetalhes(data){
+      modalTitle.textContent = data.nome || '—';
+      modalImg.src = `../${data.imagem}`;
+      modalImg.alt = `Capa: ${data.nome || 'WebLivro'}`;
+
+      modalDesc.textContent = data.descricao || '—';
+      modalWords.textContent = data.info?.palavras || '—';
+      modalTheme.textContent = data.info?.temática || '—';
+      modalLang.textContent = data.info?.idioma || '—';
+      modalPrice.textContent = typeof data.preco === 'number'
+        ? `R$ ${data.preco.toFixed(2).replace('.', ',')}`
+        : '—';
+
+      modalBackdrop.classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function fecharDetalhes(){
+      modalBackdrop.classList.remove('show');
+      document.body.style.overflow = '';
+    }
+
+    modalBackdrop.addEventListener('click', (e)=>{
+      if (e.target === modalBackdrop) fecharDetalhes();
+    });
+
+    document.addEventListener('keydown', (e)=>{
+      if (e.key === 'Escape' && modalBackdrop.classList.contains('show')) fecharDetalhes();
+    });
+
+    /* ===== Olhinho ===== */
+    (function(){
+      const btn = document.getElementById("toggleSinopse");
+      const box = document.getElementById("sinopseBox");
+      const eyeOpen = document.getElementById("eyeOpen");
+      const eyeClosed = document.getElementById("eyeClosed");
+
+      let open = true;
+      btn?.addEventListener("click", ()=>{
+        open = !open;
+        box.classList.toggle("hidden", !open);
+        eyeOpen.classList.toggle("hidden", !open);
+        eyeClosed.classList.toggle("hidden", open);
+      });
+    })();
+  </script>
+</body>
+</html>

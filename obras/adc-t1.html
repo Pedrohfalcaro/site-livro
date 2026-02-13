@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <link rel="icon" type="image/png" href="../imagens/favicon.png">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Além dos Céus — T1: Desbravadores | Estante de Histórias</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <meta property="og:title" content="Além dos Céus — T1: Desbravadores | Estante de Histórias" />
+  <meta property="og:description" content="Uma jornada espacial e sentimental através do universo. Assista aos episódios e partes diretamente aqui." />
+  <meta property="og:image" content="../imagens/AdC1.jpg" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="pt_BR" />
+
+  <style>
+    :root{
+      /* Base (padrão do site) */
+      --bg:#f8fafc; --card:#ffffff; --text:#0f172a; --muted:#475569; --muted2:#64748b;
+      --border:#e2e8f0; --shadow2:0 8px 18px rgba(15,23,42,.08); --radius:18px;
+
+      /* Identidade ADC (inspirada na capa) */
+      --space1:#07101c;          /* fundo profundo */
+      --space2:#0b1626;          /* variação */
+      --neon:#2dd4bf;            /* ciano/teal */
+      --neon2:#38bdf8;           /* azul */
+      --glow:rgba(45,212,191,.22);
+
+      /* Ajuste do site */
+      --accent: var(--neon);
+      --accent2: var(--neon2);
+    }
+    body{ background:var(--bg); color:var(--text); }
+
+    body.dark-mode{
+      --bg:#070d16; --card:#0b1220; --text:#e5e7eb; --muted:#cbd5e1; --muted2:#9ca3af;
+      --border:#203044; --shadow2:0 10px 22px rgba(0,0,0,.42);
+    }
+
+    .surface{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow2); }
+    .muted{ color:var(--muted); }
+    .muted2{ color:var(--muted2); }
+
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:.55rem;
+      border-radius:9999px; padding:.75rem 1.1rem; font-weight:800;
+      transition:transform .15s ease, background .15s ease, opacity .15s ease;
+      user-select:none;
+    }
+    .btn:active{ transform:translateY(1px) scale(.99); }
+    .btn-primary{ background:var(--accent); color:#041018; }
+    body.dark-mode .btn-primary{ color:#041018; }
+    .btn-primary:hover{ opacity:.95; }
+    .btn-ghost{ background:transparent; border:1px solid var(--border); color:var(--text); }
+    .btn-ghost:hover{ background:rgba(15,23,42,.05); }
+    body.dark-mode .btn-ghost:hover{ background:rgba(255,255,255,.06); }
+
+    .glass{
+      background:rgba(255,255,255,.82);
+      backdrop-filter:blur(10px);
+      border-bottom:1px solid var(--border);
+    }
+    body.dark-mode .glass{ background:rgba(7,13,22,.70); }
+
+    .theme-dot{
+      width:24px; height:24px; border-radius:9999px; cursor:pointer;
+      border:1px solid rgba(255,255,255,.35);
+      box-shadow:0 0 0 2px rgba(255,255,255,.15) inset;
+      transition:transform .15s ease, opacity .15s ease;
+    }
+    .theme-dot:hover{ transform:translateY(-1px); opacity:.95; }
+    #temaClaro, #temaClaroM { background:linear-gradient(90deg,#ffffff 50%, var(--neon) 50%); }
+    #temaEscuro, #temaEscuroM { background:linear-gradient(90deg,#0b1220 50%, var(--neon2) 50%); }
+
+    /* HERO com “cara” de espaço */
+    .hero-space{
+      position:relative;
+      overflow:hidden;
+      border-radius: calc(var(--radius) + 6px);
+    }
+    .hero-space::before{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(45,212,191,.20), transparent 55%),
+        radial-gradient(circle at 78% 35%, rgba(56,189,248,.18), transparent 55%),
+        radial-gradient(circle at 40% 85%, rgba(45,212,191,.14), transparent 60%),
+        linear-gradient(180deg, rgba(7,16,28,.20), rgba(7,16,28,.55));
+      pointer-events:none;
+      z-index:1;
+    }
+    body.dark-mode .hero-space::before{
+      background:
+        radial-gradient(circle at 20% 20%, rgba(45,212,191,.22), transparent 55%),
+        radial-gradient(circle at 78% 35%, rgba(56,189,248,.16), transparent 55%),
+        radial-gradient(circle at 40% 85%, rgba(45,212,191,.12), transparent 60%),
+        linear-gradient(180deg, rgba(7,16,28,.35), rgba(7,16,28,.80));
+    }
+
+    .cover{
+      position:absolute; inset:0;
+      background-image:url("../imagens/AdC1.jpg");
+      background-size:cover;
+      background-position:center;
+      filter:saturate(1.05) contrast(1.05);
+      transform:scale(1.02);
+      z-index:0;
+    }
+
+    .chip{
+      display:inline-flex; align-items:center; gap:.5rem;
+      border:1px solid rgba(45,212,191,.35);
+      border-radius:9999px;
+      padding:.5rem .9rem;
+      font-weight:900;
+      font-size:.85rem;
+      background: rgba(45,212,191,.10);
+      color: var(--accent);
+    }
+
+    .grid-ep{
+      display:grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap:.6rem;
+    }
+    @media (min-width: 640px){
+      .grid-ep{ grid-template-columns: repeat(8, minmax(0, 1fr)); }
+    }
+
+    .ep-btn{
+      border-radius:9999px;
+      padding:.55rem .75rem;
+      font-weight:900;
+      border:1px solid var(--border);
+      background:transparent;
+      transition:.15s ease;
+      color:var(--text);
+    }
+    .ep-btn:hover{ background:rgba(15,23,42,.04); }
+    body.dark-mode .ep-btn:hover{ background:rgba(255,255,255,.06); }
+
+    .ep-btn.active{
+      border-color: rgba(45,212,191,.55);
+      box-shadow: 0 0 0 4px rgba(45,212,191,.14);
+      background: rgba(45,212,191,.10);
+      color: var(--accent);
+    }
+
+    .part-pill{
+      border:1px solid var(--border);
+      border-radius:9999px;
+      padding:.45rem .8rem;
+      font-weight:900;
+      font-size:.85rem;
+      background: transparent;
+      transition:.15s ease;
+      color: var(--text);
+    }
+    .part-pill:hover{ background:rgba(15,23,42,.04); }
+    body.dark-mode .part-pill:hover{ background:rgba(255,255,255,.06); }
+    .part-pill.active{
+      background: rgba(56,189,248,.10);
+      border-color: rgba(56,189,248,.40);
+      color: var(--accent2);
+    }
+
+    .player-wrap{
+      position:relative;
+      border-radius: 18px;
+      overflow:hidden;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.08);
+    }
+    .player-wrap iframe{
+      width:100%;
+      aspect-ratio: 16 / 9;
+      display:block;
+    }
+
+    .icon-btn{
+      width:40px; height:40px;
+      border-radius:9999px;
+      display:inline-flex; align-items:center; justify-content:center;
+      border:1px solid var(--border);
+      background:transparent;
+      transition:.15s ease;
+    }
+    .icon-btn:hover{ background:rgba(15,23,42,.05); }
+    body.dark-mode .icon-btn:hover{ background:rgba(255,255,255,.06); }
+
+    .hint{
+      border:1px dashed var(--border);
+      border-radius: 16px;
+      padding: 1rem;
+      background: rgba(45,212,191,.06);
+    }
+    body.dark-mode .hint{ background: rgba(45,212,191,.08); }
+
+    @media (prefers-reduced-motion: reduce){
+      *{ scroll-behavior:auto !important; transition:none !important; animation:none !important; }
+    }
+  </style>
+</head>
+
+<body class="font-sans relative overflow-x-hidden min-h-screen">
+
+  <!-- NAVBAR -->
+  <nav class="glass sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <a href="../paginasprincipais/index.html" class="inline-flex items-center gap-2">
+          <img src="../imagens/LogoSite.png" alt="Logo - Estante de Histórias" class="h-10 w-auto select-none" />
+        </a>
+
+        <div class="hidden sm:flex items-center gap-2">
+          <button id="temaClaro" class="theme-dot" title="Tema claro" aria-label="Tema claro"></button>
+          <button id="temaEscuro" class="theme-dot" title="Tema escuro" aria-label="Tema escuro"></button>
+        </div>
+
+        <a href="https://instagram.com/pedrohfalcaro" target="_blank" rel="noopener noreferrer"
+           class="hidden sm:inline-flex items-center justify-center w-10 h-10 rounded-full border"
+           style="border-color: var(--border); color: var(--muted);"
+           title="Instagram" aria-label="Instagram">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5a4.25 4.25 0 0 0 4.25-4.25v-8.5A4.25 4.25 0 0 0 16.25 3.5h-8.5zm8.75 2a1 1 0 1 1 0 2 1 1 0 0 1 0-2zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 1.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z"/>
+          </svg>
+        </a>
+      </div>
+
+      <div class="text-center">
+        <h1 class="font-extrabold tracking-tight text-lg sm:text-xl">Além dos Céus</h1>
+        <p class="hidden sm:block text-xs muted2">T1 • Desbravadores • Áudio-série</p>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <div class="sm:hidden flex items-center gap-2">
+          <button id="temaClaroM" class="theme-dot" title="Tema claro" aria-label="Tema claro"></button>
+          <button id="temaEscuroM" class="theme-dot" title="Tema escuro" aria-label="Tema escuro"></button>
+        </div>
+
+        <a href="../paginasprincipais/index.html" class="btn btn-ghost hidden md:inline-flex">Início</a>
+        <a href="../paginasprincipais/loja.html" class="btn btn-ghost hidden md:inline-flex">Loja</a>
+        <a href="../paginasprincipais/sobreautor.html" class="btn btn-ghost hidden md:inline-flex">Sobre</a>
+        <a href="../paginasprincipais/contos.html" class="btn btn-ghost hidden md:inline-flex">Contos</a>
+
+        <a href="../paginasprincipais/index.html#obrasProjetos" class="btn btn-primary !px-4 !py-2">Voltar</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="max-w-6xl mx-auto px-4 pt-8">
+    <div class="surface hero-space">
+      <div class="cover" aria-hidden="true"></div>
+
+      <div class="relative z-[2] p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-[1.2fr_.8fr] gap-8">
+        <div>
+          <span class="chip">🎧 Áudio-série</span>
+
+          <h2 class="mt-4 text-2xl sm:text-3xl font-extrabold leading-tight">
+            Além dos Céus — Temporada 1: Desbravadores
+          </h2>
+
+          <p class="mt-2 text-sm sm:text-base" style="color: rgba(255,255,255,.86)">
+            Uma jornada espacial e sentimental através do universo.
+          </p>
+
+          <div class="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="surface !shadow-none p-4"
+                 style="background: rgba(7,16,28,.55); border-color: rgba(255,255,255,.14); color: rgba(255,255,255,.92)">
+              <p class="font-extrabold text-sm">Episódios</p>
+              <p class="text-sm mt-1" style="color: rgba(255,255,255,.74)">8 Ep divididos em 17 partes</p>
+            </div>
+            <div class="surface !shadow-none p-4"
+                 style="background: rgba(7,16,28,.55); border-color: rgba(255,255,255,.14); color: rgba(255,255,255,.92)">
+              <p class="font-extrabold text-sm">Temática</p>
+              <p class="text-sm mt-1" style="color: rgba(255,255,255,.74)">Viagem espacial / Aventura</p>
+            </div>
+            <div class="surface !shadow-none p-4"
+                 style="background: rgba(7,16,28,.55); border-color: rgba(255,255,255,.14); color: rgba(255,255,255,.92)">
+              <p class="font-extrabold text-sm">Idioma</p>
+              <p class="text-sm mt-1" style="color: rgba(255,255,255,.74)">Português</p>
+            </div>
+          </div>
+
+          <div class="mt-6 flex flex-col sm:flex-row gap-3">
+            <button class="btn btn-primary w-full sm:w-auto" onclick="scrollToSection('assistir')">
+              ▶ Assistir agora
+            </button>
+            <button class="btn btn-ghost w-full sm:w-auto" onclick="scrollToSection('episodios')"
+                    style="background: rgba(7,16,28,.35); border-color: rgba(255,255,255,.16); color: rgba(255,255,255,.92)">
+              🎬 Ver episódios
+            </button>
+          </div>
+
+          <p class="mt-4 text-xs" style="color: rgba(255,255,255,.70)">
+            Dica: selecione um episódio e, se houver partes, avance pela “Próxima parte”.
+          </p>
+        </div>
+
+        <div class="surface p-6 sm:p-7"
+             style="background: rgba(7,16,28,.55); border-color: rgba(255,255,255,.14); color: rgba(255,255,255,.92)">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <p class="font-extrabold">Sinopse</p>
+              <p class="text-sm mt-1" style="color: rgba(255,255,255,.74)">Clique no olhinho pra abrir/fechar.</p>
+            </div>
+
+            <button class="icon-btn" id="toggleSinopse" title="Mostrar/ocultar sinopse"
+                    style="border-color: rgba(255,255,255,.18); color: rgba(255,255,255,.92)">
+              <!-- eye icon -->
+              <svg id="eyeOpen" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-5 h-5" fill="currentColor">
+                <path d="M12 5c5.5 0 9.7 4.6 10.9 6.2.2.2.2.5 0 .7C21.7 13.4 17.5 18 12 18S2.3 13.4 1.1 11.9a.6.6 0 0 1 0-.7C2.3 9.6 6.5 5 12 5Zm0 11c3 0 5.5-2.5 5.5-5.5S15 5 12 5 6.5 7.5 6.5 10.5 9 16 12 16Zm0-9a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7Z"/>
+              </svg>
+              <svg id="eyeClosed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-5 h-5 hidden" fill="currentColor">
+                <path d="M3.3 5.1 2 6.4l3 3C3.3 10.9 2 12.5 1.1 13.7a.6.6 0 0 0 0 .7C2.3 16 6.5 20.6 12 20.6c2 0 3.8-.6 5.3-1.4l3.3 3.3 1.3-1.3L3.3 5.1Zm8.7 13.5c-3.9 0-7.2-3-9-5.1.9-1.1 2-2.3 3.4-3.3l2.2 2.2a5.5 5.5 0 0 0 7 7l1.8 1.8c-1.2.7-2.6 1.3-4.4 1.3Zm10.9-4.9c-1 1.3-2.5 3-4.6 4.2l-2.1-2.1a5.5 5.5 0 0 0-7.1-7.1L6.9 6.6C8.4 5.8 10.1 5.4 12 5.4c5.5 0 9.7 4.6 10.9 6.2.2.2.2.5 0 .7Z"/>
+              </svg>
+            </button>
+          </div>
+
+          <div id="sinopseBox" class="mt-4">
+            <p class="text-sm leading-relaxed" style="color: rgba(255,255,255,.86)">
+              Além dos Céus é uma áudio série focada em aventuras e viagens espaciais.
+              Leonardo é o protagonista desta história, onde sua tarefa é liderar uma equipe
+              em uma missão rumo a um sistema solar longínquo. Ele irá lidar com sentimentos,
+              conflitos internos e decisões difíceis a tomar, além de muita ação e determinação.
+              Como será a aventura desta tripulação? Isso você só descobrirá em Além dos Céus.
+            </p>
+          </div>
+
+          <div class="mt-5 hint">
+            <p class="font-extrabold" style="color: rgba(255,255,255,.92)">Status</p>
+            <p id="statusLine" class="text-sm mt-1" style="color: rgba(255,255,255,.74)">
+              Selecione um episódio para começar.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- EPISÓDIOS -->
+  <section id="episodios" class="max-w-6xl mx-auto px-4 pt-8 scroll-mt-24">
+    <div class="surface p-6 sm:p-8">
+      <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div>
+          <h3 class="text-xl font-extrabold">Episódios</h3>
+          <p class="muted mt-1">Selecione o episódio. Se houver partes, escolha a parte.</p>
+        </div>
+
+        <button class="btn btn-ghost w-full sm:w-auto" onclick="resetarSelecao()">
+          ↺ Limpar seleção
+        </button>
+      </div>
+
+      <!-- botões EP 01-08 -->
+      <div class="mt-6 grid-ep" id="epGrid"></div>
+
+      <!-- título + partes -->
+      <div class="mt-6 grid grid-cols-1 lg:grid-cols-[1.2fr_.8fr] gap-6">
+        <div class="surface !shadow-none p-5 sm:p-6">
+          <p class="text-xs font-extrabold muted2">Selecionado</p>
+          <h4 id="tituloEp" class="mt-1 text-lg sm:text-xl font-extrabold">—</h4>
+          <p id="subTituloEp" class="mt-2 text-sm muted2">Escolha um episódio acima.</p>
+
+          <div id="partsArea" class="mt-4 hidden">
+            <p class="text-xs font-extrabold muted2 mb-2">Partes</p>
+            <div id="partsPills" class="flex flex-wrap gap-2"></div>
+          </div>
+
+          <div class="mt-5 flex flex-col sm:flex-row gap-3">
+            <button id="btnAssistir" class="btn btn-primary w-full sm:w-auto" onclick="scrollToSection('assistir')" disabled style="opacity:.6">
+              ▶ Abrir no player
+            </button>
+            <button id="btnYoutube" class="btn btn-ghost w-full sm:w-auto" onclick="abrirNoYoutube()" disabled style="opacity:.6">
+              🔗 Abrir no YouTube
+            </button>
+          </div>
+        </div>
+
+        <aside class="surface !shadow-none p-5 sm:p-6">
+          <p class="font-extrabold">Navegação</p>
+          <p class="text-sm muted2 mt-1">Se o episódio tiver partes, use os botões abaixo.</p>
+
+          <div class="mt-4 flex flex-col gap-2">
+            <button id="btnPrev" class="btn btn-ghost w-full" onclick="irParaParte(-1)" disabled style="opacity:.6">
+              ⟵ Parte anterior
+            </button>
+            <button id="btnNext" class="btn btn-primary w-full" onclick="irParaParte(1)" disabled style="opacity:.6">
+              Próxima parte ⟶
+            </button>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLAYER -->
+  <section id="assistir" class="max-w-6xl mx-auto px-4 py-10 scroll-mt-24">
+    <div class="surface p-6 sm:p-8">
+      <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+        <div>
+          <h3 class="text-xl font-extrabold">Assistir</h3>
+          <p class="muted mt-1">O player abre aqui dentro.</p>
+        </div>
+        <div class="flex gap-2">
+          <button class="btn btn-ghost" onclick="scrollToSection('episodios')">🎬 Episódios</button>
+          <a href="../paginasprincipais/index.html#obrasProjetos" class="btn btn-primary">Ver outras obras</a>
+        </div>
+      </div>
+
+      <div class="mt-6 grid grid-cols-1 lg:grid-cols-[1.25fr_.75fr] gap-6">
+        <div>
+          <div class="player-wrap">
+            <iframe
+  id="ytFrame"
+  src="about:blank"
+  title="Player do YouTube"
+  frameborder="0"
+  referrerpolicy="strict-origin-when-cross-origin"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  allowfullscreen>
+</iframe>
+
+          </div>
+
+          <p id="playerHint" class="mt-3 text-sm muted2">
+            Selecione um episódio para carregar o vídeo.
+          </p>
+        </div>
+
+        <aside class="surface !shadow-none p-5 sm:p-6">
+          <p class="text-xs font-extrabold muted2">Tocando agora</p>
+          <h4 id="nowTitle" class="mt-1 text-lg font-extrabold">—</h4>
+
+          <div class="mt-3 flex items-start justify-between gap-3">
+            <p class="text-sm muted2">Sinopse do episódio</p>
+            <button class="icon-btn" id="toggleEpSinopse" title="Mostrar/ocultar sinopse do episódio">
+              <svg id="eyeOpen2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-5 h-5" fill="currentColor">
+                <path d="M12 5c5.5 0 9.7 4.6 10.9 6.2.2.2.2.5 0 .7C21.7 13.4 17.5 18 12 18S2.3 13.4 1.1 11.9a.6.6 0 0 1 0-.7C2.3 9.6 6.5 5 12 5Zm0 11c3 0 5.5-2.5 5.5-5.5S15 5 12 5 6.5 7.5 6.5 10.5 9 16 12 16Zm0-9a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7Z"/>
+              </svg>
+              <svg id="eyeClosed2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-5 h-5 hidden" fill="currentColor">
+                <path d="M3.3 5.1 2 6.4l3 3C3.3 10.9 2 12.5 1.1 13.7a.6.6 0 0 0 0 .7C2.3 16 6.5 20.6 12 20.6c2 0 3.8-.6 5.3-1.4l3.3 3.3 1.3-1.3L3.3 5.1Zm8.7 13.5c-3.9 0-7.2-3-9-5.1.9-1.1 2-2.3 3.4-3.3l2.2 2.2a5.5 5.5 0 0 0 7 7l1.8 1.8c-1.2.7-2.6 1.3-4.4 1.3Zm10.9-4.9c-1 1.3-2.5 3-4.6 4.2l-2.1-2.1a5.5 5.5 0 0 0-7.1-7.1L6.9 6.6C8.4 5.8 10.1 5.4 12 5.4c5.5 0 9.7 4.6 10.9 6.2.2.2.2.5 0 .7Z"/>
+              </svg>
+            </button>
+          </div>
+
+          <div id="epSinopseBox" class="mt-3">
+            <p id="epSinopseText" class="text-sm muted leading-relaxed">
+              Selecione um episódio para ver a sinopse.
+            </p>
+          </div>
+
+          <div class="mt-5 flex flex-col gap-2">
+            <button class="btn btn-ghost w-full" onclick="irParaParte(-1)" id="btnPrev2" disabled style="opacity:.6">
+              ⟵ Parte anterior
+            </button>
+            <button class="btn btn-primary w-full" onclick="irParaParte(1)" id="btnNext2" disabled style="opacity:.6">
+              Próxima parte ⟶
+            </button>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="w-full">
+    <div class="max-w-6xl mx-auto px-4 pb-10">
+      <div class="surface p-6 sm:p-8 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
+        <div>
+          <h3 class="text-lg font-extrabold">Estante de Histórias</h3>
+          <p class="text-sm muted2">Além dos Céus • T1: Desbravadores</p>
+        </div>
+        <a href="mailto:pedrofalcari@gmail.com" class="btn btn-ghost w-full sm:w-auto">pedrofalcari@gmail.com</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* ===== Tema ===== */
+    (function () {
+      const BODY = document.body;
+      const KEY = 'theme';
+      const btnClaro  = document.getElementById('temaClaro');
+      const btnEscuro = document.getElementById('temaEscuro');
+      const btnClaroM  = document.getElementById('temaClaroM');
+      const btnEscuroM = document.getElementById('temaEscuroM');
+
+      function apply(theme) {
+        if (theme === 'dark') BODY.classList.add('dark-mode');
+        else BODY.classList.remove('dark-mode');
+      }
+      apply(localStorage.getItem(KEY) || 'light');
+
+      function setTheme(t){ localStorage.setItem(KEY, t); apply(t); }
+      btnClaro?.addEventListener('click', () => setTheme('light'));
+      btnEscuro?.addEventListener('click', () => setTheme('dark'));
+      btnClaroM?.addEventListener('click', () => setTheme('light'));
+      btnEscuroM?.addEventListener('click', () => setTheme('dark'));
+    })();
+
+    function scrollToSection(id) {
+      const section = document.getElementById(id);
+      if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    /* ===== Dados =====
+      Troque "videoId" pelos IDs reais do YouTube (apenas o ID do vídeo).
+      Ex.: https://www.youtube.com/watch?v=ABC123 -> videoId: "ABC123"
+    */
+    const SERIE = {
+      nome: "Além dos Céus — Temporada 1: Desbravadores",
+      eps: [
+        {
+          ep: 1,
+          titulo: "Último dia",
+          sinopse: "Selecionado para liderar uma importante missão espacial, Leonardo enfrentara seus sentimentos e as dificuldades de deixar as pessoas para trás, afim de partir para o espaço em Além dos Céus",
+          parts: [
+            { parte: 1, tituloParte: null, videoId: "GeKRKIWOxLc" }
+          ]
+        },
+        {
+          ep: 2,
+          titulo: "Artemis",
+          sinopse: "Fora da Terra, a tripulação da Delta 07 começa a dar os primeiros passos para o andamento da missão, enquanto compartilham sentimentos e atravessam desafios mortais. Tudo isso em Além dos Céus",
+          parts: [
+            { parte: 1, tituloParte: "Parte 1 — Ansiedade", videoId: "sktflB8u_4k" },
+            { parte: 2, tituloParte: "Parte 2 — Retravo", videoId: "E9Yky90cCjI" },
+            { parte: 3, tituloParte: "Parte 3 — Inficionação", videoId: "xxphJ5Dk7YM" }
+          ]
+        },
+        {
+          ep: 3,
+          titulo: "Abyssia",
+          sinopse: "A equipe Delta, ainda lidando com a estranha doença em seus corpos. Parte rumo ao próximo planeta do sistema solar, se deparando com um planeta diferente de tudo que eles já haviam visto, despertando medos e curiosidades nos tripulantes. Quais mistérios e perigos aguardam a tripulação da Delta 07? ",
+          parts: [
+            { parte: 1, tituloParte: "Parte 1 — Talassofobia", videoId: "o9cEaoD5rJM" },
+            { parte: 2, tituloParte: "Parte 2 — Leviatã", videoId: "5Ppfn4QdIu4" },
+            { parte: 3, tituloParte: "Parte 3 — Solitude", videoId: "eObtUcgJwI4" }
+          ]
+        },
+        {
+          ep: 4,
+          titulo: "Tartarus",
+          sinopse: "Após os terrores e desafios enfrentados em Artemis e Abyssia, a equipe Delta faz um pouso de emergência no próximo planeta, para alinharem as descobertas e os perigos que eles arranjaram. Enquanto planejam o próximo passo da missão Delta. Tudo isso em Além dos Céus.",
+          parts: [
+            { parte: 1, tituloParte: null, videoId: "GCypc9hHKEM" }
+          ]
+        },
+        {
+          ep: 5,
+          titulo: "Murphyos",
+          sinopse: "Deixando o último planeta, A equipe da Delta 07 partiu em direção ao próximo planeta. Porém, as perturbações do espaço começam a assombrar a mente do capitão, o fazendo questionar a continuidade da missão e o seu posto de liderança. Tudo isso em Além dos Céus",
+          parts: [
+            { parte: 1, tituloParte: "Parte 1 — Interpessoal", videoId: "p2Wst20ugNg" },
+            { parte: 2, tituloParte: "Parte 2 — Desbravadores", videoId: "wmn6cHEjTUo" },
+            { parte: 3, tituloParte: "Parte 3 — Murphy", videoId: "LgPSBoLZ2bI" }
+          ]
+        },
+        {
+          ep: 6,
+          titulo: "Verdantia",
+          sinopse: "A dor de perder seu amigo, junto com a culpa que ele carregava, fez Leonardo entrar em colapso. Olívia e Zig planejavam a continuidade da missão. Decidindo quias seriam os próximos passos. Tudo isso em Além dos Céus",
+          parts: [
+            { parte: 1, tituloParte: "Parte 1 — Eminência", videoId: "p4m9WcYqJlQ" },
+            { parte: 2, tituloParte: "Parte 2 — Esperança", videoId: "lLfJaMCjf1s" },
+            { parte: 3, tituloParte: "Parte 3 — Eternidade", videoId: "AQqNaQsK6Uo" }
+          ]
+        },
+        {
+          ep: 7,
+          titulo: "Fhrostia",
+          sinopse: "A capsula disparada por Leonardo acerta o solo do próximo planeta. Um novo mundo de perigos e aventuras aguarda nosso protagonista em Além dos Céus",
+          parts: [
+            { parte: 1, tituloParte: "Parte 1 — Remanescente", videoId: "m65FWuAwe5w" },
+            { parte: 2, tituloParte: "Parte 2 — Resiliência", videoId: "rNJtj7OHOTk" }
+          ]
+        },
+        {
+          ep: 8,
+          titulo: "Última Chance",
+          sinopse: "Voltar para quem você ama e voltar a ser feliz, ou salvar todos? Leonardo se vê de frente a essa difícil pergunta. Qual será sua decisão, O que acontecerá? Uma última chance existe. O final de Além dos Céus, Desbravadores",
+          parts: [
+            { parte: 1, tituloParte: null, videoId: "vrbTfuroSbo" }
+          ]
+        }
+      ]
+    };
+
+    /* ===== Estado ===== */
+    let selectedEp = null;     // índice em SERIE.eps
+    let selectedPart = 0;      // índice em parts
+
+    /* ===== Elementos ===== */
+    const epGrid = document.getElementById("epGrid");
+    const tituloEp = document.getElementById("tituloEp");
+    const subTituloEp = document.getElementById("subTituloEp");
+    const partsArea = document.getElementById("partsArea");
+    const partsPills = document.getElementById("partsPills");
+
+    const btnAssistir = document.getElementById("btnAssistir");
+    const btnYoutube = document.getElementById("btnYoutube");
+    const btnPrev = document.getElementById("btnPrev");
+    const btnNext = document.getElementById("btnNext");
+    const btnPrev2 = document.getElementById("btnPrev2");
+    const btnNext2 = document.getElementById("btnNext2");
+
+    const ytFrame = document.getElementById("ytFrame");
+    const playerHint = document.getElementById("playerHint");
+    const nowTitle = document.getElementById("nowTitle");
+    const statusLine = document.getElementById("statusLine");
+
+    const epSinopseText = document.getElementById("epSinopseText");
+
+    /* ===== Render Episódios ===== */
+    function pad2(n){ return String(n).padStart(2,'0'); }
+
+    function renderEpGrid(){
+      epGrid.innerHTML = SERIE.eps.map((e, idx)=>`
+        <button class="ep-btn ${selectedEp===idx ? 'active':''}"
+                onclick="selecionarEp(${idx})"
+                aria-label="Selecionar episódio ${pad2(e.ep)}">
+          ${pad2(e.ep)}
+        </button>
+      `).join("");
+    }
+
+    function tituloCompleto(epObj, partObj){
+      const base = `EP ${pad2(epObj.ep)} — ${epObj.titulo}`;
+      if (epObj.parts.length > 1){
+        // se tiver parte com título, usa; senão: "Parte X"
+        const t = partObj.tituloParte ? partObj.tituloParte : `Parte ${partObj.parte}`;
+        return `${base} • ${t}`;
+      }
+      return base;
+    }
+
+    function selecionarEp(idx){
+      selectedEp = idx;
+      selectedPart = 0;
+      renderEpGrid();
+      renderPartes();
+      atualizarSelecao();
+      // carrega o vídeo imediatamente (pra ficar fluido)
+      carregarVideo();
+      // atualiza hash (opcional, mas ajuda a “lembrar” em refresh)
+      const epNumber = SERIE.eps[idx].ep;
+      location.hash = `ep${pad2(epNumber)}p${String(selectedPart+1)}`;
+    }
+
+    function renderPartes(){
+      if (selectedEp === null){
+        partsArea.classList.add("hidden");
+        partsPills.innerHTML = "";
+        return;
+      }
+
+      const epObj = SERIE.eps[selectedEp];
+      if (epObj.parts.length <= 1){
+        partsArea.classList.add("hidden");
+        partsPills.innerHTML = "";
+        return;
+      }
+
+      partsArea.classList.remove("hidden");
+
+      partsPills.innerHTML = epObj.parts.map((p, pIdx)=>{
+        const label = p.tituloParte ? `P${p.parte}` : `Parte ${p.parte}`;
+        return `
+          <button class="part-pill ${selectedPart===pIdx ? 'active':''}"
+                  onclick="selecionarParte(${pIdx})"
+                  title="${escapeHTML(p.tituloParte || ('Parte ' + p.parte))}">
+            ${label}
+          </button>
+        `;
+      }).join("");
+    }
+
+    function selecionarParte(pIdx){
+      selectedPart = pIdx;
+      renderPartes();
+      atualizarSelecao();
+      carregarVideo();
+      const epNumber = SERIE.eps[selectedEp].ep;
+      location.hash = `ep${pad2(epNumber)}p${String(selectedPart+1)}`;
+    }
+
+    function atualizarSelecao(){
+      if (selectedEp === null){
+        tituloEp.textContent = "—";
+        subTituloEp.textContent = "Escolha um episódio acima.";
+        btnAssistir.disabled = true; btnAssistir.style.opacity = ".6";
+        btnYoutube.disabled = true; btnYoutube.style.opacity = ".6";
+        setNavDisabled(true);
+        statusLine.textContent = "Selecione um episódio para começar.";
+        return;
+      }
+
+      const epObj = SERIE.eps[selectedEp];
+      const partObj = epObj.parts[selectedPart];
+
+      tituloEp.textContent = `EP ${pad2(epObj.ep)} — ${epObj.titulo}`;
+      subTituloEp.textContent = (epObj.parts.length > 1)
+        ? (partObj.tituloParte || `Parte ${partObj.parte}`)
+        : "Episódio único (sem partes).";
+
+      btnAssistir.disabled = false; btnAssistir.style.opacity = "1";
+      btnYoutube.disabled = false; btnYoutube.style.opacity = "1";
+
+      epSinopseText.textContent = epObj.sinopse || "TEMPLATE: sinopse (você troca depois).";
+
+      // navegação
+      const hasParts = epObj.parts.length > 1;
+      if (!hasParts){
+        setNavDisabled(true);
+      }else{
+        const isFirst = (selectedPart === 0);
+        const isLast  = (selectedPart === epObj.parts.length - 1);
+        btnPrev.disabled = isFirst; btnPrev.style.opacity = isFirst ? ".6" : "1";
+        btnNext.disabled = isLast;  btnNext.style.opacity = isLast ? ".6" : "1";
+        btnPrev2.disabled = isFirst; btnPrev2.style.opacity = isFirst ? ".6" : "1";
+        btnNext2.disabled = isLast;  btnNext2.style.opacity = isLast ? ".6" : "1";
+      }
+
+      statusLine.textContent = `Pronto: ${tituloCompleto(epObj, partObj)}.`;
+    }
+
+    function setNavDisabled(disabled){
+      btnPrev.disabled = disabled; btnPrev.style.opacity = disabled ? ".6" : "1";
+      btnNext.disabled = disabled; btnNext.style.opacity = disabled ? ".6" : "1";
+      btnPrev2.disabled = disabled; btnPrev2.style.opacity = disabled ? ".6" : "1";
+      btnNext2.disabled = disabled; btnNext2.style.opacity = disabled ? ".6" : "1";
+    }
+
+    function carregarVideo(){
+  if (selectedEp === null) return;
+  const epObj = SERIE.eps[selectedEp];
+  const partObj = epObj.parts[selectedPart];
+
+  const origin = encodeURIComponent(window.location.origin);
+const embed = `https://www.youtube.com/embed/${partObj.videoId}?rel=0`;
+ytFrame.src = embed;
+
+
+  const t = tituloCompleto(epObj, partObj);
+  nowTitle.textContent = t;
+  playerHint.textContent = "Se não carregar, pode ser restrição de incorporação do vídeo.";
+}
+
+
+    function abrirNoYoutube(){
+      if (selectedEp === null) return;
+      const epObj = SERIE.eps[selectedEp];
+      const partObj = epObj.parts[selectedPart];
+
+      // template (link normal)
+      const url = `https://www.youtube.com/watch?v=${partObj.videoId}`;
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+
+    function irParaParte(dir){
+      if (selectedEp === null) return;
+      const epObj = SERIE.eps[selectedEp];
+      if (epObj.parts.length <= 1) return;
+
+      const next = selectedPart + dir;
+      if (next < 0 || next >= epObj.parts.length) return;
+      selecionarParte(next);
+      scrollToSection("assistir");
+    }
+
+    function resetarSelecao(){
+      selectedEp = null;
+      selectedPart = 0;
+      renderEpGrid();
+      renderPartes();
+      atualizarSelecao();
+
+      ytFrame.src = "about:blank";
+      nowTitle.textContent = "—";
+      epSinopseText.textContent = "Selecione um episódio para ver a sinopse.";
+      playerHint.textContent = "Selecione um episódio para carregar o vídeo.";
+      location.hash = "";
+    }
+
+    function escapeHTML(str){
+      return String(str)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    /* ===== Olhinho (sinopse geral) ===== */
+    (function(){
+      const btn = document.getElementById("toggleSinopse");
+      const box = document.getElementById("sinopseBox");
+      const eyeOpen = document.getElementById("eyeOpen");
+      const eyeClosed = document.getElementById("eyeClosed");
+
+      let open = true;
+      btn?.addEventListener("click", ()=>{
+        open = !open;
+        box.classList.toggle("hidden", !open);
+        eyeOpen.classList.toggle("hidden", !open);
+        eyeClosed.classList.toggle("hidden", open);
+      });
+
+      // sinopse EP
+      const btn2 = document.getElementById("toggleEpSinopse");
+      const box2 = document.getElementById("epSinopseBox");
+      const eyeOpen2 = document.getElementById("eyeOpen2");
+      const eyeClosed2 = document.getElementById("eyeClosed2");
+
+      let open2 = true;
+      btn2?.addEventListener("click", ()=>{
+        open2 = !open2;
+        box2.classList.toggle("hidden", !open2);
+        eyeOpen2.classList.toggle("hidden", !open2);
+        eyeClosed2.classList.toggle("hidden", open2);
+      });
+    })();
+
+    /* ===== init (hash opcional) ===== */
+    document.addEventListener("DOMContentLoaded", ()=>{
+      renderEpGrid();
+      atualizarSelecao();
+
+      // Se vier hash tipo #ep02p2, tenta abrir
+      const h = (location.hash || "").replace("#","").toLowerCase().trim();
+      const m = h.match(/^ep(\d{2})p(\d+)$/);
+      if (m){
+        const epNum = parseInt(m[1], 10);
+        const partNum = parseInt(m[2], 10); // 1-based
+        const idx = SERIE.eps.findIndex(e => e.ep === epNum);
+        if (idx >= 0){
+          selectedEp = idx;
+          const epObj = SERIE.eps[idx];
+          selectedPart = Math.max(0, Math.min(epObj.parts.length-1, partNum-1));
+          renderEpGrid();
+          renderPartes();
+          atualizarSelecao();
+          carregarVideo();
+        }
+      }
+    });
+  </script>
+</body>
+</html>

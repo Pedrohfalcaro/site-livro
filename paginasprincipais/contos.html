@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Estante de Contos — Estante de Histórias</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <meta property="og:title" content="Estante de Contos — Estante de Histórias" />
+  <meta property="og:description" content="Uma coleção de contos curtos e histórias paralelas." />
+  <meta property="og:image" content="../imagens/favicon.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="pt_BR" />
+
+  <style>
+    :root{
+      --bg:#f8fafc; --card:#ffffff; --text:#0f172a; --muted:#475569; --muted2:#64748b;
+      --border:#e2e8f0; --accent:#14b8a6; --accent2:#0ea5e9;
+      --shadow:0 12px 30px rgba(15,23,42,.08); --shadow2:0 8px 18px rgba(15,23,42,.08);
+      --radius:18px;
+    }
+    body{ background:var(--bg); color:var(--text); }
+
+    body.dark-mode{
+      --bg:#0b1220; --card:#111827; --text:#e5e7eb; --muted:#cbd5e1; --muted2:#9ca3af;
+      --border:#263244; --shadow:0 18px 40px rgba(0,0,0,.35); --shadow2:0 10px 22px rgba(0,0,0,.28);
+      --accent:#34d399; --accent2:#38bdf8;
+    }
+
+    .surface{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow2); }
+    .muted{ color:var(--muted); }
+    .muted2{ color:var(--muted2); }
+
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
+      border-radius:9999px; padding:.75rem 1.1rem; font-weight:800;
+      transition:transform .15s ease, box-shadow .15s ease, background .15s ease, opacity .15s ease;
+      box-shadow:0 10px 20px rgba(2,6,23,.08);
+      user-select:none;
+    }
+    .btn:active{ transform:translateY(1px) scale(.99); box-shadow:0 8px 16px rgba(2,6,23,.08); }
+    .btn-primary{ background:var(--accent); color:#fff; }
+    .btn-primary:hover{ opacity:.95; }
+    .btn-secondary{ background:#0f172a; color:#fff; }
+    body.dark-mode .btn-secondary{ background:rgba(255,255,255,.08); color:var(--text); border:1px solid var(--border); box-shadow:none; }
+    .btn-ghost{ background:transparent; border:1px solid var(--border); color:var(--text); box-shadow:none; }
+    .btn-ghost:hover{ background:rgba(15,23,42,.04); }
+    body.dark-mode .btn-ghost:hover{ background:rgba(255,255,255,.06); }
+
+    .theme-dot{
+      width:24px; height:24px; border-radius:9999px; cursor:pointer;
+      border:1px solid rgba(255,255,255,.35);
+      box-shadow:0 0 0 2px rgba(255,255,255,.15) inset;
+      transition:transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+    }
+    .theme-dot:hover{ transform:translateY(-1px); box-shadow:0 0 0 2px rgba(255,255,255,.35) inset; opacity:.95; }
+    #temaClaro, #temaClaroM { background:linear-gradient(90deg,#ffffff 50%, #14b8a6 50%); }
+    #temaEscuro, #temaEscuroM { background:linear-gradient(90deg,#0b1220 50%, #38bdf8 50%); }
+
+    .glass{ background:rgba(255,255,255,.82); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); }
+    body.dark-mode .glass{ background:rgba(11,18,32,.68); }
+
+    .field{
+      width:100%;
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:9999px;
+      padding:.85rem 1.1rem;
+      color:var(--text);
+      outline:none;
+      transition: box-shadow .15s ease, border-color .15s ease;
+    }
+    .field:focus{
+      border-color: rgba(20,184,166,.55);
+      box-shadow: 0 0 0 4px rgba(20,184,166,.14);
+    }
+
+    .pill{
+      display:inline-flex; align-items:center; gap:.5rem;
+      border:1px solid var(--border);
+      border-radius:9999px;
+      padding:.55rem .9rem;
+      font-weight:800;
+      font-size:.875rem;
+      background: transparent;
+      color: var(--text);
+      box-shadow:none;
+      transition: background .15s ease, transform .15s ease;
+      user-select:none;
+    }
+    .pill:hover{ background: rgba(15,23,42,.04); }
+    body.dark-mode .pill:hover{ background: rgba(255,255,255,.06); }
+    .pill.active{
+      background: rgba(20,184,166,.12);
+      border-color: rgba(20,184,166,.35);
+      color: var(--accent);
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      *{ scroll-behavior:auto !important; transition:none !important; animation:none !important; }
+    }
+  </style>
+</head>
+
+<body class="font-sans relative overflow-x-hidden min-h-screen">
+
+  <!-- NAVBAR -->
+  <nav class="glass sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="inline-flex items-center gap-2">
+          <img src="../imagens/LogoSite.png" alt="Logo - Estante de Histórias" class="h-10 w-auto select-none" />
+        </a>
+
+        <div class="hidden sm:flex items-center gap-2">
+          <button id="temaClaro" class="theme-dot" title="Tema claro" aria-label="Tema claro"></button>
+          <button id="temaEscuro" class="theme-dot" title="Tema escuro" aria-label="Tema escuro"></button>
+        </div>
+
+        <a href="https://instagram.com/pedrohfalcaro" target="_blank" rel="noopener noreferrer"
+           class="hidden sm:inline-flex items-center justify-center w-10 h-10 rounded-full border"
+           style="border-color: var(--border); color: var(--muted);"
+           title="Instagram" aria-label="Instagram">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5a4.25 4.25 0 0 0 4.25-4.25v-8.5A4.25 4.25 0 0 0 16.25 3.5h-8.5zm8.75 2a1 1 0 1 1 0 2 1 1 0 0 1 0-2zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 1.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z"/>
+          </svg>
+        </a>
+      </div>
+
+      <div class="text-center">
+        <h1 class="font-extrabold tracking-tight text-lg sm:text-xl">Estante de Contos</h1>
+        <p class="hidden sm:block text-xs muted2">Contos curtos • histórias paralelas</p>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <div class="sm:hidden flex items-center gap-2">
+          <button id="temaClaroM" class="theme-dot" title="Tema claro" aria-label="Tema claro"></button>
+          <button id="temaEscuroM" class="theme-dot" title="Tema escuro" aria-label="Tema escuro"></button>
+        </div>
+
+        <a href="index.html" class="btn btn-ghost hidden md:inline-flex">Início</a>
+        <a href="loja.html" class="btn btn-ghost hidden md:inline-flex">Loja</a>
+        <a href="sobreautor.html" class="btn btn-ghost hidden md:inline-flex">Sobre</a>
+        <a href="index.html#obrasProjetos" class="btn btn-ghost hidden md:inline-flex">Obras</a>
+
+        <a href="index.html" class="btn btn-primary !px-4 !py-2">Voltar</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HEADER -->
+  <header class="max-w-6xl mx-auto px-4 pt-8">
+    <div class="surface p-6 sm:p-8">
+      <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+        <div class="max-w-2xl">
+          <span class="inline-flex items-center gap-2 text-xs font-extrabold px-3 py-1 rounded-full"
+                style="background: rgba(14,165,233,.10); color: var(--accent2); border: 1px solid rgba(14,165,233,.20);">
+            ✍️ Contos
+          </span>
+          <h2 class="mt-3 text-2xl sm:text-3xl font-extrabold">Explore histórias rápidas</h2>
+          <p class="mt-2 muted">
+            Uma coleção de contos curtos, experimentos e histórias paralelas — perfeita pra leituras rápidas.
+          </p>
+        </div>
+
+        <div class="w-full lg:w-[560px]">
+          <label class="sr-only" for="buscaContos">Buscar conto</label>
+          <input id="buscaContos" class="field" placeholder="Buscar por título ou tema…" oninput="aplicarFiltros()" />
+
+          <div class="mt-3 flex flex-wrap gap-2">
+            <button class="pill active" data-filtro="todos" onclick="setFiltro('todos')">Todos</button>
+            <button class="pill" data-filtro="emocional" onclick="setFiltro('emocional')">🌙 Emocional</button>
+            <button class="pill" data-filtro="suspense" onclick="setFiltro('suspense')">🕯️ Suspense</button>
+          </div>
+
+          <div class="mt-3 flex gap-2">
+            <button class="btn btn-ghost !py-2 w-full" type="button" onclick="ordenarPor('titulo')">A→Z</button>
+            <button class="btn btn-ghost !py-2 w-full" type="button" onclick="ordenarPor('relevancia')">Padrão</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- GRID -->
+  <main class="max-w-6xl mx-auto px-4 py-10">
+    <div class="flex items-center justify-between gap-4 mb-4">
+      <p class="text-sm muted2"><span id="qtdResultados">0</span> contos encontrados</p>
+    </div>
+
+    <section id="gridContos" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+      <!-- Cards via JS -->
+    </section>
+
+    <p id="nenhumResultado" class="hidden mt-8 muted2">
+      Nenhum conto encontrado.
+    </p>
+
+    <section class="mt-10 surface p-6 sm:p-8">
+      <h3 class="text-lg font-extrabold">Como funciona</h3>
+      <div class="mt-3 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="p-4 rounded-2xl border" style="border-color: var(--border);">
+          <p class="font-extrabold">1) Escolha um conto</p>
+          <p class="text-sm muted mt-1">Use a busca e os filtros pra achar o clima certo.</p>
+        </div>
+        <div class="p-4 rounded-2xl border" style="border-color: var(--border);">
+          <p class="font-extrabold">2) Abra e leia</p>
+          <p class="text-sm muted mt-1">Cada card te leva direto pra página do conto.</p>
+        </div>
+        <div class="p-4 rounded-2xl border" style="border-color: var(--border);">
+          <p class="font-extrabold">3) Explore o universo</p>
+          <p class="text-sm muted mt-1">Depois, volte pra Home e confira livros e projetos.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="w-full">
+    <div class="max-w-6xl mx-auto px-4 pb-10">
+      <div class="surface p-6 sm:p-8 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
+        <div>
+          <h3 class="text-lg font-extrabold">Estante de Histórias</h3>
+          <p class="text-sm muted2">Contos • Obras • Projetos</p>
+        </div>
+        <a href="mailto:pedrofalcari@gmail.com" class="btn btn-secondary w-full sm:w-auto">
+          pedrofalcari@gmail.com
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* ===== Tema (mesma lógica da Home/Loja) ===== */
+    (function () {
+      const BODY = document.body;
+      const KEY = 'theme';
+      const btnClaro = document.getElementById('temaClaro');
+      const btnEscuro = document.getElementById('temaEscuro');
+      const btnClaroM = document.getElementById('temaClaroM');
+      const btnEscuroM = document.getElementById('temaEscuroM');
+
+      function apply(theme) {
+        if (theme === 'dark') BODY.classList.add('dark-mode');
+        else BODY.classList.remove('dark-mode');
+      }
+      apply(localStorage.getItem(KEY) || 'light');
+
+      function setTheme(t){ localStorage.setItem(KEY, t); apply(t); }
+      btnClaro?.addEventListener('click', () => setTheme('light'));
+      btnEscuro?.addEventListener('click', () => setTheme('dark'));
+      btnClaroM?.addEventListener('click', () => setTheme('light'));
+      btnEscuroM?.addEventListener('click', () => setTheme('dark'));
+    })();
+
+    /* ===== Dados (seu catálogo de contos) ===== */
+    const CONTOS = [
+      {
+        id: "o-natal",
+        titulo: "O Natal",
+        desc: "Um conto sobre o tempo que passa e o que se recusa a mudar, contado através de um Natal que permanece.",
+        imagem: "../imagens/ContoONCapa.png",
+        link: "../contos/ContosON.html",
+        tags: ["emocional"]
+      },
+      {
+        id: "meu-universo",
+        titulo: "Meu Universo",
+        desc: "Um conto ambientado entre estrelas, silêncio e decisões que mudam rotas.",
+        imagem: "../imagens/ContoMUcapa.png",
+        link: "../contos/ContosMeuUniverso.html",
+        tags: ["emocional"]
+      },
+      {
+        id: "a-voz-do-vazio",
+        titulo: "A voz do vazio",
+        desc: "Um conto sobre o luto e a esperança, contado através de reinos que caem e ascendem do vazio.",
+        imagem: "../imagens/ContoVdVcapa.png",
+        link: "../contos/ContosVdV.html",
+        tags: ["emocional"]
+      },
+      {
+        id: "meus-monstros",
+        titulo: "Meus Monstros",
+        desc: "Um conto sobre insegurança e dores carregadas pela vida.",
+        imagem: "../imagens/ContosMM.jpg",
+        link: "../contos/ContosMM.html",
+        tags: ["suspense"]
+      },
+      {
+        id: "jardineiro-do-inferno",
+        titulo: "Jardineiro do Inferno",
+        desc: "Um conto sobre suspense e horror de uma vida miserável.",
+        imagem: "../imagens/ContoJdIcapa.png",
+        link: "../contos/ContosJdI.html",
+        tags: ["suspense"]
+      }
+    ];
+
+    let filtro = "todos";
+    let ordem = "relevancia";
+
+    function setFiltro(f){
+      filtro = f;
+      document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
+      document.querySelector(`.pill[data-filtro="${f}"]`)?.classList.add("active");
+      aplicarFiltros();
+    }
+
+    function ordenarPor(o){
+      ordem = o;
+      aplicarFiltros();
+    }
+
+    function limparBusca(){
+      const input = document.getElementById("buscaContos");
+      if (input) input.value = "";
+      aplicarFiltros();
+    }
+
+    function aplicarFiltros(){
+      const q = (document.getElementById("buscaContos")?.value || "").toLowerCase().trim();
+
+      let lista = CONTOS.filter(c => {
+        const matchTexto =
+          c.titulo.toLowerCase().includes(q) ||
+          c.desc.toLowerCase().includes(q);
+
+        const matchFiltro =
+          filtro === "todos" || (c.tags || []).includes(filtro);
+
+        return matchTexto && matchFiltro;
+      });
+
+      if (ordem === "titulo"){
+        lista = lista.slice().sort((a,b) => a.titulo.localeCompare(b.titulo, "pt-BR"));
+      }
+
+      render(lista);
+    }
+
+    function render(lista){
+      const grid = document.getElementById("gridContos");
+      const qtd = document.getElementById("qtdResultados");
+      const nenhum = document.getElementById("nenhumResultado");
+      if (!grid || !qtd || !nenhum) return;
+
+      qtd.textContent = String(lista.length);
+      nenhum.classList.toggle("hidden", lista.length !== 0);
+
+      grid.innerHTML = lista.map(c => `
+        <article class="surface p-4 flex flex-col group relative">
+          <span class="absolute top-3 left-3 text-[11px] font-extrabold px-2.5 py-1 rounded-full"
+                style="background: rgba(14,165,233,.10); color: var(--accent2); border: 1px solid rgba(14,165,233,.20);">
+            Conto
+          </span>
+
+          <img src="${c.imagem}" alt="Capa conto ${escapeHTML(c.titulo)}"
+               class="w-full aspect-[16/9] object-cover rounded-xl mb-3 transition-transform duration-200 group-hover:scale-[1.02]" />
+
+          <h2 class="text-sm sm:text-base font-extrabold leading-snug">${escapeHTML(c.titulo)}</h2>
+          <p class="mt-1 text-xs muted2 line-clamp-3">${escapeHTML(c.desc)}</p>
+
+          <div class="mt-auto pt-3 flex flex-col gap-2">
+            <a href="${c.link}" class="btn btn-primary w-full !py-2 !text-sm">Ler conto</a>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    function escapeHTML(str){
+      return String(str)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      aplicarFiltros();
+    });
+  </script>
+</body>
+</html>

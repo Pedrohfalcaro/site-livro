@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <link rel="icon" type="image/png" href="imagens/favicon.png">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sobre o Autor — Estante de Histórias</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <meta property="og:title" content="Sobre o Autor — Estante de Histórias" />
+  <meta property="og:description" content="Conheça o autor e acompanhe a linha do tempo dos lançamentos e projetos." />
+  <meta property="og:image" content="imagens/favicon.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="pt_BR" />
+
+  <style>
+    :root{
+      --bg:#f8fafc; --card:#ffffff; --text:#0f172a; --muted:#475569; --muted2:#64748b;
+      --border:#e2e8f0; --accent:#14b8a6; --accent2:#0ea5e9;
+      --shadow:0 12px 30px rgba(15,23,42,.08); --shadow2:0 8px 18px rgba(15,23,42,.08);
+      --radius:18px;
+    }
+    body{ background:var(--bg); color:var(--text); }
+
+    body.dark-mode{
+      --bg:#0b1220; --card:#111827; --text:#e5e7eb; --muted:#cbd5e1; --muted2:#9ca3af;
+      --border:#263244; --shadow:0 18px 40px rgba(0,0,0,.35); --shadow2:0 10px 22px rgba(0,0,0,.28);
+      --accent:#34d399; --accent2:#38bdf8;
+    }
+
+    .surface{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow2); }
+    .muted{ color:var(--muted); }
+    .muted2{ color:var(--muted2); }
+
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
+      border-radius:9999px; padding:.75rem 1.1rem; font-weight:800;
+      transition:transform .15s ease, background .15s ease, opacity .15s ease;
+      user-select:none;
+      box-shadow:0 10px 20px rgba(2,6,23,.08);
+    }
+    .btn:active{ transform:translateY(1px) scale(.99); }
+    .btn-primary{ background:var(--accent); color:#fff; }
+    .btn-primary:hover{ opacity:.95; }
+    .btn-secondary{ background:#0f172a; color:#fff; }
+    body.dark-mode .btn-secondary{ background:rgba(255,255,255,.08); color:var(--text); border:1px solid var(--border); box-shadow:none; }
+    .btn-ghost{ background:transparent; border:1px solid var(--border); color:var(--text); box-shadow:none; }
+    .btn-ghost:hover{ background:rgba(15,23,42,.04); }
+    body.dark-mode .btn-ghost:hover{ background:rgba(255,255,255,.06); }
+
+    .glass{ background:rgba(255,255,255,.82); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); }
+    body.dark-mode .glass{ background:rgba(11,18,32,.68); }
+
+    .theme-dot{
+      width:24px; height:24px; border-radius:9999px; cursor:pointer;
+      border:1px solid rgba(255,255,255,.35);
+      box-shadow:0 0 0 2px rgba(255,255,255,.15) inset;
+      transition:transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+    }
+    .theme-dot:hover{ transform:translateY(-1px); box-shadow:0 0 0 2px rgba(255,255,255,.35) inset; opacity:.95; }
+    #temaClaro, #temaClaroM { background:linear-gradient(90deg,#ffffff 50%, #14b8a6 50%); }
+    #temaEscuro, #temaEscuroM { background:linear-gradient(90deg,#0b1220 50%, #38bdf8 50%); }
+
+    .modal-backdrop{ background:rgba(2,6,23,.55); }
+
+    @media (prefers-reduced-motion: reduce){
+      *{ scroll-behavior:auto !important; transition:none !important; animation:none !important; }
+    }
+  </style>
+</head>
+
+<body class="font-sans relative overflow-x-hidden min-h-screen">
+
+  <!-- NAVBAR -->
+  <nav class="glass sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="inline-flex items-center gap-2">
+          <img src="imagens/LogoSite.png" alt="Logo - Estante de Histórias" class="h-10 w-auto select-none" />
+        </a>
+
+        <div class="hidden sm:flex items-center gap-2">
+          <button id="temaClaro" class="theme-dot" title="Tema claro" aria-label="Tema claro"></button>
+          <button id="temaEscuro" class="theme-dot" title="Tema escuro" aria-label="Tema escuro"></button>
+        </div>
+
+        <a href="https://instagram.com/pedrohfalcaro" target="_blank" rel="noopener noreferrer"
+           class="hidden sm:inline-flex items-center justify-center w-10 h-10 rounded-full border"
+           style="border-color: var(--border); color: var(--muted);"
+           title="Instagram" aria-label="Instagram">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5a4.25 4.25 0 0 0 4.25-4.25v-8.5A4.25 4.25 0 0 0 16.25 3.5h-8.5zm8.75 2a1 1 0 1 1 0 2 1 1 0 0 1 0-2zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 1.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z"/>
+          </svg>
+        </a>
+      </div>
+
+      <div class="text-center">
+        <h1 class="font-extrabold tracking-tight text-lg sm:text-xl">Sobre o Autor</h1>
+        <p class="hidden sm:block text-xs muted2">Bio • Universo • Linha do tempo</p>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <div class="sm:hidden flex items-center gap-2">
+          <button id="temaClaroM" class="theme-dot" title="Tema claro" aria-label="Tema claro"></button>
+          <button id="temaEscuroM" class="theme-dot" title="Tema escuro" aria-label="Tema escuro"></button>
+        </div>
+
+        <a href="index.html" class="btn btn-ghost hidden md:inline-flex">Obras</a>
+        <a href="loja.html" class="btn btn-ghost hidden md:inline-flex">Loja</a>
+        <a href="contos.html" class="btn btn-ghost hidden md:inline-flex">Contos</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO / BIO -->
+  <header class="max-w-6xl mx-auto px-4 pt-8">
+    <div class="surface overflow-hidden">
+      <div class="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-[1.2fr_.8fr] gap-8 items-center">
+        <div>
+          <span class="inline-flex items-center gap-2 text-xs font-extrabold px-3 py-1 rounded-full"
+                style="background: rgba(14,165,233,.10); color: var(--accent2); border: 1px solid rgba(14,165,233,.20);">
+            ✍️ Autor
+          </span>
+
+          <h2 class="mt-3 text-2xl sm:text-3xl font-extrabold leading-tight">
+            P. H. Falcaro
+          </h2>
+
+          <p class="mt-3 muted leading-relaxed">
+            Autor brasileiro focado em fantasia, suspense e histórias emocionais — com universos conectados,
+            projetos multimídia e narrativas que misturam mistério, aventura e sentimentos.
+          </p>
+
+          <!-- IDEIA (comentar para você validar): colocar aqui “mini-currículo” com 3 bullets:
+               - Autor • Roteirista • Narrador
+               - Criador do universo “A Lenda do Caos”
+               - Projetos: Livros • WebLivros • Áudio-séries
+          -->
+          <div class="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="surface !shadow-none p-4">
+              <p class="font-extrabold text-sm">Autor</p>
+              <p class="text-sm muted2 mt-1">Livros e WebLivros</p>
+            </div>
+            <div class="surface !shadow-none p-4">
+              <p class="font-extrabold text-sm">Roteirista</p>
+              <p class="text-sm muted2 mt-1">Universos conectados</p>
+            </div>
+            <div class="surface !shadow-none p-4">
+              <p class="font-extrabold text-sm">Narrador</p>
+              <p class="text-sm muted2 mt-1">Áudio-séries</p>
+            </div>
+          </div>
+
+          <div class="mt-6 flex flex-col sm:flex-row gap-3">
+            <a href="#linhaTempo" class="btn btn-primary w-full sm:w-auto">Ver linha do tempo</a>
+            <a href="index.html#obrasProjetos" class="btn btn-ghost w-full sm:w-auto">Ver obras</a>
+          </div>
+
+          <p class="mt-4 text-xs muted2">
+            <!-- IDEIA: se quiser, dá pra colocar aqui um “manifesto” curtinho (1 linha) com o tom do autor -->
+            “Histórias são portas. Algumas abrem mundos.”
+          </p>
+        </div>
+
+        <div class="flex justify-center lg:justify-end">
+          <!-- IDEIA (comentado): se você tiver uma foto/arte do autor, substitui aqui.
+               Enquanto não tiver, fica um bloco com iniciais e um visual clean.
+          -->
+          <div class="surface p-6 w-full max-w-sm">
+            <div class="flex items-center gap-4">
+              <div class="w-16 h-16 rounded-2xl flex items-center justify-center font-extrabold text-xl"
+                   style="background: rgba(20,184,166,.12); color: var(--accent); border: 1px solid rgba(20,184,166,.22);">
+                PH
+              </div>
+              <div>
+                <p class="font-extrabold">Contato</p>
+                <p class="text-sm muted2">Parcerias, feedback e convites</p>
+              </div>
+            </div>
+
+            <a href="mailto:pedrofalcari@gmail.com" class="btn btn-secondary w-full mt-4">
+              pedrofalcari@gmail.com
+            </a>
+
+            <a href="loja.html" class="btn btn-ghost w-full mt-3">
+              Ir para a Loja
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Seção: Universo / O que esperar -->
+  <section class="max-w-6xl mx-auto px-4 pt-8">
+    <div class="surface p-6 sm:p-8">
+      <h3 class="text-xl font-extrabold">O que você encontra por aqui</h3>
+      <p class="mt-2 muted max-w-3xl">
+        <!-- IDEIA: isso ajuda visitantes novos a entenderem o “site” em 10 segundos -->
+        Uma estante organizada por formatos: livros físicos, WebLivros curtos e projetos como áudio-séries no YouTube.
+        Cada história é uma peça do universo — ou uma porta para algo novo.
+      </p>
+
+      <div class="mt-5 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="p-4 rounded-2xl border" style="border-color: var(--border);">
+          <p class="font-extrabold">📚 Livros</p>
+          <p class="text-sm muted mt-1">Experiências completas, capítulos longos e construção de mundo.</p>
+        </div>
+        <div class="p-4 rounded-2xl border" style="border-color: var(--border);">
+          <p class="font-extrabold">🌐 WebLivros</p>
+          <p class="text-sm muted mt-1">Leituras rápidas e intensas — acesso via chave após compra.</p>
+        </div>
+        <div class="p-4 rounded-2xl border" style="border-color: var(--border);">
+          <p class="font-extrabold">🎧 Áudio-séries</p>
+          <p class="text-sm muted mt-1">Projetos narrados e serializados (YouTube), com temporadas e spin-offs.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Linha do Tempo -->
+  <section id="linhaTempo" class="max-w-6xl mx-auto px-4 py-10 scroll-mt-24">
+    <div class="surface p-6 sm:p-8">
+      <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold">Linha do tempo</h2>
+          <p class="muted mt-1">Lançamentos e marcos dos projetos.</p>
+        </div>
+
+        <!-- IDEIA: atalho para loja -->
+        <a href="loja.html" class="btn btn-ghost w-full sm:w-auto">Ver itens na loja</a>
+      </div>
+
+      <div class="mt-6 relative">
+        <div class="absolute left-3 top-0 bottom-0 w-px" style="background: var(--border);"></div>
+
+        <!-- ITEM -->
+        <div class="relative pl-10 py-4">
+          <div class="absolute left-[10px] top-6 w-3 h-3 rounded-full"
+               style="background: rgba(14,165,233,.35); border: 2px solid rgba(14,165,233,.65);"></div>
+          <p class="text-xs font-extrabold muted2">02 de novembro de 2024</p>
+          <h3 class="font-extrabold mt-1">Além dos Céus — T1: Desbravadores</h3>
+          <p class="text-sm muted mt-1">Estreia da áudio-série no YouTube.</p>
+        </div>
+
+        <!-- ITEM -->
+        <div class="relative pl-10 py-4">
+          <div class="absolute left-[10px] top-6 w-3 h-3 rounded-full"
+               style="background: rgba(20,184,166,.35); border: 2px solid rgba(20,184,166,.65);"></div>
+          <p class="text-xs font-extrabold muted2">01 de outubro de 2025</p>
+          <h3 class="font-extrabold mt-1">A Lenda do Caos — Tríplice Caótica</h3>
+          <p class="text-sm muted mt-1">Lançamento do livro físico.</p>
+        </div>
+
+        <!-- ITEM -->
+        <div class="relative pl-10 py-4">
+          <div class="absolute left-[10px] top-6 w-3 h-3 rounded-full"
+               style="background: rgba(56,189,248,.35); border: 2px solid rgba(56,189,248,.65);"></div>
+          <p class="text-xs font-extrabold muted2">28 de fevereiro de 2026</p>
+          <h3 class="font-extrabold mt-1">Além dos Céus — Echos</h3>
+          <p class="text-sm muted mt-1">Estreia do spin-off.</p>
+        </div>
+
+        <!-- ITEM FUTURO -->
+        <div class="relative pl-10 py-4">
+          <div class="absolute left-[10px] top-6 w-3 h-3 rounded-full"
+               style="background: rgba(148,163,184,.35); border: 2px solid rgba(148,163,184,.65);"></div>
+          <p class="text-xs font-extrabold muted2">Setembro de 2026</p>
+          <h3 class="font-extrabold mt-1">Algo novo</h3>
+          <p class="text-sm muted mt-1"><em>Algo novo está vindo...</em></p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="w-full">
+    <div class="max-w-6xl mx-auto px-4 pb-10">
+      <div class="surface p-6 sm:p-8 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
+        <div>
+          <h3 class="text-lg font-extrabold">Contato</h3>
+          <p class="text-sm muted2">Fale comigo por e-mail:</p>
+        </div>
+        <a href="mailto:pedrofalcari@gmail.com" class="btn btn-secondary w-full sm:w-auto">
+          pedrofalcari@gmail.com
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* Tema (mesmo padrão das últimas páginas) */
+    (function () {
+      const BODY = document.body;
+      const KEY = 'theme';
+      const btnClaro  = document.getElementById('temaClaro');
+      const btnEscuro = document.getElementById('temaEscuro');
+      const btnClaroM  = document.getElementById('temaClaroM');
+      const btnEscuroM = document.getElementById('temaEscuroM');
+
+      function apply(theme) {
+        if (theme === 'dark') BODY.classList.add('dark-mode');
+        else BODY.classList.remove('dark-mode');
+      }
+      apply(localStorage.getItem(KEY) || 'light');
+
+      function setTheme(t){ localStorage.setItem(KEY, t); apply(t); }
+      btnClaro?.addEventListener('click', () => setTheme('light'));
+      btnEscuro?.addEventListener('click', () => setTheme('dark'));
+      btnClaroM?.addEventListener('click', () => setTheme('light'));
+      btnEscuroM?.addEventListener('click', () => setTheme('dark'));
+    })();
+  </script>
+
+</body>
+</html>

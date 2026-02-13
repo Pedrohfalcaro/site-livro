@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <link rel="icon" type="image/png" href="../imagens/favicon.png">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Além dos Céus — Echos | Estante de Histórias</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <meta property="og:title" content="Além dos Céus — Echos | Estante de Histórias" />
+  <meta property="og:description" content="Spin-off de Além dos Céus. Assista ao trailer e aos atos diretamente aqui." />
+  <meta property="og:image" content="../imagens/AdCE.jpg" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="pt_BR" />
+
+  <style>
+    :root{
+      /* Base (padrão do site) */
+      --bg:#f8fafc; --card:#ffffff; --text:#0f172a; --muted:#475569; --muted2:#64748b;
+      --border:#e2e8f0; --shadow2:0 8px 18px rgba(15,23,42,.08); --radius:18px;
+
+      /* Identidade ECHOS (inspirada na capa) */
+      --space1:#050a12;
+      --space2:#07101c;
+      --neon:#67e8f9;     /* ciano claro */
+      --neon2:#a5f3fc;    /* ciano suave */
+      --ice:#e2e8f0;      /* cinza frio */
+
+      --accent: var(--neon);
+      --accent2: var(--neon2);
+      --glow: rgba(103,232,249,.22);
+    }
+
+    body{ background:var(--bg); color:var(--text); }
+
+    body.dark-mode{
+      --bg:#050811; --card:#070d16; --text:#e5e7eb; --muted:#cbd5e1; --muted2:#94a3b8;
+      --border:#1d2a3a; --shadow2:0 10px 22px rgba(0,0,0,.45);
+    }
+
+    .surface{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow2); }
+    .muted{ color:var(--muted); }
+    .muted2{ color:var(--muted2); }
+
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:.55rem;
+      border-radius:9999px; padding:.75rem 1.1rem; font-weight:800;
+      transition:transform .15s ease, background .15s ease, opacity .15s ease;
+      user-select:none;
+    }
+    .btn:active{ transform:translateY(1px) scale(.99); }
+
+    .btn-primary{ background:var(--accent); color:#041018; }
+    .btn-primary:hover{ opacity:.95; }
+
+    .btn-ghost{ background:transparent; border:1px solid var(--border); color:var(--text); }
+    .btn-ghost:hover{ background:rgba(15,23,42,.05); }
+    body.dark-mode .btn-ghost:hover{ background:rgba(255,255,255,.06); }
+
+    .glass{
+      background:rgba(255,255,255,.82);
+      backdrop-filter:blur(10px);
+      border-bottom:1px solid var(--border);
+    }
+    body.dark-mode .glass{ background:rgba(5,8,17,.72); }
+
+    .theme-dot{
+      width:24px; height:24px; border-radius:9999px; cursor:pointer;
+      border:1px solid rgba(255,255,255,.35);
+      box-shadow:0 0 0 2px rgba(255,255,255,.15) inset;
+      transition:transform .15s ease, opacity .15s ease;
+    }
+    .theme-dot:hover{ transform:translateY(-1px); opacity:.95; }
+    #temaClaro, #temaClaroM { background:linear-gradient(90deg,#ffffff 50%, var(--neon) 50%); }
+    #temaEscuro, #temaEscuroM { background:linear-gradient(90deg,#070d16 50%, var(--neon2) 50%); }
+
+    /* HERO com “cara” de Echos */
+    .hero-space{
+      position:relative;
+      overflow:hidden;
+      border-radius: calc(var(--radius) + 6px);
+    }
+    .hero-space::before{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        radial-gradient(circle at 22% 26%, rgba(103,232,249,.22), transparent 55%),
+        radial-gradient(circle at 76% 32%, rgba(165,243,252,.16), transparent 58%),
+        radial-gradient(circle at 48% 86%, rgba(103,232,249,.10), transparent 62%),
+        linear-gradient(180deg, rgba(5,10,18,.18), rgba(5,10,18,.72));
+      pointer-events:none;
+      z-index:1;
+    }
+    body.dark-mode .hero-space::before{
+      background:
+        radial-gradient(circle at 22% 26%, rgba(103,232,249,.20), transparent 56%),
+        radial-gradient(circle at 76% 32%, rgba(165,243,252,.14), transparent 58%),
+        radial-gradient(circle at 48% 86%, rgba(103,232,249,.08), transparent 62%),
+        linear-gradient(180deg, rgba(5,10,18,.35), rgba(5,10,18,.88));
+    }
+
+    .cover{
+      position:absolute; inset:0;
+      background-image:url("../imagens/AdCE.jpg");
+      background-size:cover;
+      background-position:center;
+      filter:saturate(1.02) contrast(1.04);
+      transform:scale(1.02);
+      z-index:0;
+    }
+
+    .chip{
+      display:inline-flex; align-items:center; gap:.5rem;
+      border:1px solid rgba(103,232,249,.35);
+      border-radius:9999px;
+      padding:.5rem .9rem;
+      font-weight:900;
+      font-size:.85rem;
+      background: rgba(103,232,249,.10);
+      color: var(--accent);
+    }
+
+    .grid-atos{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap:.6rem;
+    }
+    @media (min-width: 640px){
+      .grid-atos{ grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    }
+
+    .ato-btn{
+      border-radius:9999px;
+      padding:.60rem .80rem;
+      font-weight:900;
+      border:1px solid var(--border);
+      background:transparent;
+      transition:.15s ease;
+      color:var(--text);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .ato-btn:hover{ background:rgba(15,23,42,.04); }
+    body.dark-mode .ato-btn:hover{ background:rgba(255,255,255,.06); }
+
+    .ato-btn.active{
+      border-color: rgba(103,232,249,.55);
+      box-shadow: 0 0 0 4px rgba(103,232,249,.14);
+      background: rgba(103,232,249,.10);
+      color: var(--accent);
+    }
+
+    .player-wrap{
+      position:relative;
+      border-radius: 18px;
+      overflow:hidden;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.10);
+    }
+    .player-wrap iframe{
+      width:100%;
+      aspect-ratio: 16 / 9;
+      display:block;
+    }
+
+    .icon-btn{
+      width:40px; height:40px;
+      border-radius:9999px;
+      display:inline-flex; align-items:center; justify-content:center;
+      border:1px solid var(--border);
+      background:transparent;
+      transition:.15s ease;
+    }
+    .icon-btn:hover{ background:rgba(15,23,42,.05); }
+    body.dark-mode .icon-btn:hover{ background:rgba(255,255,255,.06); }
+
+    .hint{
+      border:1px dashed var(--border);
+      border-radius: 16px;
+      padding: 1rem;
+      background: rgba(103,232,249,.06);
+    }
+    body.dark-mode .hint{ background: rgba(103,232,249,.08); }
+
+    @media (prefers-reduced-motion: reduce){
+      *{ scroll-behavior:auto !important; transition:none !important; animation:none !important; }
+    }
+  </style>
+</head>
+
+<body class="font-sans relative overflow-x-hidden min-h-screen">
+
+  <!-- NAVBAR -->
+  <nav class="glass sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <a href="paginasprincipais/index.html" class="inline-flex items-center gap-2">
+          <img src="../imagens/LogoSite.png" alt="Logo - Estante de Histórias" class="h-10 w-auto select-none" />
+        </a>
+
+        <div class="hidden sm:flex items-center gap-2">
+          <button id="temaClaro" class="theme-dot" title="Tema claro" aria-label="Tema claro"></button>
+          <button id="temaEscuro" class="theme-dot" title="Tema escuro" aria-label="Tema escuro"></button>
+        </div>
+
+        <a href="https://instagram.com/pedrohfalcaro" target="_blank" rel="noopener noreferrer"
+           class="hidden sm:inline-flex items-center justify-center w-10 h-10 rounded-full border"
+           style="border-color: var(--border); color: var(--muted);"
+           title="Instagram" aria-label="Instagram">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5a4.25 4.25 0 0 0 4.25-4.25v-8.5A4.25 4.25 0 0 0 16.25 3.5h-8.5zm8.75 2a1 1 0 1 1 0 2 1 1 0 0 1 0-2zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 1.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z"/>
+          </svg>
+        </a>
+      </div>
+
+      <div class="text-center">
+        <h1 class="font-extrabold tracking-tight text-lg sm:text-xl">Além dos Céus</h1>
+        <p class="hidden sm:block text-xs muted2">Spin-off • Echos • Áudio-série</p>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <div class="sm:hidden flex items-center gap-2">
+          <button id="temaClaroM" class="theme-dot" title="Tema claro" aria-label="Tema claro"></button>
+          <button id="temaEscuroM" class="theme-dot" title="Tema escuro" aria-label="Tema escuro"></button>
+        </div>
+
+        <a href="../paginasprincipais/index.html" class="btn btn-ghost hidden md:inline-flex">Início</a>
+        <a href="../paginasprincipais/loja.html" class="btn btn-ghost hidden md:inline-flex">Loja</a>
+        <a href="../paginasprincipais/sobreautor.html" class="btn btn-ghost hidden md:inline-flex">Sobre</a>
+        <a href="../paginasprincipais/contos.html" class="btn btn-ghost hidden md:inline-flex">Contos</a>
+
+        <a href="../paginasprincipais/index.html#obrasProjetos" class="btn btn-primary !px-4 !py-2">Voltar</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="max-w-6xl mx-auto px-4 pt-8">
+    <div class="surface hero-space">
+      <div class="cover" aria-hidden="true"></div>
+
+      <div class="relative z-[2] p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-[1.2fr_.8fr] gap-8">
+        <div>
+          <span class="chip">🎧 Áudio-série • Spin-off</span>
+
+          <h2 class="mt-4 text-2xl sm:text-3xl font-extrabold leading-tight">
+            Além dos Céus — Echos
+          </h2>
+
+          <p class="mt-2 text-sm sm:text-base" style="color: rgba(255,255,255,.86)">
+            Uma história de mais de mil anos atrás — onde o amor vira memória e os ecos nunca se calam.
+          </p>
+
+          <div class="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="surface !shadow-none p-4"
+                 style="background: rgba(5,10,18,.55); border-color: rgba(255,255,255,.14); color: rgba(255,255,255,.92)">
+              <p class="font-extrabold text-sm">Atos</p>
+              <p class="text-sm mt-1" style="color: rgba(255,255,255,.74)">4 atos + Trailer</p>
+            </div>
+            <div class="surface !shadow-none p-4"
+                 style="background: rgba(5,10,18,.55); border-color: rgba(255,255,255,.14); color: rgba(255,255,255,.92)">
+              <p class="font-extrabold text-sm">Temática</p>
+              <p class="text-sm mt-1" style="color: rgba(255,255,255,.74)">Drama / Mistério / Universo</p>
+            </div>
+            <div class="surface !shadow-none p-4"
+                 style="background: rgba(5,10,18,.55); border-color: rgba(255,255,255,.14); color: rgba(255,255,255,.92)">
+              <p class="font-extrabold text-sm">Idioma</p>
+              <p class="text-sm mt-1" style="color: rgba(255,255,255,.74)">Português</p>
+            </div>
+          </div>
+
+          <div class="mt-6 flex flex-col sm:flex-row gap-3">
+            <button class="btn btn-primary w-full sm:w-auto" onclick="scrollToSection('assistir')">
+              ▶ Assistir agora
+            </button>
+            <button class="btn btn-ghost w-full sm:w-auto" onclick="scrollToSection('atos')"
+                    style="background: rgba(5,10,18,.35); border-color: rgba(255,255,255,.16); color: rgba(255,255,255,.92)">
+              🎬 Ver atos
+            </button>
+          </div>
+
+          <p class="mt-4 text-xs" style="color: rgba(255,255,255,.70)">
+            Dica: selecione o Trailer ou um Ato para carregar no player.
+          </p>
+        </div>
+
+        <div class="surface p-6 sm:p-7"
+             style="background: rgba(5,10,18,.55); border-color: rgba(255,255,255,.14); color: rgba(255,255,255,.92)">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <p class="font-extrabold">Sinopse da temporada</p>
+              <p class="text-sm mt-1" style="color: rgba(255,255,255,.74)">Clique no olhinho pra abrir/fechar.</p>
+            </div>
+
+            <button class="icon-btn" id="toggleSinopse" title="Mostrar/ocultar sinopse"
+                    style="border-color: rgba(255,255,255,.18); color: rgba(255,255,255,.92)">
+              <svg id="eyeOpen" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-5 h-5" fill="currentColor">
+                <path d="M12 5c5.5 0 9.7 4.6 10.9 6.2.2.2.2.5 0 .7C21.7 13.4 17.5 18 12 18S2.3 13.4 1.1 11.9a.6.6 0 0 1 0-.7C2.3 9.6 6.5 5 12 5Zm0 11c3 0 5.5-2.5 5.5-5.5S15 5 12 5 6.5 7.5 6.5 10.5 9 16 12 16Zm0-9a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7Z"/>
+              </svg>
+              <svg id="eyeClosed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-5 h-5 hidden" fill="currentColor">
+                <path d="M3.3 5.1 2 6.4l3 3C3.3 10.9 2 12.5 1.1 13.7a.6.6 0 0 0 0 .7C2.3 16 6.5 20.6 12 20.6c2 0 3.8-.6 5.3-1.4l3.3 3.3 1.3-1.3L3.3 5.1Zm8.7 13.5c-3.9 0-7.2-3-9-5.1.9-1.1 2-2.3 3.4-3.3l2.2 2.2a5.5 5.5 0 0 0 7 7l1.8 1.8c-1.2.7-2.6 1.3-4.4 1.3Zm10.9-4.9c-1 1.3-2.5 3-4.6 4.2l-2.1-2.1a5.5 5.5 0 0 0-7.1-7.1L6.9 6.6C8.4 5.8 10.1 5.4 12 5.4c5.5 0 9.7 4.6 10.9 6.2.2.2.2.5 0 .7Z"/>
+              </svg>
+            </button>
+          </div>
+
+          <div id="sinopseBox" class="mt-4">
+            <p class="text-sm leading-relaxed" style="color: rgba(255,255,255,.86); white-space:pre-line">
+Uma história de mais de mil anos atrás.  
+Em um canto distante do universo, onde os céus não se tocam e os ventos sussurram histórias esquecidas pelo tempo, existiu um planeta cujos sons da vida ecoavam de forma diferente.  
+
+Ali, entre campos infinitos e montanhas que tocavam o impossível, duas almas caminharam lado a lado. Tetron e Tavron.  
+Irmãos unidos por um vínculo profundo, criados como se o destino tivesse sido escrito para mantê-los inseparáveis. Cada passo, cada palavra, cada silêncio — tudo ecoava em conjunto.  
+
+Mas o universo também sussurra mudanças. Às vezes suaves. Às vezes implacáveis.  
+
+Além dos Céus — Echos marca o início de uma jornada onde o amor se transforma em memória, a lealdade em sombra, e os ecos do passado continuam a ressoar mesmo depois que a última palavra se perde no vento.
+            </p>
+          </div>
+
+          <div class="mt-5 hint">
+            <p class="font-extrabold" style="color: rgba(255,255,255,.92)">Status</p>
+            <p id="statusLine" class="text-sm mt-1" style="color: rgba(255,255,255,.74)">
+              Selecione o Trailer ou um Ato para começar.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ATOS -->
+  <section id="atos" class="max-w-6xl mx-auto px-4 pt-8 scroll-mt-24">
+    <div class="surface p-6 sm:p-8">
+      <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div>
+          <h3 class="text-xl font-extrabold">Atos</h3>
+          <p class="muted mt-1">Selecione o Trailer ou um Ato para carregar no player.</p>
+        </div>
+
+        <button class="btn btn-ghost w-full sm:w-auto" onclick="resetarSelecao()">
+          ↺ Limpar seleção
+        </button>
+      </div>
+
+      <div class="mt-6 grid-atos" id="atoGrid"></div>
+
+      <div class="mt-6 grid grid-cols-1 lg:grid-cols-[1.2fr_.8fr] gap-6">
+        <div class="surface !shadow-none p-5 sm:p-6">
+          <p class="text-xs font-extrabold muted2">Selecionado</p>
+          <h4 id="tituloAto" class="mt-1 text-lg sm:text-xl font-extrabold">—</h4>
+          <p id="subTituloAto" class="mt-2 text-sm muted2">Escolha um item acima.</p>
+
+          <div class="mt-5 flex flex-col sm:flex-row gap-3">
+            <button id="btnAssistir" class="btn btn-primary w-full sm:w-auto" onclick="scrollToSection('assistir')" disabled style="opacity:.6">
+              ▶ Abrir no player
+            </button>
+            <button id="btnYoutube" class="btn btn-ghost w-full sm:w-auto" onclick="abrirNoYoutube()" disabled style="opacity:.6">
+              🔗 Abrir no YouTube
+            </button>
+          </div>
+        </div>
+
+        <aside class="surface !shadow-none p-5 sm:p-6">
+          <p class="font-extrabold">Navegação</p>
+          <p class="text-sm muted2 mt-1">Avance entre Trailer e Atos.</p>
+
+          <div class="mt-4 flex flex-col gap-2">
+            <button id="btnPrev" class="btn btn-ghost w-full" onclick="irParaAto(-1)" disabled style="opacity:.6">
+              ⟵ Anterior
+            </button>
+            <button id="btnNext" class="btn btn-primary w-full" onclick="irParaAto(1)" disabled style="opacity:.6">
+              Próximo ⟶
+            </button>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLAYER -->
+  <section id="assistir" class="max-w-6xl mx-auto px-4 py-10 scroll-mt-24">
+    <div class="surface p-6 sm:p-8">
+      <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+        <div>
+          <h3 class="text-xl font-extrabold">Assistir</h3>
+          <p class="muted mt-1">O player abre aqui dentro (YouTube embed).</p>
+        </div>
+        <div class="flex gap-2">
+          <button class="btn btn-ghost" onclick="scrollToSection('atos')">🎬 Atos</button>
+          <a href="paginasprincipais/index.html#obrasProjetos" class="btn btn-primary">Ver outras obras</a>
+        </div>
+      </div>
+
+      <div class="mt-6 grid grid-cols-1 lg:grid-cols-[1.25fr_.75fr] gap-6">
+        <div>
+          <div class="player-wrap">
+            <iframe
+              id="ytFrame"
+              src="about:blank"
+              title="Player do YouTube"
+              frameborder="0"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen>
+            </iframe>
+          </div>
+
+          <p id="playerHint" class="mt-3 text-sm muted2">
+            Selecione o Trailer ou um Ato para carregar o vídeo.
+          </p>
+        </div>
+
+        <aside class="surface !shadow-none p-5 sm:p-6">
+          <p class="text-xs font-extrabold muted2">Tocando agora</p>
+          <h4 id="nowTitle" class="mt-1 text-lg font-extrabold">—</h4>
+
+          <div class="mt-3 flex items-start justify-between gap-3">
+            <p class="text-sm muted2">Sinopse</p>
+            <button class="icon-btn" id="toggleAtoSinopse" title="Mostrar/ocultar sinopse">
+              <svg id="eyeOpen2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-5 h-5" fill="currentColor">
+                <path d="M12 5c5.5 0 9.7 4.6 10.9 6.2.2.2.2.5 0 .7C21.7 13.4 17.5 18 12 18S2.3 13.4 1.1 11.9a.6.6 0 0 1 0-.7C2.3 9.6 6.5 5 12 5Zm0 11c3 0 5.5-2.5 5.5-5.5S15 5 12 5 6.5 7.5 6.5 10.5 9 16 12 16Zm0-9a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7Z"/>
+              </svg>
+              <svg id="eyeClosed2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-5 h-5 hidden" fill="currentColor">
+                <path d="M3.3 5.1 2 6.4l3 3C3.3 10.9 2 12.5 1.1 13.7a.6.6 0 0 0 0 .7C2.3 16 6.5 20.6 12 20.6c2 0 3.8-.6 5.3-1.4l3.3 3.3 1.3-1.3L3.3 5.1Zm8.7 13.5c-3.9 0-7.2-3-9-5.1.9-1.1 2-2.3 3.4-3.3l2.2 2.2a5.5 5.5 0 0 0 7 7l1.8 1.8c-1.2.7-2.6 1.3-4.4 1.3Zm10.9-4.9c-1 1.3-2.5 3-4.6 4.2l-2.1-2.1a5.5 5.5 0 0 0-7.1-7.1L6.9 6.6C8.4 5.8 10.1 5.4 12 5.4c5.5 0 9.7 4.6 10.9 6.2.2.2.2.5 0 .7Z"/>
+              </svg>
+            </button>
+          </div>
+
+          <div id="atoSinopseBox" class="mt-3">
+            <p id="atoSinopseText" class="text-sm muted leading-relaxed" style="white-space:pre-line">
+              Selecione um item para ver a sinopse.
+            </p>
+          </div>
+
+          <div class="mt-5 flex flex-col gap-2">
+            <button class="btn btn-ghost w-full" onclick="irParaAto(-1)" id="btnPrev2" disabled style="opacity:.6">
+              ⟵ Anterior
+            </button>
+            <button class="btn btn-primary w-full" onclick="irParaAto(1)" id="btnNext2" disabled style="opacity:.6">
+              Próximo ⟶
+            </button>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="w-full">
+    <div class="max-w-6xl mx-auto px-4 pb-10">
+      <div class="surface p-6 sm:p-8 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
+        <div>
+          <h3 class="text-lg font-extrabold">Estante de Histórias</h3>
+          <p class="text-sm muted2">Além dos Céus • Spin-off: Echos</p>
+        </div>
+        <a href="mailto:pedrofalcari@gmail.com" class="btn btn-ghost w-full sm:w-auto">pedrofalcari@gmail.com</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* ===== Tema ===== */
+    (function () {
+      const BODY = document.body;
+      const KEY = 'theme';
+      const btnClaro  = document.getElementById('temaClaro');
+      const btnEscuro = document.getElementById('temaEscuro');
+      const btnClaroM  = document.getElementById('temaClaroM');
+      const btnEscuroM = document.getElementById('temaEscuroM');
+
+      function apply(theme) {
+        if (theme === 'dark') BODY.classList.add('dark-mode');
+        else BODY.classList.remove('dark-mode');
+      }
+      apply(localStorage.getItem(KEY) || 'light');
+
+      function setTheme(t){ localStorage.setItem(KEY, t); apply(t); }
+      btnClaro?.addEventListener('click', () => setTheme('light'));
+      btnEscuro?.addEventListener('click', () => setTheme('dark'));
+      btnClaroM?.addEventListener('click', () => setTheme('light'));
+      btnEscuroM?.addEventListener('click', () => setTheme('dark'));
+    })();
+
+    function scrollToSection(id) {
+      const section = document.getElementById(id);
+      if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    /* ===== Dados (TEMPLATE) =====
+      Troque "videoId" pelos IDs reais (apenas o ID do vídeo).
+      Ex.: https://www.youtube.com/watch?v=ABC123 -> videoId: "ABC123"
+    */
+    const SERIE = {
+      nome: "Além dos Céus — Echos",
+      itens: [
+        {
+          tipo: "Trailer",
+          titulo: "Trailer",
+          subtitulo: "Abertura / apresentação",
+          videoId: "TEMPLATE_TRAILER",
+          sinopse:
+`Trailer de Além dos Céus — Echos.`
+        },
+        {
+          tipo: "Ato",
+          numero: 1,
+          titulo: "O dia mais importante",
+          subtitulo: "Ato 01",
+          videoId: "TEMPLATE_ATO_01",
+          sinopse:
+`Há mais de mil anos, em um universo que nunca permaneceu imóvel, dois ecos aprenderam a existir em harmonia.
+Irmãos ligados não apenas pelo sangue, mas pela forma como ouviam o mundo, caminhavam como se o destino ainda fosse simples — curioso para um, vasto e desafiador para o outro.
+
+Em Echron, o céu guarda tradições, desejos e promessas lançadas ao vento.
+Rituais que marcam passagens.
+Noites que definem futuros.
+
+Mas o universo está em constante Expansão.
+Nada se perde.
+Tudo se transforma.
+E aquilo que um dia foi inteiro começa, lentamente, a se afastar.
+
+Entre sonhos elevados aos céus e escolhas feitas no silêncio, caminhos se desenham.
+Alguns iluminados.
+Outros envoltos em sombra.
+
+Este ato acompanha o momento exato em que o destino deixa de ser compartilhado — não por tragédia, mas por decisão.
+O dia em que tudo ainda parece possível…
+e, justamente por isso, nada mais será o mesmo.`
+        },
+        {
+          tipo: "Ato",
+          numero: 2,
+          titulo: "Eu e você para sempre",
+          subtitulo: "Ato 02",
+          videoId: "TEMPLATE_ATO_02",
+          sinopse:
+`O tempo avança.
+E com ele, os ecos mudam de forma.
+
+Sete anos se estendem como um intervalo impossível de medir — longos o suficiente para criar novos lares, novos vazios e novas obsessões. Enquanto a vida segue em tons suaves para alguns, para outros ela se torna silêncio, esforço e espera.
+
+Sob os céus de Echron, algo observa.
+Uma presença distante.
+Um horizonte que nunca se aproxima por completo, mas nunca deixa de chamar.
+
+Neste ato, a história se divide em duas buscas paralelas:
+uma guiada pela curiosidade, pela pesquisa e pelo desejo de compreender;
+outra moldada pelo isolamento, pelo corpo levado ao limite e pela tentativa de dominar aquilo que não se deixa possuir.
+
+Ambos caminham sozinhos.
+Ambos sentem a ausência.
+E ambos são atraídos pelo mesmo ponto invisível.
+
+O Ato II acompanha o período em que o destino deixa de ser lembrança e se transforma em obsessão.
+Quando o que foi perdido passa a definir o que ainda será encontrado.
+E quando dois horizontes distintos começam, lentamente, a se alinhar.`
+        },
+        {
+          tipo: "Ato",
+          numero: 3,
+          titulo: "O que ninguém viu",
+          subtitulo: "Ato 03",
+          videoId: "TEMPLATE_ATO_03",
+          sinopse:
+`Depois do reencontro, o silêncio deixa de ser vazio —
+ele passa a pesar.
+
+Unidos novamente por um objetivo comum, dois caminhos internos entram em conflito. O que antes era certeza agora se fragmenta em perguntas: sobre pertencimento, sobre amor, sobre aquilo que se abandona ao atravessar o desconhecido.
+
+Este ato acompanha o momento em que o destino deixa de ser apenas futuro e se torna escolha imediata.
+Permanecer ou seguir.
+Ficar ou atravessar.
+
+À medida que avançam para além dos limites conhecidos, o universo deixa de oferecer respostas externas e passa a refletir aquilo que foi escondido por tempo demais. O Vazio não cria — ele devolve.
+
+Memórias retornam.
+Feridas se abrem.
+E verdades que jamais poderiam coexistir no silêncio são forçadas à luz.
+
+No Ato III, os ecos se chocam.
+O propósito é questionado.
+A confiança é colocada à prova.
+
+E, no centro de tudo, uma pergunta simples —
+capaz de dividir mais do que qualquer distância:
+
+Ainda somos irmãos?`
+        },
+        {
+          tipo: "Ato",
+          numero: 4,
+          titulo: "???",
+          subtitulo: "Ato 04",
+          videoId: "TEMPLATE_ATO_04",
+          sinopse:
+`Toda criação cobra algo em troca.
+Toda eternidade exige um sacrifício.
+
+Neste último ato, o universo já não observa — ele responde. As regras foram quebradas, os limites ultrapassados, e aquilo que antes parecia impossível agora existe, deixando marcas que não podem ser apagadas.
+
+Entre manipulações, verdades fragmentadas e escolhas irreversíveis, os ecos do passado retornam não para ferir, mas para exigir lembrança. O que foi vivido, amado e abandonado passa a ter peso real — não como arrependimento, mas como custo.
+
+O Ato IV acompanha o momento em que o destino deixa de ser futuro, deixa de ser escolha… e se torna consequência.
+Quando não há mais para onde avançar.
+Quando o silêncio não é vazio, mas despedida.
+
+Aqui, o universo não pergunta o que poderia ter sido.
+Ele apenas guarda o que foi.
+
+Porque alguns laços não precisam durar para sempre.
+Eles só precisam ser lembrados.`
+        }
+      ]
+    };
+
+    /* ===== Estado ===== */
+    let selectedIdx = null;
+
+    /* ===== Elementos ===== */
+    const atoGrid = document.getElementById("atoGrid");
+    const tituloAto = document.getElementById("tituloAto");
+    const subTituloAto = document.getElementById("subTituloAto");
+
+    const btnAssistir = document.getElementById("btnAssistir");
+    const btnYoutube = document.getElementById("btnYoutube");
+    const btnPrev = document.getElementById("btnPrev");
+    const btnNext = document.getElementById("btnNext");
+    const btnPrev2 = document.getElementById("btnPrev2");
+    const btnNext2 = document.getElementById("btnNext2");
+
+    const ytFrame = document.getElementById("ytFrame");
+    const playerHint = document.getElementById("playerHint");
+    const nowTitle = document.getElementById("nowTitle");
+    const statusLine = document.getElementById("statusLine");
+    const atoSinopseText = document.getElementById("atoSinopseText");
+
+    function labelBotao(item){
+      if (item.tipo === "Trailer") return "Trailer";
+      return `Ato ${String(item.numero).padStart(2,'0')}`;
+    }
+
+    function tituloCompleto(item){
+      if (item.tipo === "Trailer") return `TRAILER — ${SERIE.nome}`;
+      return `ATO ${String(item.numero).padStart(2,'0')} — ${item.titulo}`;
+    }
+
+    function renderGrid(){
+      atoGrid.innerHTML = SERIE.itens.map((item, idx)=>`
+        <button class="ato-btn ${selectedIdx===idx ? 'active':''}"
+                onclick="selecionar(${idx})"
+                aria-label="Selecionar ${labelBotao(item)}">
+          ${labelBotao(item)}
+        </button>
+      `).join("");
+    }
+
+    function selecionar(idx){
+      selectedIdx = idx;
+      renderGrid();
+      atualizarSelecao();
+      carregarVideo();
+
+      // hash opcional: #trailer / #ato01...
+      const item = SERIE.itens[idx];
+      const h = (item.tipo === "Trailer") ? "trailer" : `ato${String(item.numero).padStart(2,'0')}`;
+      location.hash = h;
+    }
+
+    function atualizarSelecao(){
+      if (selectedIdx === null){
+        tituloAto.textContent = "—";
+        subTituloAto.textContent = "Escolha um item acima.";
+        btnAssistir.disabled = true; btnAssistir.style.opacity = ".6";
+        btnYoutube.disabled = true; btnYoutube.style.opacity = ".6";
+        setNavDisabled(true);
+        statusLine.textContent = "Selecione o Trailer ou um Ato para começar.";
+        return;
+      }
+
+      const item = SERIE.itens[selectedIdx];
+      tituloAto.textContent = tituloCompleto(item);
+      subTituloAto.textContent = item.subtitulo || "";
+
+      btnAssistir.disabled = false; btnAssistir.style.opacity = "1";
+      btnYoutube.disabled = false; btnYoutube.style.opacity = "1";
+
+      atoSinopseText.textContent = item.sinopse || "—";
+
+      // navegação
+      const isFirst = (selectedIdx === 0);
+      const isLast  = (selectedIdx === SERIE.itens.length - 1);
+
+      btnPrev.disabled = isFirst; btnPrev.style.opacity = isFirst ? ".6" : "1";
+      btnNext.disabled = isLast;  btnNext.style.opacity = isLast ? ".6" : "1";
+      btnPrev2.disabled = isFirst; btnPrev2.style.opacity = isFirst ? ".6" : "1";
+      btnNext2.disabled = isLast;  btnNext2.style.opacity = isLast ? ".6" : "1";
+
+      statusLine.textContent = `Pronto: ${tituloCompleto(item)}.`;
+    }
+
+    function setNavDisabled(disabled){
+      btnPrev.disabled = disabled; btnPrev.style.opacity = disabled ? ".6" : "1";
+      btnNext.disabled = disabled; btnNext.style.opacity = disabled ? ".6" : "1";
+      btnPrev2.disabled = disabled; btnPrev2.style.opacity = disabled ? ".6" : "1";
+      btnNext2.disabled = disabled; btnNext2.style.opacity = disabled ? ".6" : "1";
+    }
+
+    function carregarVideo(){
+      if (selectedIdx === null) return;
+      const item = SERIE.itens[selectedIdx];
+
+      // ✅ youtube-nocookie (pra evitar o erro que você pegou)
+      const embed = `https://www.youtube-nocookie.com/embed/${item.videoId}?rel=0&modestbranding=1&playsinline=1`;
+      ytFrame.src = embed;
+
+      nowTitle.textContent = tituloCompleto(item);
+    }
+
+    function abrirNoYoutube(){
+      if (selectedIdx === null) return;
+      const item = SERIE.itens[selectedIdx];
+      const url = `https://www.youtube.com/watch?v=${item.videoId}`;
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+
+    function irParaAto(dir){
+      if (selectedIdx === null) return;
+      const next = selectedIdx + dir;
+      if (next < 0 || next >= SERIE.itens.length) return;
+      selecionar(next);
+      scrollToSection("assistir");
+    }
+
+    function resetarSelecao(){
+      selectedIdx = null;
+      renderGrid();
+      atualizarSelecao();
+
+      ytFrame.src = "about:blank";
+      nowTitle.textContent = "—";
+      atoSinopseText.textContent = "Selecione um item para ver a sinopse.";
+      playerHint.textContent = "Selecione o Trailer ou um Ato para carregar o vídeo.";
+      location.hash = "";
+    }
+
+    /* ===== Olhinho (sinopse geral + sinopse item) ===== */
+    (function(){
+      const btn = document.getElementById("toggleSinopse");
+      const box = document.getElementById("sinopseBox");
+      const eyeOpen = document.getElementById("eyeOpen");
+      const eyeClosed = document.getElementById("eyeClosed");
+
+      let open = true;
+      btn?.addEventListener("click", ()=>{
+        open = !open;
+        box.classList.toggle("hidden", !open);
+        eyeOpen.classList.toggle("hidden", !open);
+        eyeClosed.classList.toggle("hidden", open);
+      });
+
+      const btn2 = document.getElementById("toggleAtoSinopse");
+      const box2 = document.getElementById("atoSinopseBox");
+      const eyeOpen2 = document.getElementById("eyeOpen2");
+      const eyeClosed2 = document.getElementById("eyeClosed2");
+
+      let open2 = true;
+      btn2?.addEventListener("click", ()=>{
+        open2 = !open2;
+        box2.classList.toggle("hidden", !open2);
+        eyeOpen2.classList.toggle("hidden", !open2);
+        eyeClosed2.classList.toggle("hidden", open2);
+      });
+    })();
+
+    /* ===== init (hash opcional) ===== */
+    document.addEventListener("DOMContentLoaded", ()=>{
+      renderGrid();
+      atualizarSelecao();
+
+      // hashes aceitos: #trailer, #ato01, #ato02...
+      const h = (location.hash || "").replace("#","").toLowerCase().trim();
+      if (!h) return;
+
+      let idx = -1;
+      if (h === "trailer") idx = 0;
+      else {
+        const m = h.match(/^ato(\d{2})$/);
+        if (m){
+          const n = parseInt(m[1], 10);
+          idx = SERIE.itens.findIndex(it => it.tipo === "Ato" && it.numero === n);
+        }
+      }
+
+      if (idx >= 0){
+        selectedIdx = idx;
+        renderGrid();
+        atualizarSelecao();
+        carregarVideo();
+      }
+    });
+  </script>
+</body>
+</html>
