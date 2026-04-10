@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sonho de Pirata</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body{
+  background:
+    radial-gradient(1200px 600px at 70% -10%, #0ea5e9 0%, transparent 60%),
+    radial-gradient(800px 400px at 20% 0%, #0284c7 0%, transparent 60%),
+    linear-gradient(#020617,#020617);
+  color:#e5e7eb;
+}
+
+/* ondas */
+.waves{
+  position:fixed;
+  bottom:0;
+  width:200%;
+  height:180px;
+  background:url('https://svgshare.com/i/14kA.svg') repeat-x;
+  opacity:.12;
+  animation:wave 25s linear infinite;
+}
+@keyframes wave{
+  from{transform:translateX(0)}
+  to{transform:translateX(-50%)}
+}
+
+/* leitura */
+.reading{
+  backdrop-filter: blur(10px);
+  background: rgba(2,6,23,.78);
+  border:1px solid rgba(255,255,255,.08);
+}
+
+/* sidebar */
+.side{
+  background: rgba(2,6,23,.75);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:12px;
+}
+.btn-side{
+  width:100%;
+  padding:.8rem;
+  border-radius:.6rem;
+  background:rgba(255,255,255,.05);
+  transition:.2s;
+  text-align:left;
+}
+.btn-side:hover{background:rgba(255,255,255,.1)}
+.active{
+  background:linear-gradient(135deg,#0ea5e9,#38bdf8);
+}
+
+/* barra */
+#progress{
+  position:fixed;
+  top:0;
+  left:0;
+  height:4px;
+  width:0%;
+  background:linear-gradient(90deg,#0ea5e9,#38bdf8);
+  z-index:50;
+}
+
+/* leitura estilo livro */
+#texto{
+  max-width: 720px;
+  margin: auto;
+  font-size: 1.05rem;
+}
+
+p{
+  margin-bottom:1.4rem;
+  line-height:1.85;
+  color:#cbd5e1;
+}
+
+/* animação troca */
+.fade{
+  animation:fade .3s;
+}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+</style>
+</head>
+
+<body>
+
+<div id="progress"></div>
+<div class="waves"></div>
+
+<header class="max-w-4xl mx-auto px-4 pt-10">
+  <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight">
+    Sonho de <span class="text-sky-400">Pirata</span>
+  </h1>
+
+  <p class="mt-3 text-slate-300">
+    Um conto sobre discriminação, perseguição e manipulação. Mas acima de tudo, o poder da liberdade para mudar o mundo.
+  </p>
+
+  <div class="mt-4 flex flex-wrap items-center gap-3 text-xs">
+    <span class="px-3 py-1 rounded-full bg-white/10 border border-white/10">
+      Leitura ~ 6-10 min
+    </span>
+
+    <span class="px-3 py-1 rounded-full bg-white/10 border border-white/10">
+      esperança
+    </span>
+  </div>
+</header>
+
+<div class="max-w-6xl mx-auto px-4 mt-8 mb-20 grid md:grid-cols-4 gap-6">
+
+<aside class="side p-3 md:sticky md:top-20">
+<button onclick="setP(0)" class="btn-side active" id="b1">Parte 1 — Piratas do Sol</button>
+<button onclick="setP(1)" class="btn-side" id="b2">Parte 2 — Século Perdido</button>
+<button onclick="setP(2)" class="btn-side" id="b3">Parte 3 — Marcha da Liberdade</button>
+</aside>
+
+<section class="md:col-span-3 reading p-6 rounded-2xl">
+<div id="texto" class="fade"></div>
+</section>
+
+</div>
+
+<script>
+
+const partes = [ `
+<h2 class="text-2xl font-bold text-sky-400 mb-6">Parte 1 - Piratas do Sol</h2>
+
+<p>Nem toda vida começa com o direito de ver o céu. Algumas começam onde a luz não chega, não porque ela não exista, mas porque foi mantida distante o suficiente para parecer inexistente. Cresce-se assim, não na ausência, mas na limitação. Aprendendo cedo que existir já vem acompanhado de um lugar. E que esse lugar raramente pode ser escolhido.</p>
+
+<p>O mundo, para alguns, se revela cedo como medida. Há limites que não são ensinados, mas impostos com naturalidade suficiente para parecerem verdade. Estão nos olhares que decidem valor antes da história, nos espaços que se fecham sem explicação, nas correntes que não precisam de ferro para existir. Correntes que moldam o possível, que definem até onde se pode ir, como se o horizonte fosse privilégio, e não direito. Há corpos que carregam marcas antes mesmo de serem tocados, como se o mundo, em silêncio, já tivesse decidido quem pode viver livre… e quem deve aprender a aceitar o fundo.</p>
+
+<p>E ainda assim, algo não se encaixa.</p>
+
+<p>Uma sensação difícil de nomear, como se existir ali exigisse mais do que deveria. Como se o peso não fosse parte do mundo, mas algo colocado sobre ele. E é nesse desconforto, quase imperceptível, que nasce a primeira ruptura, não no mundo, mas na forma como ele é aceito.</p>
+
+<p>Dizem, em histórias que sobrevivem mesmo quando tudo tenta apagá-las, que existe algo acima. Um calor que não fere. Uma luz que não escolhe. Chamam de sol. Há quem diga que um dia ele já tocou todos de forma igual. Há quem diga que houve um tempo em que ninguém nascia abaixo. Mas essas histórias são tratadas como erro, como delírio… como perigo. Porque lembrar de um mundo diferente é o primeiro passo para recusar o mundo atual.</p>
+
+<p>Mas há sempre alguém que olha para cima. E, às vezes, isso basta. Porque o mundo pode ensinar a aceitar o peso, pode moldar, pode silenciar, mas não consegue impedir completamente o instante em que algo muda por dentro. O momento em que alguém percebe que a dor não é natural. Que a ausência de luz não é destino. Que viver não deveria depender de onde se nasce… ou de quem se é.</p>
+
+<p>É nesse instante que o mundo perde um pouco da sua certeza.</p>
+
+<p>Nada se rompe por fora. Nada desmorona.<br>
+Mas algo, silenciosamente, deixa de se encaixar.</p>
+
+<p>A aceitação já não é completa. O peso já não parece inevitável. Há um pequeno atraso entre o que é imposto e o que é aceito. E, nesse espaço, nasce algo novo.</p>
+
+<p>Um olhar que não cede como antes.<br>
+Um silêncio que já não concorda.<br>
+Uma presença que começa, ainda que devagar, a se recusar.</p>
+
+<p>Recusa em aceitar o limite como fim.<br>
+Recusa em esquecer que, em algum lugar, mesmo que distante, o sol existe.</p>
+
+<p>Chamaram-nos de perigosos.</p>
+
+<p>Porque deixaram de pedir permissão para existir. Porque começaram a subir, mesmo quando tudo foi feito para mantê-los abaixo. Porque, carregando o peso do fundo, ousaram se mover como se a superfície também lhes pertencesse, como se nunca tivesse deixado de pertencer.</p>
+
+<p>Chamaram-nos de muitas coisas.</p>
+
+<p>Mas entre aqueles que ainda permaneciam abaixo, um outro nome começou a surgir. Não alto, não abertamente, mas como sobrevivem todas as verdades que ainda não podem ser ditas.</p>
+
+<p class="text-xl font-semibold text-sky-300">Piratas.</p>
+
+<p>Não por aquilo que tomavam,<br>
+mas por aquilo que se recusaram a continuar sendo.</p>
+
+<p>Porque, no fundo, o que mais assusta não é quem quebra as correntes.</p>
+
+<p>É quem percebe…<br>
+que elas nunca deveriam ter existido.</p>
+`,
+`
+<h2 class="text-2xl font-bold text-sky-400 mb-6">Parte 2 - Século Perdido</h2>
+
+<p>Há coisas que o mundo não esqueceu.<br>
+Ele foi ensinado a não saber.</p>
+
+<p>Existe um vazio na história que não se comporta como esquecimento. Não há ruínas, não há vestígios claros, não há marcas de passagem — apenas ausência. Um intervalo limpo demais para ser natural, preciso demais para ser acaso. Como se o tempo, em determinado momento, tivesse sido interrompido… e reescrito antes de continuar.</p>
+
+<p>Reinos existem. Tronos persistem. Ordens se mantêm. Mas suas bases repousam sobre algo que não pode ser nomeado. Há verdades que não foram perdidas — foram removidas. E aquilo que foi removido não deixa espaço para dúvida… apenas para silêncio.</p>
+
+<p>Um silêncio que se repete até parecer verdade.</p>
+
+<p>Não é necessário força quando ninguém sabe o que questionar. Não é necessário esconder quando ninguém sabe o que procurar. O controle mais eficiente não é aquele que impõe… é o que impede a consciência de existir.</p>
+
+<p>E acima de tudo isso, há presença.</p>
+
+<p>Algo que observa sem ser observado. Que existe onde não deveria haver ninguém. Que não governa por voz, nem por rosto, mas pela permanência absoluta de uma ordem que nunca é desafiada porque nunca é compreendida. Um ponto fixo no topo de tudo, não reconhecido, não questionado, não tocado.</p>
+
+<p>Porque o mundo não sabe que há algo a ser tocado. Ainda assim, as histórias tentaram sobreviver.</p>
+
+<p>Fragmentos atravessaram o tempo como puderam. Nomes resistiram, ainda que distorcidos. Figuras que um dia carregaram mudança foram transformadas em mito. Não negadas, isso seria perigoso demais, mas suavizadas, diluídas, afastadas o suficiente da realidade para deixarem de representar ameaça.</p>
+
+<p>Heróis viraram lendas.<br>
+Lendas viraram dúvida.<br>
+Dúvidas viraram silêncio.</p>
+
+<p>E assim, aquilo que poderia despertar… foi convertido em algo seguro de ignorar.</p>
+
+<p>Há relatos de tempos diferentes. De um mundo que não obedecia às mesmas regras. De reis que não se curvavam ao que hoje parece inquestionável. De promessas deixadas para trás, não como falha, mas como interrupção.</p>
+
+<p>Mas essas histórias não são proibidas.<br>
+São desacreditadas.</p>
+
+<p>Existem lugares que não constam nos mapas. Territórios que desapareceram sem deixar ruínas. Povos que deixaram de existir sem deixar memória. Guerras que nunca aconteceram — ao menos, não oficialmente. Como se partes inteiras do mundo tivessem sido removidas com o mesmo cuidado com que se apaga uma palavra indesejada de um texto.</p>
+
+<p>E o mais inquietante não é o desaparecimento. É a ausência de questionamento. Porque, para questionar, seria preciso perceber que algo falta — e o mundo foi cuidadosamente moldado para não sentir essa falta.</p>
+
+<p>Mas há um limite para o silêncio. Não porque ele se rompe por vontade, mas porque precisa sustentar demais. Aquilo que foi apagado não desapareceu. Foi empurrado para baixo, comprimido, ocultado sob camadas de ordem e de história reescrita. Sobre ele, ergueram estruturas. Reinos. Tronos. Um mundo inteiro construído acima de algo que não poderia ser lembrado.</p>
+
+<p>Um palácio alto demais para ser alcançado, distante o suficiente para não ser questionado, sustentado por uma base que ninguém pode ver… mas que ainda existe. E no topo, aquilo que nunca deveria estar ali. Não nomeado. Não tocado. Não contestado.</p>
+
+<p class="text-xl font-semibold text-sky-300">Imundo.</p>
+
+<p>Porque só o que não pode ser visto consegue permanecer intocável por tanto tempo. Mas nenhuma estrutura se sustenta para sempre sobre aquilo que foi escondido à força. O que é enterrado não desaparece. Ele pressiona. Ele desloca. Ele insiste. E quanto mais se constrói acima, mais inevitável se torna a queda.</p>
+
+<p>Porque há verdades que não precisam ser lembradas para existir. Apenas tempo. E quando esse tempo chega, não é o mundo que muda. É o que sempre esteve por baixo… que finalmente vem à superfície.</p>
+
+<p>E quando vier, não haverá silêncio suficiente para sustentar o que foi construído acima.</p>
+`,
+
+`
+<h2 class="text-2xl font-bold text-sky-400 mb-6">Parte 3 - Marcha da Liberdade</h2>
+
+<p>O mar continua em movimento. Atravessa águas que já viram silêncio demais. Passa por ilhas onde o céu foi negado, onde o peso ainda tenta definir quem pode ou não seguir. Lugares marcados por nomes que ainda assustam, por histórias que ninguém aprendeu por completo. O mundo continua o mesmo, e o movimento também.</p>
+
+<p>Em algum ponto do caminho, o ritmo muda. O passo acelera. A dificuldade deixa de travar e passa a empurrar. Sempre existe uma próxima marcha, esperando ser usada. Quanto mais o mundo aperta, mais o movimento avança.</p>
+
+<p>E, no meio disso, algo se sente.</p>
+
+<p>Um compasso leve. Quase distante. Como se o próprio caminho tivesse ritmo. Não guia, não impõe — acompanha. E, quando se escuta, mesmo que por um instante, fica difícil parar.</p>
+
+<p>Isso se espalha.</p>
+
+<p>No olhar de quem já não abaixa. No riso que surge onde não deveria. No instante em que o medo ainda existe… mas já não decide o próximo passo. As marcas permanecem, a dor atravessa, as lembranças ficam — e, ainda assim, o caminho continua.</p>
+
+<p>Porque acreditar começa assim.<br>
+Pequeno. Quase invisível. Sem garantia, sem certeza. Apenas um passo dado mesmo sem saber exatamente onde vai dar. E, quando alguém acredita, outro acompanha. Quando outro acompanha, o caminho ganha força.</p>
+
+<p>E ninguém segue sozinho.</p>
+
+<p>Vozes se juntam. Caminhos se cruzam. Histórias diferentes passam a avançar juntas. O peso se divide. O percurso segue incerto, mas deixa de ser solitário. E, no meio disso, algo simples permanece.</p>
+
+<p class="text-xl font-semibold text-sky-300">O sorriso.</p>
+
+<p>Leve, constante, impossível de ignorar. Não apaga o que aconteceu. Não desfaz o que foi construído. Muda a forma de atravessar. Onde havia silêncio, surge som. Onde havia espera, surge movimento.</p>
+
+<p>E o mundo sente.</p>
+
+<p>Ilhas que pareciam fechadas começam a ceder. Não por completo, não de uma vez, mas o suficiente. O suficiente para alguém respirar diferente. O suficiente para enxergar além. O suficiente para que o que parecia definitivo deixe de ser.</p>
+
+<p>Nada desaparece de imediato, mas deixa de prender.</p>
+
+<p>O movimento segue sem rota fixa, sem destino final. Avança como se o próprio caminho bastasse. Como se o mundo inteiro coubesse no olhar de quem escolhe continuar.</p>
+
+<p>E, ao olhar para frente, algo sempre aparece.</p>
+
+<p class="text-xl font-semibold text-sky-300">O sol.</p>
+
+<p>Presente, constante, impossível de apagar. Não exige direção. Não cobra resposta. Apenas está. E isso basta.</p>
+
+<p>Enquanto o ritmo continua, enquanto houver riso, enquanto houver alguém disposto a acreditar e dar o próximo passo, nada para.</p>
+
+<p class="text-lg font-semibold">Liberdade não espera.<br>
+Ela segue.</p>
+
+<p>E quem segue com ela carrega o mundo inteiro nas mãos.</p>
+`];
+
+/* troca */
+function setP(i){
+document.querySelectorAll('.btn-side').forEach(b=>b.classList.remove('active'));
+document.getElementById('b'+(i+1)).classList.add('active');
+
+texto.classList.remove('fade');
+void texto.offsetWidth;
+
+texto.innerHTML = partes[i];
+
+texto.classList.add('fade');
+
+window.scrollTo({top:0,behavior:"smooth"});
+}
+
+setP(0);
+
+/* barra leitura */
+window.addEventListener("scroll",()=>{
+let scrollTop = window.scrollY;
+let docHeight = document.body.scrollHeight - window.innerHeight;
+let progress = (scrollTop / docHeight) * 100;
+document.getElementById("progress").style.width = progress + "%";
+});
+
+</script>
+
+</body>
+</html>

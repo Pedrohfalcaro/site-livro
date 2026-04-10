@@ -437,10 +437,11 @@ async function pagarMercadoPago(){
 
   try{
     const r = await fetch("https://site-livro-backend.onrender.com/mp/preferencia", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(payload),
+  mode: "cors",
+});
 
     const data = await r.json();
 
