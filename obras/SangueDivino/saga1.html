@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sangue Divino — Saga 1</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<style>
+body{
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(239,68,68,.25), transparent 60%),
+    radial-gradient(circle at 20% 100%, rgba(251,146,60,.2), transparent 60%),
+    linear-gradient(#020617, #0b1220);
+}
+
+.fogo{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background-image: radial-gradient(circle, rgba(255,120,0,.08) 1px, transparent 1px);
+  background-size: 30px 30px;
+  animation: subir 20s linear infinite;
+}
+@keyframes subir{
+  from{ transform:translateY(0); }
+  to{ transform:translateY(-200px); }
+}
+
+.card{
+  background: rgba(17,24,39,.8);
+  border:1px solid rgba(255,255,255,.08);
+  backdrop-filter: blur(10px);
+  border-radius:16px;
+}
+
+.leitura{
+  line-height:1.8;
+  font-size:1.05rem;
+}
+
+.cap-scroll{
+  display:flex;
+  gap:10px;
+  overflow-x:auto;
+}
+
+.cap-btn{
+  min-width:120px;
+  padding:.7rem;
+  border-radius:10px;
+  background:rgba(239,68,68,.15);
+  border:1px solid rgba(239,68,68,.3);
+}
+
+.star{
+  font-size:24px;
+  cursor:pointer;
+  color:#374151;
+}
+.star.full{ color:#f59e0b; }
+.star.half{
+  background: linear-gradient(90deg, #f59e0b 50%, #374151 50%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+</style>
+</head>
+
+<body class="text-slate-100 font-sans">
+
+<div class="fogo"></div>
+
+<header class="max-w-4xl mx-auto px-4 pt-8">
+  <h1 class="text-3xl sm:text-4xl font-extrabold">
+    Saga 1 — <span class="text-red-500">Chamas do Destino</span>
+  </h1>
+  <p class="mt-2 text-slate-400">
+    O início da jornada de um assassino de Deuses.
+  </p>
+</header>
+
+<div class="max-w-4xl mx-auto px-4 mt-4 md:hidden">
+  <div class="cap-scroll">
+    <button class="cap-btn" onclick="abrirCap(1)">Cap 01</button>
+  </div>
+</div>
+
+<div class="max-w-6xl mx-auto px-4 mt-6 pb-16 grid grid-cols-1 md:grid-cols-4 gap-6">
+
+  <aside class="card p-4 hidden md:block">
+    <h2 class="font-bold mb-3">Capítulos</h2>
+    <button class="cap-btn w-full" onclick="abrirCap(1)">
+      Capítulo 01
+    </button>
+  </aside>
+
+  <section class="card p-5 md:col-span-2 leitura">
+    <div id="conteudo">
+      <h2 class="text-lg opacity-70">Selecione um capítulo</h2>
+    </div>
+  </section>
+
+  <aside class="card p-4 md:col-span-1">
+
+    <div class="mb-4">
+      <h3 class="font-bold mb-2">Comentários</h3>
+      <div id="listaComentarios" class="text-sm text-slate-400">
+        Carregando comentários...
+      </div>
+    </div>
+
+    <div>
+      <h3 class="font-bold mb-2">Deixe seu comentário</h3>
+
+      <input id="nome" placeholder="Nome"
+        class="w-full mb-2 p-2 rounded bg-black/30 border border-white/10">
+
+      <input id="email" placeholder="Email"
+        class="w-full mb-2 p-2 rounded bg-black/30 border border-white/10">
+
+      <textarea id="comentario" placeholder="Comentário"
+        class="w-full mb-2 p-2 rounded bg-black/30 border border-white/10"></textarea>
+
+      <div id="stars" class="flex gap-1 mb-3"></div>
+
+      <button onclick="enviarComentario()" class="w-full bg-red-500 py-2 rounded font-bold">
+        Enviar
+      </button>
+    </div>
+
+  </aside>
+
+</div>
+
+<script>
+(function(){
+  emailjs.init("D3yNsMBwQ-3eyf6j4");
+})();
+
+/* CAPÍTULOS + COMENTÁRIOS */
+async function abrirCap(n){
+  const conteudo = document.getElementById("conteudo");
+
+  conteudo.innerHTML = `<p class="opacity-70">Carregando...</p>`;
+
+  try{
+    const res = await fetch(`capitulos/cap${n}.html`);
+    const html = await res.text();
+    conteudo.innerHTML = html;
+
+    // 🔥 CARREGA COMENTÁRIOS
+    carregarComentarios(n);
+
+  }catch{
+    conteudo.innerHTML = `<p class="text-red-400">Erro ao carregar.</p>`;
+  }
+}
+
+/* 💬 COMENTÁRIOS */
+async function carregarComentarios(capitulo){
+  const container = document.getElementById("listaComentarios");
+
+  try{
+    const res = await fetch(`comentarios/cap${capitulo}.json`);
+    const data = await res.json();
+
+    if(data.comentarios.length === 0){
+      container.innerHTML = "Nenhum comentário ainda.";
+      return;
+    }
+
+    container.innerHTML = "";
+
+    data.comentarios.forEach(c=>{
+      container.innerHTML += `
+        <div class="mb-4 pb-3 border-b border-white/10">
+          <div class="flex justify-between">
+            <strong>${c.nome}</strong>
+            <span class="text-amber-400">⭐ ${c.nota}</span>
+          </div>
+          <p class="text-sm opacity-80">${c.texto}</p>
+        </div>
+      `;
+    });
+
+  } catch{
+    container.innerHTML = "Erro ao carregar comentários.";
+  }
+}
+
+/* ⭐ ESTRELAS */
+const starsContainer = document.getElementById("stars");
+let rating = 0;
+
+for(let i=1;i<=5;i++){
+  const star = document.createElement("span");
+  star.classList.add("star");
+  star.innerHTML = "★";
+
+  star.addEventListener("mousemove", e=>{
+    const rect = star.getBoundingClientRect();
+    const half = e.clientX < rect.left + rect.width/2;
+    updateStars(i - (half ? 0.5 : 0));
+  });
+
+  star.addEventListener("click", e=>{
+    const rect = star.getBoundingClientRect();
+    const half = e.clientX < rect.left + rect.width/2;
+    rating = i - (half ? 0.5 : 0);
+    updateStars(rating);
+  });
+
+  starsContainer.appendChild(star);
+}
+
+function updateStars(value){
+  const stars = document.querySelectorAll(".star");
+
+  stars.forEach((star, i)=>{
+    const index = i + 1;
+    star.classList.remove("full","half");
+
+    if(value >= index){
+      star.classList.add("full");
+    } else if(value >= index - 0.5){
+      star.classList.add("half");
+    }
+  });
+}
+
+/* 📩 EMAIL */
+function enviarComentario(){
+
+  const nome = document.getElementById("nome").value;
+  const email = document.getElementById("email").value;
+  const comentario = document.getElementById("comentario").value;
+
+  if(!nome || !email || !comentario){
+    alert("Preencha todos os campos.");
+    return;
+  }
+
+  emailjs.send("service_7opfygj", "template_lsf8lck", {
+    nome,
+    email,
+    comentario,
+    nota: rating
+  })
+  .then(()=>{
+    alert("Comentário enviado! (aguardando aprovação)");
+
+    document.getElementById("nome").value = "";
+    document.getElementById("email").value = "";
+    document.getElementById("comentario").value = "";
+    updateStars(0);
+  })
+  .catch(()=>{
+    alert("Erro ao enviar comentário.");
+  });
+}
+function abrirCapDaURL(){
+  const params = new URLSearchParams(window.location.search);
+  const cap = params.get("cap");
+
+  if(cap){
+    abrirCap(cap);
+  }
+}
+
+// executa ao carregar a página
+function abrirCapDaURL(){
+  const params = new URLSearchParams(window.location.search);
+  const cap = params.get("cap");
+
+  if(cap){
+    abrirCap(cap);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+}
+
+// executa ao carregar
+abrirCapDaURL();
+</script>
+
+</body>
+</html>
