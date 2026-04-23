@@ -97,10 +97,13 @@ body{
 
   <aside class="card p-4 hidden md:block">
     <h2 class="font-bold mb-3">Capítulos</h2>
-    <button class="cap-btn w-full" onclick="abrirCap(1)">
-      Capítulo 01
-    </button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(1)">Capítulo 01</button>
+<button class="cap-btn w-full mb-2" onclick="abrirCap(2)">Capítulo 02</button>
+<button class="cap-btn w-full mb-2" onclick="abrirCap(3)">Capítulo 03</button>
+<button class="cap-btn w-full mb-2" onclick="abrirCap(4)">Capítulo 04</button>
   </aside>
+
+  
 
   <section class="card p-5 md:col-span-2 leitura">
     <div id="conteudo">
@@ -141,13 +144,38 @@ body{
 </div>
 
 <script>
+/* EMAIL */
 (function(){
   emailjs.init("D3yNsMBwQ-3eyf6j4");
 })();
 
-/* CAPÍTULOS + COMENTÁRIOS */
+/* 📅 LANÇAMENTO */
+const lancamentos = {
+  1: new Date("2026-04-01T00:00:00"),
+  2: new Date("2026-05-08T00:00:00")
+};
+
+function capLiberado(n){
+  return new Date() >= lancamentos[n];
+}
+
+/* 📖 CAPÍTULO */
 async function abrirCap(n){
   const conteudo = document.getElementById("conteudo");
+
+  if(!capLiberado(n)){
+    conteudo.innerHTML = `
+      <div class="text-center py-10">
+        <p class="text-red-400 text-lg font-bold mb-2">
+          🔒 Capítulo ainda não disponível
+        </p>
+        <p class="text-sm opacity-70">
+          Aguarde o lançamento oficial.
+        </p>
+      </div>
+    `;
+    return;
+  }
 
   conteudo.innerHTML = `<p class="opacity-70">Carregando...</p>`;
 
@@ -156,7 +184,6 @@ async function abrirCap(n){
     const html = await res.text();
     conteudo.innerHTML = html;
 
-    // 🔥 CARREGA COMENTÁRIOS
     carregarComentarios(n);
 
   }catch{
@@ -236,7 +263,7 @@ function updateStars(value){
   });
 }
 
-/* 📩 EMAIL */
+/* 📩 ENVIO */
 function enviarComentario(){
 
   const nome = document.getElementById("nome").value;
@@ -266,16 +293,8 @@ function enviarComentario(){
     alert("Erro ao enviar comentário.");
   });
 }
-function abrirCapDaURL(){
-  const params = new URLSearchParams(window.location.search);
-  const cap = params.get("cap");
 
-  if(cap){
-    abrirCap(cap);
-  }
-}
-
-// executa ao carregar a página
+/* 🔗 URL */
 function abrirCapDaURL(){
   const params = new URLSearchParams(window.location.search);
   const cap = params.get("cap");
@@ -283,10 +302,11 @@ function abrirCapDaURL(){
   if(cap){
     abrirCap(cap);
     window.scrollTo({ top: 0, behavior: "smooth" });
+  } else {
+    abrirCap(1);
   }
 }
 
-// executa ao carregar
 abrirCapDaURL();
 </script>
 
