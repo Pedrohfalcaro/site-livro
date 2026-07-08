@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>O Chamado das Profundezas</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+:root{
+--bg1:#02101d;--bg2:#031726;--card:rgba(4,18,30,.72);--accent:#5ecbff;
+}
+*{box-sizing:border-box}
+body{
+margin:0;color:#dbeafe;font-family:Georgia,serif;
+background:
+radial-gradient(circle at top,#0b4f6c 0%,transparent 40%),
+linear-gradient(var(--bg1),#01070d 70%);
+overflow-x:hidden;
+}
+#progress{position:fixed;top:0;left:0;height:4px;width:0;background:linear-gradient(90deg,#7dd3fc,#38bdf8);z-index:100}
+.light{position:fixed;top:-20%;left:50%;transform:translateX(-50%);width:900px;height:900px;background:radial-gradient(circle,rgba(255,255,255,.12),transparent 70%);pointer-events:none}
+.bubble{position:fixed;bottom:-20px;width:4px;height:4px;background:rgba(255,255,255,.15);border-radius:50%;animation:rise linear infinite}
+@keyframes rise{from{transform:translateY(0)}to{transform:translateY(-120vh)}}
+.wrap{max-width:1200px;margin:auto;padding:40px 20px;display:grid;grid-template-columns:280px 1fr;gap:30px}
+aside{position:sticky;top:30px;background:var(--card);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:16px;height:max-content}
+button{width:100%;padding:14px;border:none;border-radius:12px;background:#0b2334;color:white;text-align:left;margin-bottom:10px;cursor:pointer}
+button.active{background:#0ea5e9}
+article{background:var(--card);backdrop-filter:blur(12px);border-radius:20px;padding:40px;border:1px solid rgba(255,255,255,.08);max-width:820px}
+header{max-width:820px;margin:40px auto 10px;padding:0 20px}
+p{line-height:1.9;margin:0 0 1.4rem;color:#d5e7f2}
+.badge{display:inline-block;padding:.35rem .8rem;border:1px solid rgba(255,255,255,.15);border-radius:999px;margin-right:8px;margin-top:10px;font-size:.8rem}
+h2{color:#7dd3fc}
+@media(max-width:900px){.wrap{grid-template-columns:1fr}aside{position:static}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<div class="light"></div>
+<script>
+for(let i=0;i<45;i++){
+ const b=document.createElement('div');
+ b.className='bubble';
+ b.style.left=Math.random()*100+'vw';
+ b.style.animationDuration=(8+Math.random()*12)+'s';
+ b.style.animationDelay=(-Math.random()*20)+'s';
+ document.body.appendChild(b);
+}
+window.addEventListener('scroll',()=>{
+const h=document.documentElement;
+const p=h.scrollTop/(h.scrollHeight-h.clientHeight)*100;
+document.getElementById('progress').style.width=p+'%';
+});
+</script>
+
+<header>
+<h1 style="font-size:3rem;font-weight:800">O Chamado das <span style="color:#7dd3fc">Profundezas</span></h1>
+<p>Um conto sobre culpa, transformação e o preço de desafiar aquilo que jamais deveria ser despertado.</p>
+<div>
+<span class="badge">Leitura ~10–14 min</span>
+<span class="badge">Horror</span>
+<span class="badge">Oceano</span>
+</div>
+</header>
+
+<div class="wrap">
+<aside>
+<button class="active" onclick="setP(0,this)">Parte I — Precursores da Tragédia</button>
+<button onclick="setP(1,this)">Parte II — Arquitetos da Culpa</button>
+<button onclick="setP(2,this)">Parte III — Pioneiros do Horror</button>
+</aside>
+<article id="content"></article>
+</div>
+
+<script>
+const parts=[
+`<h2 class="text-2xl font-bold text-cyan-300 mb-6">Parte I — Precursores da Tragédia</h2>
+
+<p>Existem lugares que não foram feitos para serem dominados.<br>
+Não por serem hostis ou cruéis, mas por serem antigos demais para reconhecer qualquer necessidade de obedecer. O oceano é um deles. E ainda assim, houve aqueles que olharam para ele e viram apenas um problema a ser resolvido.</p>
+
+<p>Vieram em embarcações silenciosas, com instrumentos que mediam tudo — profundidade, temperatura, densidade, vida — mas que não continham uma única variável para dúvida. Não chegaram como exploradores. Chegaram como juízes.</p>
+
+<p>Para eles, o desconhecido não era algo a ser compreendido, mas algo a ser corrigido. Onde havia mistério, viam falha. Onde havia equilíbrio, viam imperfeição. Onde havia vida, viam matéria-prima.</p>
+
+<p>Há uma diferença sutil entre estudar e dissecar. Entre observar e intervir. Entre aprender e impor. Eles nunca aprenderam essa diferença — ou talvez tenham aprendido e escolhido ignorá-la, o que é uma forma mais antiga de crueldade.</p>
+
+<p>Para eles, compreender era o primeiro passo para controlar. Nomear era o primeiro passo para possuir. E possuir era o único objetivo que, no fim, sobrava.</p>
+
+<p>O oceano, para eles, não passava de um sistema imperfeito. E tudo o que é imperfeito deve ser ajustado.</p>
+
+<p>Foi assim que tudo começou: não com violência, ao menos não no sentido convencional da palavra, mas com método. Estruturas erguidas nas profundezas onde nenhuma luz chegava. Máquinas enterradas no silêncio, programadas para obedecer a lógicas que o próprio oceano jamais reconheceria como suas. Protocolos escritos com a frieza de quem acredita estar fazendo o necessário.</p>
+
+<p>Eles viam o progresso. Nunca viram o sofrimento, nem a destruição que deixavam para trás — apenas custo. E todo custo, para eles, era aceitável, porque havia uma certeza que sustentava tudo: a certeza de que estavam certos.</p>
+
+<p class="text-lg font-semibold text-cyan-200">
+As maiores tragédias raramente nascem da ignorância.<br>
+Nascem da convicção de que não há erro.
+</p>
+
+<p>Mas o oceano nunca foi um mecanismo. Ele não responde a comandos, não se curva a protocolos e não esquece. Cada intervenção deixou marcas. Cada tentativa de controle gerou consequência. Cada decisão tomada em nome da eficiência abriu espaço para algo que não podia ser previsto — porque há algo que eles nunca compreenderam: o erro não é apenas uma falha. É o nascimento de algo maior.</p>
+
+<p class="text-xl font-semibold text-cyan-300">
+O erro é uma semente.
+</p>
+
+<p>E quando plantada nas profundezas, ela não desaparece. Ela cresce, se espalha, se transforma. O que começou como correção tornou-se contaminação. O que começou como estudo tornou-se ameaça. E aquilo que eles acreditavam poder conter passou a existir além de qualquer controle.</p>
+
+<p>Ainda assim, persistiram. Construíram mais, isolaram mais, tentaram conter aquilo que eles mesmos haviam libertado. Mas cada solução carregava o mesmo problema em sua origem: a mesma arrogância, a mesma cegueira, a mesma incapacidade de reconhecer que o erro não estava no mundo. Estava neles.</p>
+
+<p>O oceano guardou tudo. Suas estruturas, suas máquinas, suas tentativas fracassadas de impor ordem ao que nunca precisou dela. Guardou, acima de tudo, as consequências — porque há algo curioso sobre os erros: eles não desaparecem quando seus autores desaparecem. Continuam existindo, mudam de forma, afundam, esperam, como destroços repousando no fundo de uma corrente que jamais para de se mover.</p>
+
+<p>E nas profundezas, o erro deles não morreu. Apenas encontrou novas formas de existir, novas formas de se espalhar, novas formas de lembrar ao mundo que nem toda inteligência é sabedoria, e que nem todo avanço é progresso.</p>
+
+<p>O oceano não os rejeitou. Não precisou. Apenas continuou — e, ao continuar, transformou tudo o que deixaram para trás em testemunho. Um testemunho silencioso, mas impossível de ignorar.</p>
+
+<p>Porque há ruínas que contam histórias, e há ruínas que são avisos. Eles acreditaram que estavam construindo um futuro. O que deixaram foi outra coisa: um erro profundo demais para ser apagado. Um erro que ainda respira. Um erro que ainda espera — e que, um dia, alguém terá que enfrentar.</p>`,
+
+`<h2 class="text-2xl font-bold text-cyan-300 mb-6">Parte II — Arquitetos da Culpa</h2>
+
+<p>Nas profundezas onde tudo aquilo foi enterrado, o tempo segue outra lei: não apaga, apenas empurra para mais fundo. E é dessa pressão sem luz que duas vozes aprendem a se ouvir — vozes que não nasceram no mesmo lugar, não pensam com a mesma lógica, mas carregam, cada uma à sua maneira, o mesmo peso.</p>
+
+<p>O tempo costuma receber um mérito que não lhe pertence. Dizem que ele cura, que resolve, que leva embora aquilo que machuca. Mas o tempo raramente remove alguma coisa. Na maior parte das vezes, apenas reorganiza. Empilha novas experiências sobre as antigas. Acrescenta distância entre o presente e o acontecimento.</p>
+
+<p>Para ela, a distância se mede em rostos que não voltou a ver, em uma irmã que ficou para trás em algum lugar que já não existe do mesmo jeito. Para ele, a distância se mede em eras — em um povo inteiro que confundiu correção com destruição, e que já não existe de forma alguma. A escala é diferente. A ferida, estranhamente, não é.</p>
+
+<p>A dor continua existindo, mas aprende novos caminhos. A culpa segue essa mesma lógica, embora se manifeste de outra forma em cada um deles. Nela, é silêncio — mistura-se aos pensamentos comuns, surge entre lembranças banais, ocupa conversas que nunca aconteceram e respostas que chegaram tarde demais. Nele, é memória compartilhada — carregada não como lembrança pessoal, mas como herança de tudo que os seus construíram e destruíram ao mesmo tempo.</p>
+
+<p>Há sempre uma pergunta que os acompanha, pequena e persistente, embora nascida de bocas diferentes:</p>
+
+<p class="text-lg font-semibold text-cyan-200">E se?</p>
+
+<p>Ela pergunta e se tivesse chegado antes. Ele pergunta e se seu povo tivesse escutado o oceano em vez de tentar corrigi-lo. As perguntas não são iguais, mas ocupam o mesmo território — um lugar onde nada pode ser provado e nada pode ser desfeito.</p>
+
+<p>Um deles busca absolvição. O outro busca compreensão. E é essa diferença, mais do que a diferença entre suas naturezas, que torna a conversa entre os dois tão difícil — e tão necessária. Porque a absolvição encerra. A compreensão transforma. Quem busca absolvição deseja apagar o passado; quem busca compreensão aprende a caminhar ao lado dele.</p>
+
+<p>Ele já caminha há mais tempo do que ela pode imaginar. Sabe, com uma clareza que só a longevidade oferece, que algumas feridas não nasceram da maldade, mas de limitações, de medo, de escolhas feitas sem a possibilidade de enxergar todas as consequências — e talvez seja por isso que ele resista a julgá-la, mesmo quando ela insiste em se julgar sozinha.</p>
+
+<p>A culpa dela tem um hábito estranho: promete que o sofrimento contínuo é uma forma de reparação, como se permanecer presa à dor pudesse corrigir o passado. A culpa dele tem o mesmo hábito, disfarçado de outra forma — a convicção de que carregar sozinho o peso de todo um povo é uma espécie de penitência justa. Nenhuma das duas formas floresce. Nenhuma vida — humana ou não — cresce dentro de uma cela construída pela própria consciência.</p>
+
+<p class="text-lg font-semibold text-cyan-200">Chega um momento em que continuar carregando a culpa deixa de ser responsabilidade e passa a ser resistência.</p>
+
+<p>Resistência à cura, ao perdão, à possibilidade de seguir em frente. E é isso, talvez, que cada um ensina ao outro sem perceber: ela aprende que sobreviver não é traição a quem se perdeu; ele aprende que testemunhar o fim de um mundo não é o mesmo que ser responsável por ele.</p>
+
+<p>Existem erros que diminuem e existem erros que transformam, e a diferença nunca esteve no passado, mas naquilo que se escolhe fazer depois dele. Talvez seja por isso que essa conversa entre os dois — uma voz que veio do mar e uma voz que aprendeu a escutá-la — permaneça muito depois de terminar. Porque não surgiu para responder perguntas. Surgiu para que os dois aprendessem, um através do outro, a viver com elas.</p>
+
+<p>E talvez, lá embaixo, entre estruturas e máquinas que ninguém mais visita, ainda exista algo parecido com isso: duas formas de arrependimento aprendendo, lentamente, a se tornar companhia uma da outra.</p>`,
+`<h2 class="text-2xl font-bold text-cyan-300 mb-6">Parte III — Pioneiros do Horror</h2>
+
+<p>A pressão muda de som antes de mudar de sensação. Primeiro é um zumbido nos ouvidos. Depois, um silêncio espesso demais para ser natural. É nesse silêncio que a diferença aparece: entre estar perdido e estar deslocado.</p>
+
+<p>Quem está perdido ainda pertence ao lugar onde se encontra; falta apenas descobrir o caminho de volta. O deslocado vive outra experiência: chega a um mundo que não o reconhece, onde sua presença não é esperada, onde nada foi moldado para recebê-lo.</p>
+
+<p>Talvez seja esse o sentimento mais antigo que existe: a percepção de que somos pequenos. Pequenos diante do oceano, pequenos diante do tempo, pequenos diante de formas de vida tão antigas e complexas que sequer nos enxergam como algo relevante.</p>
+
+<p>Durante muito tempo, a humanidade acreditou ocupar uma posição especial no universo. Criamos cidades, atravessamos continentes, alcançamos as estrelas. Cada conquista reforçou a sensação de que estávamos avançando em direção ao controle. Mas existem lugares onde essa ilusão não sobrevive — lugares onde voltamos a ser apenas mais uma espécie tentando existir.</p>
+
+<p>O pioneiro descobre isso primeiro. É ele quem pisa em territórios sem mapas, quem atravessa paisagens que jamais viram um rosto humano, quem aprende que coragem não é ausência de medo, é convivência. Porque o medo nunca vai embora. Apenas muda.</p>
+
+<p>No início, teme-se a escuridão. Depois, aquilo que se move dentro dela. Mais tarde, aquilo que não se move — aquilo que observa, aquilo que cresce, aquilo que parece seguir regras que ninguém ensinou. Até que surge um medo diferente, mais silencioso, mais difícil de enfrentar: o medo de deixar de ser quem se é.</p>
+
+<p>A morte tem contornos claros. Existe um antes, existe um depois. Mas existem destinos mais estranhos — destinos onde a fronteira entre continuidade e substituição começa a desaparecer. Imagine acordar e descobrir que sua vida continua, que suas memórias continuam, que sua voz continua, mas sem a certeza de que foi você quem atravessou o caminho entre um momento e outro.</p>
+
+<p class="text-lg font-semibold text-cyan-200">Existe conforto na permanência.<br>
+Existe horror na dúvida.</p>
+
+<p>Porque identidade não é matéria, não ocupa espaço, não pode ser medida. Ainda assim, é uma das poucas coisas que realmente possuímos. E quando essa certeza começa a se desfazer, surge uma pergunta para a qual talvez nunca exista resposta: quantas partes de alguém podem ser substituídas antes que ele deixe de ser a mesma pessoa?</p>
+
+<p>Talvez nenhuma. Talvez todas. Talvez a resposta nunca tenha importado, porque a vida sempre foi adaptação. Toda cicatriz é uma adaptação. Toda memória é uma adaptação. Toda escolha modifica, remove ou acrescenta algo à pessoa que a realizou.</p>
+
+<p>Mudamos constantemente — costumamos chamar esse processo de crescimento. Mas alguns mundos aceleram essa transformação. Alguns exigem mudanças tão profundas que já não é possível distinguir evolução de renúncia.</p>
+
+<p>O corpo se adapta. A mente se adapta. Os hábitos se adaptam. Até que surge a dúvida: ainda estamos sobrevivendo naquele ambiente, ou estamos nos tornando parte dele? Talvez exista menos diferença do que gostaríamos de admitir.</p>
+
+<p>A natureza nunca demonstrou interesse em preservar aquilo que fomos — apenas naquilo que podemos nos tornar. E isso assusta. Assusta porque passamos a vida tentando deixar marcas no mundo, enquanto o mundo trabalha silenciosamente para deixar marcas em nós.</p>
+
+<p class="text-lg font-semibold text-cyan-200">O pioneiro compreende essa troca antes dos outros.</p>
+
+<p>Compreende que explorar não é apenas transformar uma fronteira — é permitir que a fronteira também transforme o explorador. Nenhuma viagem termina com a mesma pessoa que a iniciou. Nenhum horizonte é alcançado sem algum tipo de mudança. Nenhuma descoberta acontece sem abandonar algo para trás.</p>
+
+<p>Talvez por isso exista tanta solidão no ato de abrir caminhos. Quem chega primeiro não carrega apenas a esperança dos que virão depois — carrega também a incerteza, o peso de caminhar sem garantias, o peso de tomar decisões que ninguém tomou antes, o peso de continuar avançando mesmo quando não existe prova de que ainda existe um caminho.</p>
+
+<p>E ainda assim, alguém avança. Não se sabe se é coragem, ou se é apenas a forma que o medo encontra para continuar existindo.</p>
+
+<p class="text-xl font-semibold text-cyan-300">Talvez nunca tenha havido diferença entre as duas coisas.</p>`
+];
+function setP(i,el){
+ document.querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+ if(el)el.classList.add('active');
+ else document.querySelectorAll('button')[i].classList.add('active');
+ content.innerHTML=parts[i];
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+setP(0);
+</script>
+</body>
+</html>
