@@ -23,6 +23,7 @@
     const q = new URLSearchParams(global.location.search);
     const paymentId = q.get('payment_id') || q.get('collection_id') || '';
     const status = q.get('status') || q.get('collection_status') || '';
+    const externalReference = q.get('external_reference') || '';
 
     return {
       paymentId: paymentId && paymentId !== 'null' ? paymentId : '',
@@ -30,7 +31,8 @@
       preferenceId: q.get('preference_id') || '',
       merchantOrderId: q.get('merchant_order_id') || '',
       paymentType: q.get('payment_type') || '',
-      externalReference: q.get('external_reference') || '',
+      externalReference:
+        externalReference && externalReference !== 'null' ? externalReference : '',
     };
   }
 
@@ -96,9 +98,62 @@
     return data;
   }
 
+  /**
+   * Consulta o backend até o pagamento ser approved (Pix costuma confirmar depois do redirect).
+   */
+  function pollPaymentUntilApproved(options = {}) {
+    const {
+      intervalMs = 4000,
+      maxAttempts = 45,
+      onUpdate,
+      onApproved,
+      onGiveUp,
+    } = options;
+
+    const data = readMpReturnParams();
+    if (!data.paymentId) return null;
+
+    const apiBase =
+      global.ApiBase?.resolveApiBase?.() || 'https://site-livro-backend.onrender.com';
+    let attempts = 0;
+    let timer = null;
+
+    async function tick() {
+      attempts += 1;
+      try {
+        const res = await fetch(
+          `${apiBase}/mp/payment-status?payment_id=${encodeURIComponent(data.paymentId)}`,
+          { mode: 'cors' },
+        );
+        const json = await res.json();
+        onUpdate?.(json);
+
+        if (json?.ok && json.status === 'approved') {
+          if (timer) clearInterval(timer);
+          onApproved?.(json);
+          return;
+        }
+      } catch (error) {
+        console.warn('poll payment-status:', error);
+      }
+
+      if (attempts >= maxAttempts) {
+        if (timer) clearInterval(timer);
+        onGiveUp?.();
+      }
+    }
+
+    tick();
+    timer = setInterval(tick, intervalMs);
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }
+
   global.MpReturn = {
     readMpReturnParams,
     statusLabel,
     renderMpReturnDetails,
+    pollPaymentUntilApproved,
   };
 })(window);

@@ -138,6 +138,7 @@
       </div>
 
       <div id="mpReturnMeta" class="note mt-6" hidden></div>
+      <p id="mpPollStatus" class="mt-4 text-sm muted2" hidden></p>
 
       <div class="mt-8 flex flex-col sm:flex-row gap-3">
         <a href="../loja.html" class="btn btn-primary w-full sm:w-auto">📚 Voltar pra loja</a>
@@ -160,12 +161,41 @@
     </div>
   </footer>
 
+<script src="../assets/js/api-base.js"></script>
 <script src="../assets/js/mp-return.js"></script>
 <script>
 (function () {
-  if (globalThis.MpReturn) {
-    MpReturn.renderMpReturnDetails('mpReturnMeta');
+  if (!globalThis.MpReturn) return;
+
+  const data = MpReturn.renderMpReturnDetails('mpReturnMeta');
+  const pollEl = document.getElementById('mpPollStatus');
+
+  if (!data?.paymentId) return;
+
+  if (pollEl) {
+    pollEl.hidden = false;
+    pollEl.textContent = 'Verificando confirmação do pagamento…';
   }
+
+  MpReturn.pollPaymentUntilApproved({
+    onUpdate(json) {
+      if (!pollEl || !json?.ok) return;
+      const label = MpReturn.statusLabel(json.status) || json.status;
+      pollEl.textContent = 'Status atual: ' + label + ' — aguardando confirmação…';
+    },
+    onApproved(json) {
+      const params = new URLSearchParams(location.search);
+      params.set('status', 'approved');
+      if (json.payment_id) params.set('payment_id', json.payment_id);
+      location.replace('./pagamento-sucesso.html?' + params.toString());
+    },
+    onGiveUp() {
+      if (pollEl) {
+        pollEl.textContent =
+          'Ainda pendente. Se o Pix já caiu na conta, aguarde o e-mail ou fale com o suporte com o ID do pagamento.';
+      }
+    },
+  });
 })();
 </script>
 
