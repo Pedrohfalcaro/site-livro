@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://estantedehistorias.com/sitemap-index.xml

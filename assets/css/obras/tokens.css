@@ -1,0 +1,64 @@
+/* Gerado por scripts/build-obra-tokens.mjs — não editar à mão */
+/* Fonte: src/data/obras.json */
+
+/* O Incidente de Willowbrook (idw) */
+[data-obra="idw"] {
+  --accent: #64748b;
+  --accent2: #94a3b8;
+  --glow: rgba(148, 163, 184, 0.25);
+  --on-accent: #0b1220;
+}
+
+/* A Última Colheita (auc) */
+[data-obra="auc"] {
+  --accent: #22c55e;
+  --accent2: #86efac;
+  --glow: rgba(34, 197, 94, 0.22);
+  --on-accent: #04130a;
+}
+
+/* A Lenda do Caos — Livro 1 (ldc1) */
+[data-obra="ldc1"] {
+  --accent: #7c3aed;
+  --accent2: #a78bfa;
+  --glow: rgba(167, 139, 250, 0.22);
+  --on-accent: #ffffff;
+  --purple1: #2e1065;
+  --purple2: #4c1d95;
+  --purple3: #7c3aed;
+  --violet: #a78bfa;
+}
+
+/* Além dos Céus — Temporada 1 (adc-t1) */
+[data-obra="adc-t1"] {
+  --accent: #2dd4bf;
+  --accent2: #38bdf8;
+  --glow: rgba(45, 212, 191, 0.22);
+  --on-accent: #041018;
+  --neon: #2dd4bf;
+  --neon2: #38bdf8;
+}
+
+/* Além dos Céus — Echos (adc-spf) */
+[data-obra="adc-spf"] {
+  --accent: #67e8f9;
+  --accent2: #a5f3fc;
+  --glow: rgba(103, 232, 249, 0.22);
+  --on-accent: #041018;
+  --neon: #67e8f9;
+  --neon2: #a5f3fc;
+}
+
+/* Sangue Divino (sangue-divino) */
+[data-obra="sangue-divino"] {
+  --accent: #ef4444;
+  --accent2: #f87171;
+  --glow: rgba(239, 68, 68, 0.22);
+  --on-accent: #ffffff;
+}
+
+/* Utilidades compartilhadas nas landings */
+[data-obra] .btn-primary {
+  background: var(--accent);
+  color: var(--on-accent, #0b1220);
+}

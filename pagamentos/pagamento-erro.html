@@ -5,8 +5,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pagamento não concluído — Estante de Histórias</title>
-
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../assets/css/tailwind.css">
+  <link rel="stylesheet" href="../assets/css/shared.css">
 
   <meta property="og:title" content="Pagamento não concluído — Estante de Histórias" />
   <meta property="og:description" content="Não foi possível concluir seu pagamento. Você pode tentar novamente." />
@@ -70,35 +70,58 @@
 
 <body class="font-sans min-h-screen">
 
-  <nav class="glass sticky top-0 z-40">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
-      <div class="flex items-center gap-3">
-        <a href="../index.html" class="inline-flex items-center gap-2">
-          <img src="../imagens/LogoSite.png" class="h-9" alt="Logo">
+  <!-- NAVBAR -->
+<nav class="glass site-nav sticky top-0 z-50">
+  <div class="max-w-6xl mx-auto px-4 py-3 nav-shell">
+    <div class="nav-row">
+      <div class="flex items-center gap-2 sm:gap-3 shrink-0 min-w-0">
+        <a href="../index.html" class="inline-flex items-center gap-2 shrink-0">
+          <img src="../imagens/LogoSite.png" alt="Logo - Estante de Histórias" class="nav-logo select-none" />
         </a>
         <button id="temaClaro" class="theme-dot" title="Tema claro" aria-label="Tema claro"></button>
         <button id="temaEscuro" class="theme-dot" title="Tema escuro" aria-label="Tema escuro"></button>
+        <a href="https://instagram.com/pedrohfalcaro" target="_blank" rel="noopener noreferrer"
+           class="hidden sm:inline-flex items-center justify-center w-10 h-10 rounded-full border shrink-0"
+           style="border-color: var(--border); color: var(--muted);"
+           title="Instagram" aria-label="Instagram">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5a4.25 4.25 0 0 0 4.25-4.25v-8.5A4.25 4.25 0 0 0 16.25 3.5h-8.5zm8.75 2a1 1 0 1 1 0 2 1 1 0 0 1 0-2zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 1.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z"/>
+          </svg>
+        </a>
       </div>
 
-      <div class="hidden md:flex items-center gap-2">
-        <a href="../index.html" class="btn btn-ghost">Início</a>
-        <a href="../loja.html" class="btn btn-ghost">Loja</a>
-        <a href="../sobreautor.html" class="btn btn-ghost">Sobre</a>
-        <a href="../contos.html" class="btn btn-ghost">Contos</a>
+      <div class="text-center flex-1 min-w-0 px-1">
+        <h1 class="font-extrabold tracking-tight text-base sm:text-lg md:text-xl nav-title">Estante de Histórias</h1>
+        <p class="hidden sm:block text-xs muted2 truncate">Erro no pagamento</p>
       </div>
 
-      <a href="../loja.html" class="btn btn-primary">Voltar pra loja</a>
+      <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        <a href="../loja.html" class="btn btn-primary !px-3 sm:!px-4 !py-2 text-sm whitespace-nowrap hidden sm:inline-flex">Voltar pra loja</a>
+        <div class="hidden md:flex items-center gap-2">
+          <a href="../index.html" class="btn btn-ghost !px-3 !py-2 text-sm whitespace-nowrap">Início</a>
+          <a href="../loja.html" class="btn btn-ghost !px-3 !py-2 text-sm whitespace-nowrap">Loja</a>
+          <a href="../contos.html" class="btn btn-ghost !px-3 !py-2 text-sm whitespace-nowrap">Contos</a>
+          <a href="../sobreautor.html" class="btn btn-ghost !px-3 !py-2 text-sm whitespace-nowrap">Sobre</a>
+        </div>
+        <button type="button" id="btnMobileMenu" class="md:hidden btn btn-ghost !px-3 !py-2" aria-expanded="false" aria-controls="mobileNavPanel" aria-label="Abrir menu">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
     </div>
 
-    <div class="md:hidden max-w-6xl mx-auto px-4 pb-3">
-      <div class="flex flex-wrap gap-2">
-        <a href="../index.html" class="btn btn-ghost !py-2">Início</a>
-        <a href="../loja.html" class="btn btn-ghost !py-2">Loja</a>
-        <a href="../sobreautor.html" class="btn btn-ghost !py-2">Sobre</a>
-        <a href="../contos.html" class="btn btn-ghost !py-2">Contos</a>
+    <div id="mobileNavPanel" class="mobile-nav-panel md:hidden border-t mt-2 pt-2" style="border-color: var(--border);">
+      <div class="flex flex-col gap-2 pb-2">
+        <a href="../index.html" class="btn w-full justify-start btn-ghost">Início</a>
+        <a href="../loja.html" class="btn w-full justify-start btn-ghost">Loja</a>
+        <a href="../contos.html" class="btn w-full justify-start btn-ghost">Contos</a>
+        <a href="../sobreautor.html" class="btn w-full justify-start btn-ghost">Sobre</a>
       </div>
     </div>
-  </nav>
+  </div>
+</nav>
+<script src="../assets/js/navbar.js"></script>
 
   <main class="max-w-6xl mx-auto px-4 py-10">
     <div class="surface p-6 sm:p-10">
@@ -118,13 +141,15 @@
         </p>
       </div>
 
+      <div id="mpReturnMeta" class="danger mt-6" hidden></div>
+
       <div class="mt-8 flex flex-col sm:flex-row gap-3">
         <a href="../pagamento.html" class="btn btn-primary w-full sm:w-auto">🔁 Tentar de novo</a>
         <a href="../loja.html" class="btn btn-ghost w-full sm:w-auto">📚 Voltar pra loja</a>
       </div>
 
       <p class="mt-6 text-xs muted2">
-        Se você acredita que houve erro, envie o print do status do Mercado Pago por e-mail.
+        Se você acredita que houve erro, envie o ID do pagamento (abaixo, se aparecer) ou um print do Mercado Pago por e-mail.
       </p>
     </div>
   </main>
@@ -139,16 +164,15 @@
     </div>
   </footer>
 
+<script src="../assets/js/mp-return.js"></script>
 <script>
-(function(){
-  const KEY='theme';
-  const b=document.body;
-  function apply(t){ b.classList.toggle('dark-mode', t==='dark'); }
-  apply(localStorage.getItem(KEY)||'light');
-  temaClaro.onclick=()=>{ localStorage.setItem(KEY,'light'); apply('light'); }
-  temaEscuro.onclick=()=>{ localStorage.setItem(KEY,'dark');  apply('dark');  }
+(function () {
+  if (globalThis.MpReturn) {
+    MpReturn.renderMpReturnDetails('mpReturnMeta');
+  }
 })();
 </script>
 
+  <script src="../assets/js/theme.js"></script>
 </body>
 </html>

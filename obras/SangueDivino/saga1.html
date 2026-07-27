@@ -4,11 +4,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Sangue Divino — Saga 1</title>
-
-<script src="https://cdn.tailwindcss.com"></script>
-
-<!-- EmailJS -->
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <link rel="stylesheet" href="../../assets/css/tailwind.css">
+  <link rel="stylesheet" href="../../assets/css/shared.css">
 
 <style>
 body{
@@ -58,6 +55,34 @@ body{
   border:1px solid rgba(239,68,68,.3);
 }
 
+.cap-btn.bloqueado{
+  opacity:.45;
+  filter:grayscale(100%);
+  cursor:not-allowed;
+}
+
+/* Navbar escura — Sangue Divino */
+.site-nav.sd-dark-nav{
+  background:rgba(15,10,10,.92) !important;
+  border-bottom:1px solid rgba(239,68,68,.22);
+  backdrop-filter:blur(10px);
+}
+.site-nav.sd-dark-nav .nav-title{ color:#f1f5f9; }
+.site-nav.sd-dark-nav .muted2{ color:#94a3b8; }
+.site-nav.sd-dark-nav .btn-ghost{
+  border-color:rgba(255,255,255,.14);
+  color:#e2e8f0;
+  box-shadow:none;
+}
+.site-nav.sd-dark-nav .btn-ghost:hover{ background:rgba(255,255,255,.06); }
+.site-nav.sd-dark-nav .btn-primary{
+  background:#dc2626;
+  color:#fff;
+}
+.site-nav.sd-dark-nav .mobile-nav-panel{
+  background:rgba(15,10,10,.98);
+}
+
 .star{
   font-size:24px;
   cursor:pointer;
@@ -74,11 +99,65 @@ body{
 </style>
 </head>
 
-<body class="text-slate-100 font-sans">
+<body class="reader-page text-slate-100 font-sans">
+
+<!-- NAVBAR -->
+<nav class="glass site-nav sd-dark-nav sticky top-0 z-50">
+  <div class="max-w-6xl mx-auto px-4 py-3 nav-shell">
+    <div class="nav-row">
+      <div class="flex items-center gap-2 sm:gap-3 shrink-0 min-w-0">
+        <a href="../../index.html" class="inline-flex items-center gap-2 shrink-0">
+          <img src="../../imagens/LogoSite.png" alt="Logo - Estante de Histórias" class="nav-logo select-none" />
+        </a>
+        <button id="temaClaro" class="theme-dot" title="Tema claro" aria-label="Tema claro"></button>
+        <button id="temaEscuro" class="theme-dot" title="Tema escuro" aria-label="Tema escuro"></button>
+        <a href="https://instagram.com/pedrohfalcaro" target="_blank" rel="noopener noreferrer"
+           class="hidden sm:inline-flex items-center justify-center w-10 h-10 rounded-full border shrink-0"
+           style="border-color: var(--border); color: var(--muted);"
+           title="Instagram" aria-label="Instagram">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5a4.25 4.25 0 0 0 4.25-4.25v-8.5A4.25 4.25 0 0 0 16.25 3.5h-8.5zm8.75 2a1 1 0 1 1 0 2 1 1 0 0 1 0-2zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 1.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z"/>
+          </svg>
+        </a>
+      </div>
+
+      <div class="text-center flex-1 min-w-0 px-1">
+        <h1 class="font-extrabold tracking-tight text-base sm:text-lg md:text-xl nav-title">Sangue Divino</h1>
+        <p class="hidden sm:block text-xs muted2 truncate">Saga 1 — Paraíso do lar</p>
+      </div>
+
+      <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        <a href="../../obras/sangue-divino.html" class="btn btn-primary !px-3 sm:!px-4 !py-2 text-sm whitespace-nowrap hidden sm:inline-flex">Voltar</a>
+        <div class="hidden md:flex items-center gap-2">
+          <a href="../../index.html" class="btn btn-ghost !px-3 !py-2 text-sm whitespace-nowrap">Início</a>
+          <a href="../../loja.html" class="btn btn-ghost !px-3 !py-2 text-sm whitespace-nowrap">Loja</a>
+          <a href="../../contos.html" class="btn btn-ghost !px-3 !py-2 text-sm whitespace-nowrap">Contos</a>
+          <a href="../../sobreautor.html" class="btn btn-ghost !px-3 !py-2 text-sm whitespace-nowrap">Sobre</a>
+        </div>
+        <button type="button" id="btnMobileMenu" class="md:hidden btn btn-ghost !px-3 !py-2" aria-expanded="false" aria-controls="mobileNavPanel" aria-label="Abrir menu">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div id="mobileNavPanel" class="mobile-nav-panel md:hidden border-t mt-2 pt-2" style="border-color: var(--border);">
+      <div class="flex flex-col gap-2 pb-2">
+        <a href="../../index.html" class="btn w-full justify-start btn-ghost">Início</a>
+        <a href="../../loja.html" class="btn w-full justify-start btn-ghost">Loja</a>
+        <a href="../../contos.html" class="btn w-full justify-start btn-ghost">Contos</a>
+        <a href="../../sobreautor.html" class="btn w-full justify-start btn-ghost">Sobre</a>
+        <a href="../../obras/sangue-divino.html" class="btn w-full justify-start btn-primary">Voltar</a>
+      </div>
+    </div>
+  </div>
+</nav>
+<script src="../../assets/js/navbar.js"></script>
 
 <div class="fogo"></div>
 
-<header class="max-w-4xl mx-auto px-4 pt-8">
+<header class="max-w-4xl mx-auto px-4 pt-4 sm:pt-6">
   <h1 class="text-3xl sm:text-4xl font-extrabold">
     Saga 1 — <span class="text-red-500">Paraíso do lar</span>
   </h1>
@@ -108,9 +187,9 @@ body{
   </div>
 </div>
 
-<div class="max-w-6xl mx-auto px-4 mt-6 pb-16 grid grid-cols-1 md:grid-cols-4 gap-6">
+<div class="max-w-6xl mx-auto px-4 mt-4 sm:mt-6 pb-16 sd-reader-grid">
 
-  <aside class="card p-4 hidden md:block">
+  <aside class="card reader-panel p-4 hidden md:block">
     <h2 class="font-bold mb-3">Capítulos</h2>
     <button class="cap-btn w-full mb-2" onclick="abrirCap(1)">Capítulo 01</button>
     <button class="cap-btn w-full mb-2" onclick="abrirCap(2)">Capítulo 02</button>
@@ -132,13 +211,13 @@ body{
 
   
 
-  <section class="card p-5 md:col-span-2 leitura">
+  <section class="card p-4 sm:p-6 sd-reader-main leitura-prose">
     <div id="conteudo">
       <h2 class="text-lg opacity-70">Selecione um capítulo</h2>
     </div>
   </section>
 
-  <aside class="card p-4 md:col-span-1">
+  <aside class="card reader-panel p-4">
 
     <div class="mb-4">
       <h3 class="font-bold mb-2">Comentários</h3>
@@ -153,15 +232,19 @@ body{
       <input id="nome" placeholder="Nome"
         class="w-full mb-2 p-2 rounded bg-black/30 border border-white/10">
 
-      <input id="email" placeholder="Email"
+      <input id="email" type="email" placeholder="Email"
         class="w-full mb-2 p-2 rounded bg-black/30 border border-white/10">
 
       <textarea id="comentario" placeholder="Comentário"
         class="w-full mb-2 p-2 rounded bg-black/30 border border-white/10"></textarea>
 
-      <div id="stars" class="flex gap-1 mb-3"></div>
+      <input id="website" type="text" tabindex="-1" autocomplete="off"
+        style="position:absolute;left:-9999px;opacity:0;height:0;width:0" aria-hidden="true">
 
-      <button onclick="enviarComentario()" class="w-full bg-red-500 py-2 rounded font-bold">
+      <div id="stars" class="flex gap-1 mb-3"></div>
+      <p id="comentarioMsg" class="text-sm min-h-[1.2em] mb-2 opacity-80" aria-live="polite"></p>
+
+      <button id="btnEnviarComentario" onclick="enviarComentario()" class="w-full bg-red-500 py-2 rounded font-bold">
         Enviar
       </button>
     </div>
@@ -171,33 +254,58 @@ body{
 </div>
 
 <script>
-/* EMAIL */
-(function(){
-  emailjs.init("D3yNsMBwQ-3eyf6j4");
-})();
+const COMMENTS_API_PROD = 'https://site-livro-backend.onrender.com';
+const COMMENTS_API_DEV = 'http://localhost:3000';
+function commentsApiBase() {
+  const host = location.hostname || '';
+  return (host === 'localhost' || host === '127.0.0.1') ? COMMENTS_API_DEV : COMMENTS_API_PROD;
+}
+function escapeHtml(str) {
+  return String(str)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;');
+}
 
-/* 📅 LANÇAMENTO */
-const lancamentos = {
-  1: new Date("2026-05-01T00:00:00"),
-  2: new Date("2026-05-08T00:00:00"),
-  3: new Date("2026-05-15T00:00:00"),
-  4: new Date("2026-05-22T00:00:00"),
-  5: new Date("2026-05-29T00:00:00"),
-  6: new Date("2026-06-05T00:00:00"),
-  7: new Date("2026-06-12T00:00:00"),
-  8: new Date("2026-06-19T00:00:00"),
-  9: new Date("2026-06-26T00:00:00"),
-  10: new Date("2026-07-03T00:00:00"),
-  11: new Date("2026-07-10T00:00:00"),
-  12: new Date("2026-07-17T00:00:00"),
-  13: new Date("2026-07-24T00:00:00"),
-  14: new Date("2026-07-31T00:00:00"),
-  15: new Date("2026-08-07T00:00:00"),
-  16: new Date("2026-08-14 T00:00:00"),
-};
+let capituloAtual = null;
+
+/* 📅 LANÇAMENTO (fonte: src/data/lancamentos.json → lancamentos.json) */
+let lancamentos = {};
+
+async function carregarLancamentos(){
+  const res = await fetch('lancamentos.json');
+  const data = await res.json();
+  lancamentos = {};
+  for (const [k, v] of Object.entries(data)) {
+    lancamentos[Number(k)] = new Date(v);
+  }
+}
+
+function formatLancamento(n){
+  const d = lancamentos[n];
+  if (!d || Number.isNaN(d.getTime())) return '';
+  return d.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+}
 
 function capLiberado(n){
-  return new Date() >= lancamentos[n];
+  const d = lancamentos[n];
+  if (!d) return false;
+  return new Date() >= d;
+}
+
+function aplicarEstadoCaps(){
+  for (let n = 1; n <= 16; n++) {
+    document.querySelectorAll(`button[onclick="abrirCap(${n})"]`).forEach((btn) => {
+      if (capLiberado(n)) {
+        btn.classList.remove('bloqueado');
+        btn.removeAttribute('aria-disabled');
+      } else {
+        btn.classList.add('bloqueado');
+        btn.setAttribute('aria-disabled', 'true');
+      }
+    });
+  }
 }
 
 /* 📖 CAPÍTULO */
@@ -211,7 +319,7 @@ async function abrirCap(n){
           🔒 Capítulo ainda não disponível
         </p>
         <p class="text-sm opacity-70">
-          Aguarde o lançamento oficial.
+          Lançamento previsto: ${formatLancamento(n) || 'em breve'}.
         </p>
       </div>
     `;
@@ -225,6 +333,7 @@ async function abrirCap(n){
     const html = await res.text();
     conteudo.innerHTML = html;
 
+    capituloAtual = n;
     carregarComentarios(n);
 
   }catch{
@@ -235,33 +344,47 @@ async function abrirCap(n){
 /* 💬 COMENTÁRIOS */
 async function carregarComentarios(capitulo){
   const container = document.getElementById("listaComentarios");
+  container.innerHTML = "Carregando comentários...";
 
   try{
-    const res = await fetch(`comentarios/cap${capitulo}.json`);
-    const data = await res.json();
+    const res = await fetch(`${commentsApiBase()}/comments/sangue-divino/${capitulo}`);
+    const data = await res.json().catch(() => ({}));
+    const list = Array.isArray(data.comentarios) ? data.comentarios : [];
 
-    if(data.comentarios.length === 0){
-      container.innerHTML = "Nenhum comentário ainda.";
+    if(!res.ok){
+      // Fallback para JSON estático legado
+      const local = await fetch(`comentarios/cap${capitulo}.json`);
+      const localData = await local.json();
+      renderComentarios(container, localData.comentarios || []);
       return;
     }
 
-    container.innerHTML = "";
-
-    data.comentarios.forEach(c=>{
-      container.innerHTML += `
-        <div class="mb-4 pb-3 border-b border-white/10">
-          <div class="flex justify-between">
-            <strong>${c.nome}</strong>
-            <span class="text-amber-400">⭐ ${c.nota}</span>
-          </div>
-          <p class="text-sm opacity-80">${c.texto}</p>
-        </div>
-      `;
-    });
-
+    renderComentarios(container, list);
   } catch{
-    container.innerHTML = "Erro ao carregar comentários.";
+    try {
+      const local = await fetch(`comentarios/cap${capitulo}.json`);
+      const localData = await local.json();
+      renderComentarios(container, localData.comentarios || []);
+    } catch {
+      container.innerHTML = "Erro ao carregar comentários.";
+    }
   }
+}
+
+function renderComentarios(container, comentarios){
+  if(!comentarios.length){
+    container.innerHTML = "Nenhum comentário ainda.";
+    return;
+  }
+  container.innerHTML = comentarios.map((c) => `
+    <div class="mb-4 pb-3 border-b border-white/10">
+      <div class="flex justify-between">
+        <strong>${escapeHtml(c.nome)}</strong>
+        <span class="text-amber-400">⭐ ${escapeHtml(String(c.nota))}</span>
+      </div>
+      <p class="text-sm opacity-80">${escapeHtml(c.texto)}</p>
+    </div>
+  `).join('');
 }
 
 /* ⭐ ESTRELAS */
@@ -305,34 +428,61 @@ function updateStars(value){
 }
 
 /* 📩 ENVIO */
-function enviarComentario(){
+async function enviarComentario(){
+  const msg = document.getElementById("comentarioMsg");
+  const btn = document.getElementById("btnEnviarComentario");
+  const nome = document.getElementById("nome").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const comentario = document.getElementById("comentario").value.trim();
+  const website = document.getElementById("website")?.value || "";
 
-  const nome = document.getElementById("nome").value;
-  const email = document.getElementById("email").value;
-  const comentario = document.getElementById("comentario").value;
-
+  if(!capituloAtual){
+    if(msg) msg.textContent = "Abra um capítulo antes de comentar.";
+    return;
+  }
   if(!nome || !email || !comentario){
-    alert("Preencha todos os campos.");
+    if(msg) msg.textContent = "Preencha todos os campos.";
+    return;
+  }
+  if(!rating){
+    if(msg) msg.textContent = "Escolha uma nota nas estrelas.";
     return;
   }
 
-  emailjs.send("service_7opfygj", "template_lsf8lck", {
-    nome,
-    email,
-    comentario,
-    nota: rating
-  })
-  .then(()=>{
-    alert("Comentário enviado! (aguardando aprovação)");
+  if(btn) btn.disabled = true;
+  if(msg) msg.textContent = "Enviando…";
 
+  try{
+    const res = await fetch(`${commentsApiBase()}/comments`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        obra: 'sangue-divino',
+        cap: capituloAtual,
+        nome,
+        email,
+        texto: comentario,
+        nota: rating,
+        website,
+      }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if(!res.ok){
+      if(msg) msg.textContent = data.error || "Erro ao enviar comentário.";
+      return;
+    }
+
+    if(msg) msg.textContent = data.message || "Comentário enviado! (aguardando aprovação)";
     document.getElementById("nome").value = "";
     document.getElementById("email").value = "";
     document.getElementById("comentario").value = "";
+    rating = 0;
     updateStars(0);
-  })
-  .catch(()=>{
-    alert("Erro ao enviar comentário.");
-  });
+  }catch{
+    if(msg) msg.textContent = "Erro ao enviar comentário.";
+  }finally{
+    if(btn) btn.disabled = false;
+  }
 }
 
 /* 🔗 URL */
@@ -348,7 +498,13 @@ function abrirCapDaURL(){
   }
 }
 
-abrirCapDaURL();
+async function initSaga(){
+  await carregarLancamentos();
+  aplicarEstadoCaps();
+  abrirCapDaURL();
+}
+
+initSaga();
 </script>
 
 </body>

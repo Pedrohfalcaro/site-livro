@@ -5,8 +5,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pagamento — Estante de Histórias</title>
-
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="assets/css/tailwind.css">
+  <link rel="stylesheet" href="assets/css/shared.css">
 
   <meta property="og:title" content="Pagamento — Estante de Histórias" />
   <meta property="og:description" content="Finalize sua compra com Pix ou cartão via Mercado Pago." />
@@ -15,69 +15,6 @@
   <meta property="og:locale" content="pt_BR" />
 
   <style>
-    :root{
-      --bg:#f8fafc; --card:#ffffff; --text:#0f172a; --muted:#475569; --muted2:#64748b;
-      --border:#e2e8f0; --accent:#14b8a6; --accent2:#0ea5e9;
-      --shadow2:0 8px 18px rgba(15,23,42,.08); --radius:18px;
-    }
-    body{ background:var(--bg); color:var(--text); }
-
-    body.dark-mode{
-      --bg:#0b1220; --card:#111827; --text:#e5e7eb; --muted:#cbd5e1; --muted2:#9ca3af;
-      --border:#263244; --accent:#34d399; --accent2:#38bdf8;
-      --shadow2:0 10px 22px rgba(0,0,0,.35);
-    }
-
-    .surface{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow2); }
-    .muted{ color:var(--muted); }
-    .muted2{ color:var(--muted2); }
-
-    .btn{
-      display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
-      border-radius:9999px; padding:.75rem 1.1rem; font-weight:800;
-      transition:.15s ease; user-select:none;
-    }
-    .btn-primary{ background:var(--accent); color:#fff; }
-    .btn-primary:hover{ opacity:.95; }
-    .btn-ghost{ background:transparent; border:1px solid var(--border); color:var(--text); }
-    .btn-ghost:hover{ background:rgba(15,23,42,.05); }
-    body.dark-mode .btn-ghost:hover{ background:rgba(255,255,255,.06); }
-
-    .glass{ background:rgba(255,255,255,.85); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); }
-    body.dark-mode .glass{ background:rgba(11,18,32,.7); }
-
-    .theme-dot{
-      width:22px; height:22px; border-radius:9999px; cursor:pointer;
-      border:1px solid var(--border);
-    }
-    #temaClaro { background:linear-gradient(90deg,#fff 50%, #14b8a6 50%); }
-    #temaEscuro{ background:linear-gradient(90deg,#0b1220 50%, #38bdf8 50%); }
-
-    .field{
-      width:100%;
-      background:var(--card);
-      border:1px solid var(--border);
-      border-radius:9999px;
-      padding:.85rem 1.05rem;
-      color:var(--text);
-      outline:none;
-    }
-    .field:focus{
-      border-color: rgba(20,184,166,.55);
-      box-shadow: 0 0 0 4px rgba(20,184,166,.14);
-    }
-
-    .chip{
-      display:inline-flex; align-items:center; gap:.5rem;
-      border:1px solid var(--border);
-      border-radius:9999px;
-      padding:.55rem .9rem;
-      font-weight:800;
-      font-size:.875rem;
-      background:transparent;
-      color:var(--text);
-    }
-
     .toast{
       position:fixed;
       top:84px;
@@ -139,37 +76,58 @@
     </div>
   </div>
 
-  <!-- NAV -->
-  <nav class="glass sticky top-0 z-40">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
-      <div class="flex items-center gap-3">
-        <a href="index.html" class="inline-flex items-center gap-2">
-          <img src="imagens/LogoSite.png" class="h-9" alt="Logo">
+  <!-- NAVBAR -->
+<nav class="glass site-nav sticky top-0 z-50">
+  <div class="max-w-6xl mx-auto px-4 py-3 nav-shell">
+    <div class="nav-row">
+      <div class="flex items-center gap-2 sm:gap-3 shrink-0 min-w-0">
+        <a href="index.html" class="inline-flex items-center gap-2 shrink-0">
+          <img src="imagens/LogoSite.png" alt="Logo - Estante de Histórias" class="nav-logo select-none" />
         </a>
-
         <button id="temaClaro" class="theme-dot" title="Tema claro" aria-label="Tema claro"></button>
         <button id="temaEscuro" class="theme-dot" title="Tema escuro" aria-label="Tema escuro"></button>
+        <a href="https://instagram.com/pedrohfalcaro" target="_blank" rel="noopener noreferrer"
+           class="hidden sm:inline-flex items-center justify-center w-10 h-10 rounded-full border shrink-0"
+           style="border-color: var(--border); color: var(--muted);"
+           title="Instagram" aria-label="Instagram">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5a4.25 4.25 0 0 0 4.25-4.25v-8.5A4.25 4.25 0 0 0 16.25 3.5h-8.5zm8.75 2a1 1 0 1 1 0 2 1 1 0 0 1 0-2zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 1.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z"/>
+          </svg>
+        </a>
       </div>
 
-      <div class="hidden md:flex items-center gap-2">
-        <a href="index.html" class="btn btn-ghost">Início</a>
-        <a href="loja.html" class="btn btn-ghost">Loja</a>
-        <a href="sobreautor.html" class="btn btn-ghost">Sobre</a>
-        <a href="contos.html" class="btn btn-ghost">Contos</a>
+      <div class="text-center flex-1 min-w-0 px-1">
+        <h1 class="font-extrabold tracking-tight text-base sm:text-lg md:text-xl nav-title">Estante de Histórias</h1>
+        <p class="hidden sm:block text-xs muted2 truncate">Pagamento</p>
       </div>
 
-      <a href="loja.html" class="btn btn-primary">Voltar pra loja</a>
+      <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        <a href="loja.html" class="btn btn-primary !px-3 sm:!px-4 !py-2 text-sm whitespace-nowrap hidden sm:inline-flex">Voltar pra loja</a>
+        <div class="hidden md:flex items-center gap-2">
+          <a href="index.html" class="btn btn-ghost !px-3 !py-2 text-sm whitespace-nowrap">Início</a>
+          <a href="loja.html" class="btn btn-ghost !px-3 !py-2 text-sm whitespace-nowrap">Loja</a>
+          <a href="contos.html" class="btn btn-ghost !px-3 !py-2 text-sm whitespace-nowrap">Contos</a>
+          <a href="sobreautor.html" class="btn btn-ghost !px-3 !py-2 text-sm whitespace-nowrap">Sobre</a>
+        </div>
+        <button type="button" id="btnMobileMenu" class="md:hidden btn btn-ghost !px-3 !py-2" aria-expanded="false" aria-controls="mobileNavPanel" aria-label="Abrir menu">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
     </div>
 
-    <div class="md:hidden max-w-6xl mx-auto px-4 pb-3">
-      <div class="flex flex-wrap gap-2">
-        <a href="index.html" class="btn btn-ghost !py-2">Início</a>
-        <a href="loja.html" class="btn btn-ghost !py-2">Loja</a>
-        <a href="sobreautor.html" class="btn btn-ghost !py-2">Sobre</a>
-        <a href="contos.html" class="btn btn-ghost !py-2">Contos</a>
+    <div id="mobileNavPanel" class="mobile-nav-panel md:hidden border-t mt-2 pt-2" style="border-color: var(--border);">
+      <div class="flex flex-col gap-2 pb-2">
+        <a href="index.html" class="btn w-full justify-start btn-ghost">Início</a>
+        <a href="loja.html" class="btn w-full justify-start btn-ghost">Loja</a>
+        <a href="contos.html" class="btn w-full justify-start btn-ghost">Contos</a>
+        <a href="sobreautor.html" class="btn w-full justify-start btn-ghost">Sobre</a>
       </div>
     </div>
-  </nav>
+  </div>
+</nav>
+<script src="assets/js/navbar.js"></script>
 
   <!-- HEADER -->
   <header class="max-w-6xl mx-auto px-4 pt-8">
@@ -204,7 +162,9 @@
       <!-- FORM -->
       <section class="surface p-6 sm:p-8 lg:col-span-2">
         <h2 class="text-xl font-extrabold">Seus dados</h2>
-        <p class="text-sm muted2 mt-1">Obrigatório: nome, e-mail, CPF e endereço completo (para envio de livro físico).</p>
+        <p class="text-sm muted2 mt-1">
+          Preencha seus dados e o CEP. O endereço é preenchido automaticamente — basta completar número e complemento.
+        </p>
 
         <div id="alertaVazio" class="hidden danger mt-5">
           Sua sacola está vazia. Volte para a loja e adicione um item antes de pagar.
@@ -212,61 +172,69 @@
 
         <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div class="sm:col-span-2">
-            <label class="block text-sm font-extrabold mb-2">Seu nome completo</label>
+            <label class="block text-sm font-extrabold mb-2" for="nome">Nome completo</label>
             <input id="nome" class="field" placeholder="Nome completo" autocomplete="name" />
           </div>
 
           <div class="sm:col-span-2">
-            <label class="block text-sm font-extrabold mb-2">Seu e-mail</label>
+            <label class="block text-sm font-extrabold mb-2" for="email">E-mail</label>
             <input id="email" type="email" class="field" placeholder="exemplo@dominio.com" autocomplete="email" />
+            <p class="text-xs muted2 mt-2">É para este e-mail que enviamos a confirmação e as chaves de WebLivro.</p>
           </div>
 
           <div class="sm:col-span-2">
-            <label class="block text-sm font-extrabold mb-2">CPF</label>
+            <label class="block text-sm font-extrabold mb-2" for="cpf">CPF</label>
             <input id="cpf" class="field" placeholder="000.000.000-00" inputmode="numeric" />
-            <p class="text-xs muted2 mt-2">Usado para identificação do pedido e emissão/registro, se necessário.</p>
           </div>
 
           <div class="sm:col-span-2">
-            <label class="block text-sm font-extrabold mb-2">Rua</label>
+            <label class="block text-sm font-extrabold mb-2" for="cep">CEP</label>
+            <input id="cep" class="field" placeholder="00000-000" inputmode="numeric" autocomplete="postal-code" />
+            <p id="cepStatus" class="text-xs muted2 mt-2" aria-live="polite"></p>
+          </div>
+        </div>
+
+        <div id="enderecoFields" class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4" hidden>
+          <div class="sm:col-span-2">
+            <label class="block text-sm font-extrabold mb-2" for="rua">Rua</label>
             <input id="rua" class="field" placeholder="Rua" autocomplete="address-line1" />
           </div>
 
           <div>
-            <label class="block text-sm font-extrabold mb-2">Número</label>
+            <label class="block text-sm font-extrabold mb-2" for="numero">Número</label>
             <input id="numero" class="field" placeholder="Número" autocomplete="address-line2" />
           </div>
 
           <div>
-            <label class="block text-sm font-extrabold mb-2">Bairro</label>
+            <label class="block text-sm font-extrabold mb-2" for="complemento">Complemento</label>
+            <input id="complemento" class="field" placeholder="Apto, bloco… (opcional)" autocomplete="address-line3" />
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="block text-sm font-extrabold mb-2" for="bairro">Bairro</label>
             <input id="bairro" class="field" placeholder="Bairro" autocomplete="address-level3" />
           </div>
 
           <div class="sm:col-span-1">
-            <label class="block text-sm font-extrabold mb-2">Cidade</label>
+            <label class="block text-sm font-extrabold mb-2" for="cidade">Cidade</label>
             <input id="cidade" class="field" placeholder="Cidade" autocomplete="address-level2" />
           </div>
 
           <div class="sm:col-span-1">
-            <label class="block text-sm font-extrabold mb-2">Estado</label>
-            <input id="estado" class="field" placeholder="UF" autocomplete="address-level1" />
-          </div>
-
-          <div class="sm:col-span-2">
-            <label class="block text-sm font-extrabold mb-2">CEP</label>
-            <input id="cep" class="field" placeholder="00000-000" inputmode="numeric" autocomplete="postal-code" />
+            <label class="block text-sm font-extrabold mb-2" for="estado">Estado</label>
+            <input id="estado" class="field" placeholder="UF" maxlength="2" autocomplete="address-level1" />
           </div>
         </div>
 
         <div class="mt-8 flex flex-col sm:flex-row gap-3">
           <button id="btnPagar" onclick="pagarMercadoPago()" class="btn btn-primary w-full sm:w-auto">
-            💳 Pagar com Mercado Pago (Pix ou Cartão)
+            Pagar com Mercado Pago
           </button>
           <a href="loja.html" class="btn btn-ghost w-full sm:w-auto">Voltar pra loja</a>
         </div>
 
         <p class="mt-5 text-sm muted2">
-          Após o pagamento aprovado, você receberá confirmação por e-mail.
+          Depois do pagamento aprovado, a confirmação (e a chave, se for WebLivro) chega no seu e-mail.
         </p>
       </section>
 
@@ -286,10 +254,10 @@
           </div>
 
           <div class="mt-5 note">
-            <p class="font-extrabold">Entrega / Acesso</p>
+            <p class="font-extrabold">Entrega e acesso</p>
             <p class="text-sm muted2 mt-1">
-              WebLivros: você recebe a chave por e-mail.<br>
-              Livros físicos: envio para o endereço informado.
+              <strong>WebLivro:</strong> chave no e-mail, leitura no site.<br>
+              <strong>Livro físico:</strong> envio para o endereço informado.
             </p>
           </div>
         </div>
@@ -307,19 +275,13 @@
     </div>
   </footer>
 
+<script src="assets/js/theme.js"></script>
+<script src="assets/js/api-base.js"></script>
+<script src="assets/js/cart.js"></script>
+<script src="assets/js/cep.js"></script>
 <script>
-/* ===== Tema ===== */
-(function(){
-  const KEY='theme';
-  const b=document.body;
-  function apply(t){ b.classList.toggle('dark-mode', t==='dark'); }
-  apply(localStorage.getItem(KEY)||'light');
-  temaClaro.onclick=()=>{ localStorage.setItem(KEY,'light'); apply('light'); }
-  temaEscuro.onclick=()=>{ localStorage.setItem(KEY,'dark');  apply('dark');  }
-})();
-
 /* ===== Util ===== */
-function brl(v){ return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); }
+function brl(v){ return Cart.formatBRL(v); }
 
 function showToast(id, ms=2500){
   const t=document.getElementById(id);
@@ -330,10 +292,6 @@ function showToast(id, ms=2500){
 }
 
 /* ===== Sacola ===== */
-function getEstante(){
-  return JSON.parse(localStorage.getItem('estante')||'[]');
-}
-
 function renderResumo(){
   const estante=getEstante();
   const totalItens=estante.reduce((s,x)=>s+x.quantidade,0);
@@ -366,7 +324,7 @@ function renderResumo(){
 }
 
 function limparSacola(){
-  localStorage.removeItem('estante');
+  Cart.clearEstante();
   renderResumo();
   validarSacolaVazia();
 }
@@ -399,24 +357,51 @@ async function pagarMercadoPago(){
   const nome = (document.getElementById("nome").value || "").trim();
   const email = (document.getElementById("email").value || "").trim();
   const cpf = (document.getElementById("cpf").value || "").trim();
-
-  const rua = (document.getElementById("rua").value || "").trim();
-  const numero = (document.getElementById("numero").value || "").trim();
-  const bairro = (document.getElementById("bairro").value || "").trim();
-  const cidade = (document.getElementById("cidade").value || "").trim();
-  const estado = (document.getElementById("estado").value || "").trim();
   const cep = (document.getElementById("cep").value || "").trim();
 
-  if(!nome || !email || !cpf || !rua || !numero || !bairro || !cidade || !estado || !cep){
-    alert("Preencha nome, e-mail, CPF e endereço completo antes de pagar.");
+  if(!nome || !email || !cpf){
+    alert("Preencha nome, e-mail e CPF.");
     return;
   }
 
-  // Itens para o backend (MVP: usando dados da sacola)
-  const itens = estante.map(x => ({
+  if(!cep || onlyDigits(cep).length !== 8){
+    alert("Informe um CEP válido com 8 dígitos.");
+    document.getElementById("cep")?.focus();
+    return;
+  }
+
+  // Garante busca ViaCEP + abertura dos campos antes de validar número/endereço
+  if (globalThis.CepLookup?.ensureAddressReady) {
+    await CepLookup.ensureAddressReady();
+  } else {
+    document.getElementById('enderecoFields')?.removeAttribute('hidden');
+  }
+
+  const rua = (document.getElementById("rua").value || "").trim();
+  const numero = (document.getElementById("numero").value || "").trim();
+  const complemento = (document.getElementById("complemento").value || "").trim();
+  const bairro = (document.getElementById("bairro").value || "").trim();
+  const cidade = (document.getElementById("cidade").value || "").trim();
+  const estado = (document.getElementById("estado").value || "").trim();
+
+  if(!rua || !numero || !bairro || !cidade || !estado){
+    document.getElementById('enderecoFields')?.removeAttribute('hidden');
+    CepLookup.focusFirstEmptyAddressField?.();
+    const missingNumero = !numero;
+    alert(
+      missingNumero
+        ? "Endereço carregado. Agora informe o número (complemento é opcional)."
+        : "Complete o endereço (rua, número, bairro, cidade e estado). Complemento é opcional."
+    );
+    return;
+  }
+
+  // Itens: id + quantity — preços validados no backend
+  const itens = estante.map((x) => ({
+    id: x.id,
     title: x.nome,
     unit_price: Number(x.preco),
-    quantity: Number(x.quantidade || 1)
+    quantity: Number(x.quantidade || 1),
   }));
 
   const payload = {
@@ -424,7 +409,7 @@ async function pagarMercadoPago(){
     email,
     cpf: onlyDigits(cpf),
     endereco: {
-      rua, numero, bairro, cidade, estado,
+      rua, numero, complemento, bairro, cidade, estado,
       cep: onlyDigits(cep)
     },
     itens
@@ -436,7 +421,8 @@ async function pagarMercadoPago(){
   showToast('toastWait', 15000);
 
   try{
-    const r = await fetch("https://site-livro-backend.onrender.com/mp/preferencia", {
+    const apiBase = window.ApiBase?.resolveApiBase?.() || 'https://site-livro-backend.onrender.com';
+    const r = await fetch(`${apiBase}/mp/preferencia`, {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify(payload),
@@ -444,6 +430,18 @@ async function pagarMercadoPago(){
 });
 
     const data = await r.json();
+
+    if(r.ok && data.ok && data.simulated){
+      try {
+        sessionStorage.setItem('estante-sim-checkout', JSON.stringify({
+          email,
+          orderId: data.order_id || null,
+          keys: data.keys || [],
+        }));
+      } catch (_) {}
+      window.location.href = data.init_point || '/pagamentos/pagamento-sucesso.html';
+      return;
+    }
 
     if(r.ok && data.ok && data.init_point){
       // redireciona para Mercado Pago (Pix ou cartão)
@@ -468,6 +466,21 @@ async function pagarMercadoPago(){
 document.addEventListener('DOMContentLoaded', ()=>{
   renderResumo();
   validarSacolaVazia();
+
+  if (globalThis.CepLookup) {
+    CepLookup.bindCheckoutCep({
+      cepId: 'cep',
+      addressSectionId: 'enderecoFields',
+      statusId: 'cepStatus',
+      fields: {
+        rua: 'rua',
+        bairro: 'bairro',
+        cidade: 'cidade',
+        estado: 'estado',
+        numero: 'numero',
+      },
+    });
+  }
 });
 </script>
 
