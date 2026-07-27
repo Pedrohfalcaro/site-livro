@@ -1,5 +1,4 @@
 ﻿# Estante de Histórias
 
-Site estático publicado em [estantedehistorias.com](https://estantedehistorias.com).
-
-Este repositório contém o **build** (GitHub Pages). Fonte Astro: pasta local site-livro.refatorado.
+Site estático em [estantedehistorias.com](https://estantedehistorias.com).
+Build Astro publicado no GitHub Pages (inclui .nojekyll).
