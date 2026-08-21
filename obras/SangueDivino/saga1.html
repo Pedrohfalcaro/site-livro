@@ -185,6 +185,16 @@ body{
     <button class="cap-btn w-full mb-2" onclick="abrirCap(14)">Cap 14</button>
     <button class="cap-btn w-full mb-2" onclick="abrirCap(15)">Cap 15</button>
     <button class="cap-btn w-full mb-2" onclick="abrirCap(16)">Cap 16</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(17)">Cap 17</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(18)">Cap 18</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(19)">Cap 19</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(20)">Cap 20</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(21)">Cap 21</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(22)">Cap 22</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(23)">Cap 23</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(24)">Cap 24</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(25)">Cap 25</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(26)">Cap 26</button>
   </div>
 </div>
 
@@ -208,6 +218,16 @@ body{
     <button class="cap-btn w-full mb-2" onclick="abrirCap(14)">Capítulo 14</button>
     <button class="cap-btn w-full mb-2" onclick="abrirCap(15)">Capítulo 15</button>
     <button class="cap-btn w-full mb-2" onclick="abrirCap(16)">Capítulo 16</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(17)">Capítulo 17</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(18)">Capítulo 18</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(19)">Capítulo 19</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(20)">Capítulo 20</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(21)">Capítulo 21</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(22)">Capítulo 22</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(23)">Capítulo 23</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(24)">Capítulo 24</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(25)">Capítulo 25</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(26)">Capítulo 26</button>
   </aside>
 
   
@@ -296,7 +316,7 @@ function capLiberado(n){
 }
 
 function aplicarEstadoCaps(){
-  for (let n = 1; n <= 16; n++) {
+  for (let n = 1; n <= 26; n++) {
     document.querySelectorAll(`button[onclick="abrirCap(${n})"]`).forEach((btn) => {
       if (capLiberado(n)) {
         btn.classList.remove('bloqueado');

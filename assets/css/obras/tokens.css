@@ -1,6 +1,16 @@
 /* Gerado por scripts/build-obra-tokens.mjs — não editar à mão */
 /* Fonte: src/data/obras.json */
 
+/* Além dos Céus (alem-dos-ceus) */
+[data-obra="alem-dos-ceus"] {
+  --accent: #2dd4bf;
+  --accent2: #38bdf8;
+  --glow: rgba(45, 212, 191, 0.22);
+  --on-accent: #041018;
+  --neon: #2dd4bf;
+  --neon2: #38bdf8;
+}
+
 /* O Incidente de Willowbrook (idw) */
 [data-obra="idw"] {
   --accent: #64748b;
