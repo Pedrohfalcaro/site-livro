@@ -39,6 +39,18 @@
   --violet: #a78bfa;
 }
 
+/* A Lenda do Caos — Livro 2 (ldc2) */
+[data-obra="ldc2"] {
+  --accent: #dc2626;
+  --accent2: #f97316;
+  --glow: rgba(220, 38, 38, 0.28);
+  --on-accent: #ffffff;
+  --flame1: #450a0a;
+  --flame2: #7f1d1d;
+  --flame3: #dc2626;
+  --ember: #f97316;
+}
+
 /* Além dos Céus — Temporada 1 (adc-t1) */
 [data-obra="adc-t1"] {
   --accent: #2dd4bf;
