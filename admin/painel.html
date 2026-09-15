@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Painel — Estante de Histórias</title>
+  <link rel="icon" type="image/png" href="../imagens/favicon.png">
+  <link rel="stylesheet" href="../assets/css/tailwind.css">
+  <link rel="stylesheet" href="../assets/css/shared.css">
+
+  <style>
+    body { background: var(--bg); }
+
+    .painel-wrap { max-width: 1180px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+
+    .tabs { display: flex; gap: .5rem; margin-bottom: 1.25rem; }
+    .tab-btn {
+      padding: .55rem 1.1rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: transparent;
+      font-weight: 800;
+      font-size: .9rem;
+      cursor: pointer;
+    }
+    .tab-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    table.data-table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+    .data-table th, .data-table td {
+      text-align: left;
+      padding: .6rem .7rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    .data-table th { font-size: .72rem; text-transform: uppercase; letter-spacing: .03em; color: var(--muted2); }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table td.wrap { white-space: pre-line; max-width: 220px; }
+    .table-scroll { overflow-x: auto; border-radius: 16px; border: 1px solid var(--border); }
+
+    select.status-select {
+      padding: .4rem .6rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      font-size: .82rem;
+      font-weight: 700;
+    }
+
+    .badge-pending { background: rgba(234,179,8,.15); color: #a16207; border: 1px solid rgba(234,179,8,.35); }
+    .badge-approved { background: rgba(34,197,94,.12); color: #15803d; border: 1px solid rgba(34,197,94,.3); }
+    .badge-rejected { background: rgba(239,68,68,.12); color: #b91c1c; border: 1px solid rgba(239,68,68,.3); }
+    .badge {
+      display: inline-block;
+      padding: .2rem .6rem;
+      border-radius: 999px;
+      font-size: .72rem;
+      font-weight: 800;
+    }
+
+    #loginScreen { max-width: 420px; margin: 4rem auto; }
+    .field-err { color: #dc2626; font-size: .85rem; margin-top: .5rem; min-height: 1.2em; }
+    .empty-state { padding: 2rem; text-align: center; color: var(--muted2); }
+  </style>
+</head>
+<body class="font-sans min-h-screen">
+
+  <!-- LOGIN -->
+  <section id="loginScreen" class="surface p-6 sm:p-8">
+    <h1 class="text-xl font-extrabold">Painel — Estante de Histórias</h1>
+    <p class="text-sm muted2 mt-1">Acesso restrito. Entre com seu e-mail e senha.</p>
+
+    <form id="loginForm" class="mt-6 flex flex-col gap-4">
+      <div>
+        <label class="block text-sm font-extrabold mb-2" for="loginEmail">E-mail</label>
+        <input id="loginEmail" type="email" class="field" autocomplete="username" required />
+      </div>
+      <div>
+        <label class="block text-sm font-extrabold mb-2" for="loginSenha">Senha</label>
+        <input id="loginSenha" type="password" class="field" autocomplete="current-password" required />
+      </div>
+      <p id="loginErro" class="field-err"></p>
+      <button type="submit" class="btn btn-primary w-full">Entrar</button>
+    </form>
+  </section>
+
+  <!-- PAINEL -->
+  <div id="painel" class="painel-wrap hidden">
+    <div class="flex items-center justify-between gap-3 mb-6">
+      <div>
+        <h1 class="text-xl font-extrabold">Painel</h1>
+        <p class="text-sm muted2">Pedidos e comentários do site.</p>
+      </div>
+      <button id="btnLogout" class="btn btn-ghost !px-3 !py-2 text-sm">Sair</button>
+    </div>
+
+    <div class="tabs">
+      <button type="button" class="tab-btn active" data-tab="pedidos">Pedidos</button>
+      <button type="button" class="tab-btn" data-tab="comentarios">Comentários</button>
+    </div>
+
+    <!-- PEDIDOS -->
+    <section id="tabPedidos" class="surface p-4 sm:p-6">
+      <div class="flex items-center justify-between gap-3 mb-4">
+        <h2 class="text-lg font-extrabold">Pedidos</h2>
+        <button id="btnRefreshOrders" class="btn btn-ghost !px-3 !py-1.5 text-sm">Atualizar</button>
+      </div>
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>E-mail</th>
+              <th>Data</th>
+              <th>Pedido</th>
+              <th>Valor</th>
+              <th>Endereço</th>
+              <th>Status</th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+          <tbody id="ordersBody"></tbody>
+        </table>
+      </div>
+      <p id="ordersEmpty" class="empty-state hidden">Nenhum pedido ainda.</p>
+    </section>
+
+    <!-- COMENTÁRIOS -->
+    <section id="tabComentarios" class="surface p-4 sm:p-6 hidden">
+      <div class="flex items-center justify-between gap-3 mb-4">
+        <h2 class="text-lg font-extrabold">Comentários</h2>
+        <button id="btnRefreshComments" class="btn btn-ghost !px-3 !py-1.5 text-sm">Atualizar</button>
+      </div>
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>E-mail</th>
+              <th>Comentário</th>
+              <th>Onde</th>
+              <th>Nota</th>
+              <th>Status</th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+          <tbody id="commentsBody"></tbody>
+        </table>
+      </div>
+      <p id="commentsEmpty" class="empty-state hidden">Nenhum comentário ainda.</p>
+    </section>
+  </div>
+
+<script src="../assets/js/api-base.js"></script>
+<script src="../assets/js/busy-overlay.js"></script>
+<script>
+(function () {
+  const TOKEN_KEY = 'estante-admin-token';
+  const apiBase = window.ApiBase?.resolveApiBase?.() || 'https://site-livro-backend.onrender.com';
+
+  const STATUS_LABELS = {
+    recebido: 'Pedido recebido',
+    grafica: 'Livros encomendados na gráfica',
+    despachado: 'Livro despachado',
+    em_rota: 'Em rota de entrega',
+    concluido: 'Concluído',
+  };
+  const STATUS_ORDER = Object.keys(STATUS_LABELS);
+
+  function brl(v) {
+    return Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  }
+
+  function formatDate(ms) {
+    if (!ms) return '—';
+    return new Date(ms).toLocaleString('pt-BR');
+  }
+
+  function formatEndereco(e) {
+    if (!e) return '—';
+    const numPart = [e.numero, e.complemento].filter(Boolean).join(', ');
+    const street = [e.rua, numPart].filter(Boolean).join(', ');
+    return `${street} - ${e.bairro || ''}, ${e.cidade || ''} - ${e.estado || ''}, CEP: ${e.cep || ''}`.trim();
+  }
+
+  function getToken() {
+    try { return sessionStorage.getItem(TOKEN_KEY) || ''; } catch (_) { return ''; }
+  }
+  function setToken(token) {
+    try { sessionStorage.setItem(TOKEN_KEY, token); } catch (_) { /* ignore */ }
+  }
+  function clearToken() {
+    try { sessionStorage.removeItem(TOKEN_KEY); } catch (_) { /* ignore */ }
+  }
+
+  async function apiFetch(path, options = {}, busyMessage) {
+    if (busyMessage) BusyOverlay.show(busyMessage);
+    try {
+      const res = await fetch(`${apiBase}${path}`, {
+        ...options,
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${getToken()}`,
+          ...(options.headers || {}),
+        },
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 401) {
+        clearToken();
+        showLogin('Sessão expirada. Entre novamente.');
+      }
+      return { ok: res.ok, status: res.status, data };
+    } finally {
+      if (busyMessage) BusyOverlay.hide();
+    }
+  }
+
+  function showLogin(erro) {
+    document.getElementById('painel').classList.add('hidden');
+    document.getElementById('loginScreen').classList.remove('hidden');
+    document.getElementById('loginErro').textContent = erro || '';
+  }
+
+  function showPainel() {
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('painel').classList.remove('hidden');
+    loadOrders();
+    loadComments();
+  }
+
+  /* ===== Login ===== */
+  document.getElementById('loginForm').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const email = document.getElementById('loginEmail').value.trim();
+    const senha = document.getElementById('loginSenha').value;
+    document.getElementById('loginErro').textContent = '';
+
+    BusyOverlay.show('Entrando… o servidor pode demorar um pouco na primeira tentativa.');
+    try {
+      const res = await fetch(`${apiBase}/admin/login`, {
+        method: 'POST',
+        mode: 'cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, senha }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.ok && data.token) {
+        setToken(data.token);
+        showPainel();
+        return;
+      }
+      document.getElementById('loginErro').textContent = data.error || 'Não foi possível entrar.';
+    } catch (err) {
+      console.error(err);
+      document.getElementById('loginErro').textContent = 'Erro de conexão. Tente novamente.';
+    } finally {
+      BusyOverlay.hide();
+    }
+  });
+
+  document.getElementById('btnLogout').addEventListener('click', () => {
+    clearToken();
+    showLogin();
+  });
+
+  /* ===== Tabs ===== */
+  document.querySelectorAll('.tab-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      const tab = btn.dataset.tab;
+      document.getElementById('tabPedidos').classList.toggle('hidden', tab !== 'pedidos');
+      document.getElementById('tabComentarios').classList.toggle('hidden', tab !== 'comentarios');
+    });
+  });
+
+  /* ===== Pedidos ===== */
+  function statusSelectHtml(orderId, current) {
+    const options = STATUS_ORDER.map(
+      (s) => `<option value="${s}" ${s === current ? 'selected' : ''}>${STATUS_LABELS[s]}</option>`
+    ).join('');
+    return `<select class="status-select" data-order-id="${orderId}">${options}</select>`;
+  }
+
+  function escapeHtml(str) {
+    return String(str ?? '').replace(/[&<>"']/g, (c) => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+    }[c]));
+  }
+
+  async function loadOrders() {
+    const { ok, data } = await apiFetch('/admin/orders');
+    const body = document.getElementById('ordersBody');
+    const empty = document.getElementById('ordersEmpty');
+    if (!ok || !data.ok) { body.innerHTML = ''; empty.classList.remove('hidden'); return; }
+
+    const orders = data.orders || [];
+    empty.classList.toggle('hidden', orders.length > 0);
+
+    body.innerHTML = orders.map((o) => `
+      <tr data-row-order="${o.id}">
+        <td>${escapeHtml(o.nome)}</td>
+        <td>${escapeHtml(o.email)}</td>
+        <td>${formatDate(o.createdAt)}</td>
+        <td class="wrap">${escapeHtml(o.resumo)}</td>
+        <td>${brl(o.total)}</td>
+        <td class="wrap">${escapeHtml(formatEndereco(o.endereco))}</td>
+        <td>${statusSelectHtml(o.id, o.status)}</td>
+        <td><button class="btn btn-ghost !px-3 !py-1.5 text-xs" data-send-email="${o.id}">Enviar e-mail</button></td>
+      </tr>
+    `).join('');
+  }
+
+  document.getElementById('ordersBody').addEventListener('change', async (ev) => {
+    const select = ev.target.closest('select[data-order-id]');
+    if (!select) return;
+    const orderId = select.dataset.orderId;
+    const status = select.value;
+    const { ok, data } = await apiFetch(
+      `/admin/orders/${encodeURIComponent(orderId)}/status`,
+      { method: 'POST', body: JSON.stringify({ status }) },
+      'Atualizando status…',
+    );
+    if (!ok || !data.ok) alert(data.error || 'Não foi possível atualizar o status.');
+  });
+
+  document.getElementById('ordersBody').addEventListener('click', async (ev) => {
+    const btn = ev.target.closest('button[data-send-email]');
+    if (!btn) return;
+    const orderId = btn.dataset.sendEmail;
+    const row = btn.closest('tr');
+    const status = row.querySelector('select[data-order-id]').value;
+
+    btn.disabled = true;
+    const { ok, data } = await apiFetch(
+      `/admin/orders/${encodeURIComponent(orderId)}/send-status-email`,
+      { method: 'POST', body: JSON.stringify({ status }) },
+      'Enviando e-mail…',
+    );
+    btn.disabled = false;
+    if (ok && data.ok) {
+      btn.textContent = 'Enviado ✅';
+      setTimeout(() => { btn.textContent = 'Enviar e-mail'; }, 2500);
+    } else {
+      alert(data.error || 'Não foi possível enviar o e-mail.');
+    }
+  });
+
+  document.getElementById('btnRefreshOrders').addEventListener('click', loadOrders);
+
+  /* ===== Comentários ===== */
+  function commentBadge(status) {
+    const map = { pending: ['badge-pending', 'pendente'], approved: ['badge-approved', 'aprovado'], rejected: ['badge-rejected', 'rejeitado'] };
+    const [cls, label] = map[status] || ['badge-pending', status];
+    return `<span class="badge ${cls}">${label}</span>`;
+  }
+
+  async function loadComments() {
+    const { ok, data } = await apiFetch('/admin/comments');
+    const body = document.getElementById('commentsBody');
+    const empty = document.getElementById('commentsEmpty');
+    if (!ok || !data.ok) { body.innerHTML = ''; empty.classList.remove('hidden'); return; }
+
+    const comments = data.comments || [];
+    empty.classList.toggle('hidden', comments.length > 0);
+
+    body.innerHTML = comments.map((c) => `
+      <tr data-row-comment="${c.id}">
+        <td>${escapeHtml(c.nome)}</td>
+        <td>${escapeHtml(c.email)}</td>
+        <td class="wrap">${escapeHtml(c.texto)}</td>
+        <td>${escapeHtml(c.obra)} · cap. ${escapeHtml(c.cap)}</td>
+        <td>${escapeHtml(c.nota)}</td>
+        <td>${commentBadge(c.status)}</td>
+        <td>
+          ${c.status === 'pending' ? `
+            <div class="flex gap-2">
+              <button class="btn btn-ghost !px-3 !py-1.5 text-xs" data-approve="${c.id}">Aprovar</button>
+              <button class="btn btn-ghost !px-3 !py-1.5 text-xs" data-reject="${c.id}">Rejeitar</button>
+            </div>` : '—'}
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  document.getElementById('commentsBody').addEventListener('click', async (ev) => {
+    const approveBtn = ev.target.closest('button[data-approve]');
+    const rejectBtn = ev.target.closest('button[data-reject]');
+    const btn = approveBtn || rejectBtn;
+    if (!btn) return;
+    const id = approveBtn ? approveBtn.dataset.approve : rejectBtn.dataset.reject;
+    const action = approveBtn ? 'approve' : 'reject';
+
+    const { ok, data } = await apiFetch(
+      `/comments/admin/${encodeURIComponent(id)}/${action}`,
+      { method: 'POST' },
+      'Salvando…',
+    );
+    if (ok && data.ok) {
+      loadComments();
+    } else {
+      alert(data.error || 'Não foi possível concluir a ação.');
+    }
+  });
+
+  document.getElementById('btnRefreshComments').addEventListener('click', loadComments);
+
+  /* init */
+  if (getToken()) {
+    showPainel();
+  } else {
+    showLogin();
+  }
+})();
+</script>
+
+</body>
+</html>

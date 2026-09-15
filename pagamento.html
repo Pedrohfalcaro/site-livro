@@ -56,16 +56,6 @@
 <body class="font-sans min-h-screen">
 
   <!-- Toasts -->
-  <div id="toastWait" class="toast">
-    <div class="flex items-start gap-2">
-      <span>⏳</span>
-      <div>
-        <p class="font-extrabold leading-tight">Iniciando pagamento…</p>
-        <p class="text-sm muted2 mt-1">Você será encaminhado ao Mercado Pago (Pix ou cartão).</p>
-      </div>
-    </div>
-  </div>
-
   <div id="toastErr" class="toast">
     <div class="flex items-start gap-2">
       <span>⚠️</span>
@@ -277,6 +267,7 @@
 
 <script src="assets/js/theme.js"></script>
 <script src="assets/js/api-base.js"></script>
+<script src="assets/js/busy-overlay.js"></script>
 <script src="assets/js/cart.js"></script>
 <script src="assets/js/cep.js"></script>
 <script>
@@ -418,7 +409,7 @@ async function pagarMercadoPago(){
   const btn = document.getElementById('btnPagar');
   btn.disabled = true;
   btn.style.opacity = '.7';
-  showToast('toastWait', 15000);
+  BusyOverlay.show('Aguardando resposta do sistema… A primeira tentativa pode levar até 1 minuto, o servidor pode estar "acordando". Não feche nem atualize a página.');
 
   try{
     const apiBase = window.ApiBase?.resolveApiBase?.() || 'https://site-livro-backend.onrender.com';
@@ -457,6 +448,7 @@ async function pagarMercadoPago(){
     showToast('toastErr', 3000);
     alert("Erro ao iniciar pagamento. Verifique sua internet e tente novamente.");
   } finally{
+    BusyOverlay.hide();
     btn.disabled = false;
     btn.style.opacity = '1';
   }
