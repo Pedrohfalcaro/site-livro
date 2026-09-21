@@ -181,6 +181,7 @@
             <label class="block text-sm font-extrabold mb-2" for="cep">CEP</label>
             <input id="cep" class="field" placeholder="00000-000" inputmode="numeric" autocomplete="postal-code" />
             <p id="cepStatus" class="text-xs muted2 mt-2" aria-live="polite"></p>
+            <p id="freteStatus" class="text-xs mt-1 font-extrabold" aria-live="polite"></p>
           </div>
         </div>
 
@@ -237,6 +238,14 @@
           <div id="listaItens" class="mt-3 space-y-3"></div>
 
           <div class="mt-6 pt-4 border-t" style="border-color:var(--border)">
+            <div id="linhaSubtotal" class="flex items-center justify-between text-sm muted2 mb-2">
+              <span>Subtotal</span>
+              <span id="subtotalValor">R$ 0,00</span>
+            </div>
+            <div id="linhaFrete" class="flex items-center justify-between text-sm muted2 mb-3" hidden>
+              <span>Frete (Envio Módico)</span>
+              <span id="freteValor" class="text-right">—</span>
+            </div>
             <div class="flex items-center justify-between">
               <span class="font-extrabold">Total</span>
               <span id="totalValor" class="text-lg font-extrabold" style="color:var(--accent2)">R$ 0,00</span>
@@ -248,6 +257,9 @@
             <p class="text-sm muted2 mt-1">
               <strong>WebLivro:</strong> chave no e-mail, leitura no site.<br>
               <strong>Livro físico:</strong> envio para o endereço informado.
+            </p>
+            <p class="text-xs muted2 mt-3">
+              🚚 Livro físico: frete do Envio Módico com desconto — informe o CEP para ver o valor.
             </p>
           </div>
         </div>
@@ -286,12 +298,21 @@ function showToast(id, ms=2500){
 function renderResumo(){
   const estante=getEstante();
   const totalItens=estante.reduce((s,x)=>s+x.quantidade,0);
-  const totalValor=estante.reduce((s,x)=>s+(x.preco*x.quantidade),0);
+  const subtotal=estante.reduce((s,x)=>s+(x.preco*x.quantidade),0);
+  const totalValor=subtotal + (frete.valor||0);
 
   document.getElementById('resumoTop').innerHTML =
     `📚 <strong>${totalItens}</strong> item(ns) • 💰 <strong>${brl(totalValor)}</strong>`;
 
+  document.getElementById('subtotalValor').textContent = brl(subtotal);
   document.getElementById('totalValor').textContent = brl(totalValor);
+
+  const linhaFrete=document.getElementById('linhaFrete');
+  const temFisico=temLivroFisico();
+  linhaFrete.hidden = !temFisico || !frete.pronto;
+  document.getElementById('freteValor').innerHTML =
+    (frete.valorReal > frete.valor ? `<s class="opacity-60 mr-1">${brl(frete.valorReal)}</s>` : '') +
+    `+ <strong>${brl(frete.valor)}</strong>`;
 
   const lista=document.getElementById('listaItens');
   if(estante.length===0){
@@ -314,8 +335,79 @@ function renderResumo(){
   `).join('');
 }
 
+/* ===== Frete (Envio Módico) ===== */
+let frete = { pronto:false, valorReal:0, valor:0 };
+let freteReq = 0;
+
+function temLivroFisico(){
+  return getEstante().some(x => (x.tipo || 'livro') === 'livro');
+}
+
+function setFreteStatus(text, isError){
+  const el=document.getElementById('freteStatus');
+  if(!el) return;
+  el.textContent = text || '';
+  el.style.color = isError ? '#b91c1c' : 'var(--accent)';
+}
+
+function resetFrete(msg){
+  frete = { pronto:false, valorReal:0, valor:0 };
+  setFreteStatus(msg || '', false);
+  renderResumo();
+}
+
+/** Consulta o backend (valida CEP + calcula Módico). Retorna true se o frete ficou pronto. */
+async function calcularFrete(){
+  const cep = onlyDigits(document.getElementById('cep').value);
+  const estante = getEstante();
+
+  if(estante.length===0 || !temLivroFisico()){
+    frete = { pronto:true, valorReal:0, valor:0 };
+    setFreteStatus('', false);
+    renderResumo();
+    return true;
+  }
+  if(cep.length!==8){ resetFrete(''); return false; }
+
+  const req = ++freteReq;
+  setFreteStatus('Calculando frete…', false);
+  try{
+    const apiBase = window.ApiBase?.resolveApiBase?.() || 'https://site-livro-backend.onrender.com';
+    const r = await fetch(`${apiBase}/frete/calcular`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        cep,
+        itens: estante.map(x=>({ id:x.id, quantity:Number(x.quantidade||1) })),
+      }),
+      mode:'cors',
+    });
+    const data = await r.json();
+    if(req!==freteReq) return false; // resposta antiga
+    if(!r.ok || !data.ok){
+      frete = { pronto:false, valorReal:0, valor:0 };
+      setFreteStatus(data.error || 'Não foi possível calcular o frete.', true);
+      renderResumo();
+      return false;
+    }
+    frete = { pronto:true, valorReal:Number(data.valorReal)||0, valor:Number(data.valor)||0 };
+    setFreteStatus('', false);
+    document.getElementById('freteStatus').innerHTML =
+      `🚚 Frete do envio módico: <s class="opacity-60">${brl(frete.valorReal)}</s> <strong>${brl(frete.valor)}</strong>`;
+    renderResumo();
+    return true;
+  }catch(err){
+    if(req!==freteReq) return false;
+    frete = { pronto:false, valorReal:0, valor:0 };
+    setFreteStatus('Falha ao calcular o frete. Tente novamente.', true);
+    renderResumo();
+    return false;
+  }
+}
+
 function limparSacola(){
   Cart.clearEstante();
+  calcularFrete();
   renderResumo();
   validarSacolaVazia();
 }
@@ -384,6 +476,13 @@ async function pagarMercadoPago(){
         ? "Endereço carregado. Agora informe o número (complemento é opcional)."
         : "Complete o endereço (rua, número, bairro, cidade e estado). Complemento é opcional."
     );
+    return;
+  }
+
+  const freteOk = await calcularFrete();
+  if(!freteOk){
+    alert("Não foi possível calcular o frete para este CEP. Confira o CEP e tente novamente.");
+    document.getElementById("cep")?.focus();
     return;
   }
 
@@ -458,6 +557,18 @@ async function pagarMercadoPago(){
 document.addEventListener('DOMContentLoaded', ()=>{
   renderResumo();
   validarSacolaVazia();
+
+  const cepEl=document.getElementById('cep');
+  let freteTimer=null;
+  cepEl.addEventListener('input', ()=>{
+    clearTimeout(freteTimer);
+    if(onlyDigits(cepEl.value).length===8){
+      freteTimer=setTimeout(calcularFrete, 350);
+    }else{
+      resetFrete('');
+    }
+  });
+  if(onlyDigits(cepEl.value).length===8) calcularFrete();
 
   if (globalThis.CepLookup) {
     CepLookup.bindCheckoutCep({
