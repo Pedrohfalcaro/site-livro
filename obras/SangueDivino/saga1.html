@@ -97,6 +97,135 @@ body{
   color: transparent;
   -webkit-text-fill-color: transparent;
 }
+
+/* 🌪️ CAIXA DE APRESENTAÇÃO DE DIVINDADE (estilo mangá) */
+.divindade-card{
+  perspective: 1400px;
+  max-width: 420px;
+  margin: 1.75rem auto;
+  cursor: pointer;
+  user-select: none;
+}
+.divindade-card:focus-visible .divindade-face-front{
+  outline: 2px solid rgba(226,232,240,.6);
+  outline-offset: 2px;
+}
+.divindade-card-inner{
+  position: relative;
+  min-height: 190px;
+  border-radius: 18px;
+  transition: transform .9s cubic-bezier(.4,.15,.2,1);
+  transform-style: preserve-3d;
+}
+.divindade-card[data-revelado="true"] .divindade-card-inner{
+  transform: rotateY(180deg);
+}
+.divindade-face{
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 18px;
+  padding: 1.75rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border: 2px dashed rgba(226,232,240,.35);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(226,232,240,.08), transparent 65%),
+    linear-gradient(160deg, rgba(30,41,59,.9), rgba(15,23,42,.95));
+  box-shadow: 0 0 30px rgba(226,232,240,.06) inset;
+}
+.divindade-face-front{
+  animation: divindadeBorda 4.5s ease-in-out infinite;
+}
+.divindade-face-back{
+  transform: rotateY(180deg);
+  border-color: rgba(148,163,184,.55);
+  border-style: solid;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(148,163,184,.14), transparent 65%),
+    linear-gradient(160deg, rgba(51,65,85,.92), rgba(15,23,42,.97));
+}
+@keyframes divindadeBorda{
+  0%, 100%{ border-color: rgba(226,232,240,.25); }
+  50%{ border-color: rgba(226,232,240,.6); }
+}
+.divindade-icon{
+  font-size: 2.5rem;
+  margin-bottom: .6rem;
+  display: inline-block;
+  animation: divindadeGirar 5s linear infinite;
+}
+@keyframes divindadeGirar{
+  from{ transform: rotate(0deg); }
+  to{ transform: rotate(360deg); }
+}
+.divindade-hint{
+  font-weight: 700;
+  opacity: .85;
+}
+.divindade-hint-sub{
+  font-size: .8rem;
+  opacity: .5;
+  margin-top: .3rem;
+}
+.divindade-nome{
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #f1f5f9;
+  letter-spacing: .01em;
+}
+.divindade-titulo{
+  opacity: .75;
+  margin-top: .3rem;
+}
+.divindade-poder{
+  margin-top: .9rem;
+  font-size: .9rem;
+  padding: .3rem .8rem;
+  border-radius: 999px;
+  border: 1px solid rgba(226,232,240,.25);
+  background: rgba(226,232,240,.06);
+}
+.divindade-poder span{
+  opacity: .55;
+  margin-right: .4rem;
+}
+
+/* 💨 EFEITO DE VENTANIA (disparado ao revelar uma divindade) */
+.ventania-overlay{
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  overflow: hidden;
+  pointer-events: none;
+}
+.ventania-linha{
+  position: absolute;
+  left: -45%;
+  width: 45%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(226,232,240,.85), transparent);
+  animation: ventaniaMover .9s ease-out forwards;
+  filter: blur(.3px);
+}
+@keyframes ventaniaMover{
+  to{ left: 145%; }
+}
+.ventania-flash{
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 40%, rgba(226,232,240,.12), transparent 70%);
+  animation: ventaniaFlash .9s ease-out forwards;
+}
+@keyframes ventaniaFlash{
+  0%{ opacity: 0; }
+  30%{ opacity: 1; }
+  100%{ opacity: 0; }
+}
 </style>
 </head>
 
@@ -195,6 +324,9 @@ body{
     <button class="cap-btn w-full mb-2" onclick="abrirCap(24)">Cap 24</button>
     <button class="cap-btn w-full mb-2" onclick="abrirCap(25)">Cap 25</button>
     <button class="cap-btn w-full mb-2" onclick="abrirCap(26)">Cap 26</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(27)">Cap 27</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(28)">Cap 28</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(29)">Cap 29</button>
   </div>
 </div>
 
@@ -228,6 +360,9 @@ body{
     <button class="cap-btn w-full mb-2" onclick="abrirCap(24)">Capítulo 24</button>
     <button class="cap-btn w-full mb-2" onclick="abrirCap(25)">Capítulo 25</button>
     <button class="cap-btn w-full mb-2" onclick="abrirCap(26)">Capítulo 26</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(27)">Capítulo 27</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(28)">Capítulo 28</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(29)">Capítulo 29</button>
   </aside>
 
   
@@ -309,14 +444,22 @@ function formatLancamento(n){
   return d.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
 }
 
+/* 🧪 Preview local: em localhost, todos os capítulos aparecem liberados,
+   sem precisar mexer nas datas reais de lançamento (lancamentos.json). */
+function isPreviewLocal(){
+  const host = location.hostname || '';
+  return host === 'localhost' || host === '127.0.0.1' || host === '';
+}
+
 function capLiberado(n){
+  if (isPreviewLocal()) return true;
   const d = lancamentos[n];
   if (!d) return false;
   return new Date() >= d;
 }
 
 function aplicarEstadoCaps(){
-  for (let n = 1; n <= 26; n++) {
+  for (let n = 1; n <= 29; n++) {
     document.querySelectorAll(`button[onclick="abrirCap(${n})"]`).forEach((btn) => {
       if (capLiberado(n)) {
         btn.classList.remove('bloqueado');
@@ -360,6 +503,36 @@ async function abrirCap(n){
   }catch{
     conteudo.innerHTML = `<p class="text-red-400">Erro ao carregar.</p>`;
   }
+}
+
+/* 🌪️ REVELAÇÃO DE DIVINDADE + VENTANIA NA TELA */
+function revelarDivindade(el){
+  if (!el || el.getAttribute('data-revelado') === 'true') return;
+  el.setAttribute('data-revelado', 'true');
+  dispararVentania();
+}
+
+function dispararVentania(){
+  const overlay = document.createElement('div');
+  overlay.className = 'ventania-overlay';
+
+  const flash = document.createElement('div');
+  flash.className = 'ventania-flash';
+  overlay.appendChild(flash);
+
+  const totalLinhas = 16;
+  for (let i = 0; i < totalLinhas; i++) {
+    const linha = document.createElement('div');
+    linha.className = 'ventania-linha';
+    linha.style.top = `${Math.random() * 100}%`;
+    linha.style.width = `${30 + Math.random() * 30}%`;
+    linha.style.animationDelay = `${Math.random() * 0.35}s`;
+    linha.style.opacity = String(0.35 + Math.random() * 0.5);
+    overlay.appendChild(linha);
+  }
+
+  document.body.appendChild(overlay);
+  setTimeout(() => overlay.remove(), 1400);
 }
 
 /* 💬 COMENTÁRIOS */
