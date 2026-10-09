@@ -2,12 +2,12 @@
 :root {
   --bg: #f8fafc;
   --card: #ffffff;
-  --text: #0f172a;
+  --text: #0b1220;
   --muted: #475569;
   --muted2: #64748b;
   --border: #e2e8f0;
   --accent: #14b8a6;
-  --accent2: #0ea5e9;
+  --accent2: #a86a0c;
   --shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
   --shadow2: 0 8px 18px rgba(15, 23, 42, 0.08);
   --radius: 18px;
@@ -32,7 +32,7 @@ body.dark-mode:not(.reader-page) {
   --shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
   --shadow2: 0 10px 22px rgba(0, 0, 0, 0.28);
   --accent: #34d399;
-  --accent2: #38bdf8;
+  --accent2: #f0b84a;
 }
 
 /* ===== Utilitários ===== */
@@ -67,13 +67,13 @@ body.dark-mode:not(.reader-page) {
 
 .btn-primary {
   background: var(--accent);
-  color: #fff;
+  color: #0b1220;
 }
 
 .btn-primary:hover { opacity: 0.95; }
 
 .btn-secondary {
-  background: #0f172a;
+  background: #0b1220;
   color: #fff;
 }
 
@@ -118,7 +118,7 @@ body.dark-mode .btn-ghost:hover { background: rgba(255, 255, 255, 0.06); }
 
 #temaEscuro,
 #temaEscuroM {
-  background: linear-gradient(90deg, #0b1220 50%, #38bdf8 50%);
+  background: linear-gradient(90deg, #0b1220 50%, #f0b84a 50%);
 }
 
 /* ===== Responsividade global (páginas estáticas) ===== */
@@ -454,13 +454,13 @@ body.dark-mode .pill:hover { background: rgba(255, 255, 255, 0.06); }
 /* ===== Fundos decorativos ===== */
 .soft-grid {
   background:
-    radial-gradient(circle at 25% 15%, rgba(14, 165, 233, 0.2), transparent 55%),
+    radial-gradient(circle at 25% 15%, rgba(217, 154, 30, 0.2), transparent 55%),
     radial-gradient(circle at 75% 75%, rgba(20, 184, 166, 0.2), transparent 55%);
 }
 
 body.dark-mode .soft-grid {
   background:
-    radial-gradient(circle at 25% 15%, rgba(56, 189, 248, 0.22), transparent 55%),
+    radial-gradient(circle at 25% 15%, rgba(240, 184, 74, 0.22), transparent 55%),
     radial-gradient(circle at 75% 75%, rgba(52, 211, 153, 0.22), transparent 55%);
 }
 
@@ -540,13 +540,13 @@ body.dark-mode .soft-grid {
   gap: 12px;
   border-bottom: 1px solid var(--border);
   background:
-    radial-gradient(circle at 20% 0%, rgba(14, 165, 233, 0.14), transparent 55%),
+    radial-gradient(circle at 20% 0%, rgba(217, 154, 30, 0.14), transparent 55%),
     radial-gradient(circle at 80% 20%, rgba(20, 184, 166, 0.14), transparent 55%);
 }
 
 body.dark-mode .modal-header {
   background:
-    radial-gradient(circle at 20% 0%, rgba(56, 189, 248, 0.16), transparent 55%),
+    radial-gradient(circle at 20% 0%, rgba(240, 184, 74, 0.16), transparent 55%),
     radial-gradient(circle at 80% 20%, rgba(52, 211, 153, 0.16), transparent 55%);
 }
 
@@ -640,11 +640,11 @@ body.dark-mode .modal-item:hover {
   padding: 12px 12px;
   border-radius: 16px;
   border: 1px dashed var(--border);
-  background: rgba(14, 165, 233, 0.06);
+  background: rgba(217, 154, 30, 0.06);
 }
 
 body.dark-mode .modal-hint {
-  background: rgba(56, 189, 248, 0.1);
+  background: rgba(240, 184, 74, 0.1);
 }
 
 .hint-dot {
@@ -652,7 +652,7 @@ body.dark-mode .modal-hint {
   height: 10px;
   border-radius: 9999px;
   background: var(--accent2);
-  box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.14);
+  box-shadow: 0 0 0 4px rgba(217, 154, 30, 0.14);
 }
 
 .modal-backdrop { background: rgba(2, 6, 23, 0.55); }
@@ -665,3 +665,23 @@ body.dark-mode .modal-hint {
     animation: none !important;
   }
 }
+
+/* Logo do menu: versão clara/escura conforme o tema */
+img.nav-logo.nav-logo--escuro { display: none; }
+body.dark-mode img.nav-logo.nav-logo--claro { display: none; }
+body.dark-mode img.nav-logo.nav-logo--escuro { display: inline-block; }
+
+/* Selo da editora (página Sobre) */
+.brand-seal {
+  width: 7.5rem;
+  height: 7.5rem;
+  display: grid;
+  place-items: center;
+  border-radius: 1.5rem;
+  background: color-mix(in srgb, var(--accent) 10%, var(--card));
+  border: 1px solid var(--border);
+}
+.brand-seal-img { width: 5.5rem; height: 5.5rem; object-fit: contain; }
+.brand-seal-img--escuro { display: none; }
+body.dark-mode .brand-seal-img--claro { display: none; }
+body.dark-mode .brand-seal-img--escuro { display: block; }
