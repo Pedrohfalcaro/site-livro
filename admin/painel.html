@@ -74,6 +74,10 @@
       font-weight: 800;
     }
 
+    .stat { border: 1px solid var(--border); border-radius: 14px; padding: .8rem 1rem; }
+    .stat-n { font-size: 1.6rem; font-weight: 900; line-height: 1.1; }
+    .stat-l { font-size: .75rem; color: var(--muted2); font-weight: 700; margin-top: .2rem; }
+
     #loginScreen { max-width: 420px; margin: 4rem auto; }
     .field-err { color: #dc2626; font-size: .85rem; margin-top: .5rem; min-height: 1.2em; }
     .empty-state { padding: 2rem; text-align: center; color: var(--muted2); }
@@ -105,7 +109,7 @@
     <div class="flex items-center justify-between gap-3 mb-6">
       <div>
         <h1 class="text-xl font-extrabold">Painel</h1>
-        <p class="text-sm muted2">Pedidos e comentários do site.</p>
+        <p class="text-sm muted2">Pedidos, comentários e leitores do site.</p>
       </div>
       <button id="btnLogout" class="btn btn-ghost !px-3 !py-2 text-sm">Sair</button>
     </div>
@@ -113,6 +117,7 @@
     <div class="tabs">
       <button type="button" class="tab-btn active" data-tab="pedidos">Pedidos</button>
       <button type="button" class="tab-btn" data-tab="comentarios">Comentários</button>
+      <button type="button" class="tab-btn" data-tab="leitores">Leitores</button>
     </div>
 
     <!-- PEDIDOS -->
@@ -147,6 +152,18 @@
         <h2 class="text-lg font-extrabold">Comentários</h2>
         <button id="btnRefreshComments" class="btn btn-ghost !px-3 !py-1.5 text-sm">Atualizar</button>
       </div>
+      <div class="flex flex-wrap items-center gap-3 mb-4">
+        <label class="text-sm font-extrabold" for="filtroObra">Obra</label>
+        <select id="filtroObra" class="status-select"><option value="">Todas</option></select>
+        <label class="text-sm font-extrabold" for="filtroStatus">Status</label>
+        <select id="filtroStatus" class="status-select">
+          <option value="">Todos</option>
+          <option value="pending">Pendentes</option>
+          <option value="approved">Aprovados</option>
+          <option value="rejected">Rejeitados</option>
+        </select>
+        <span id="filtroContagem" class="text-sm muted2"></span>
+      </div>
       <div class="table-scroll">
         <table class="data-table">
           <thead>
@@ -165,6 +182,41 @@
       </div>
       <p id="commentsEmpty" class="empty-state hidden">Nenhum comentário ainda.</p>
     </section>
+
+    <!-- LEITORES (leitura gamificada por e-mail) -->
+    <section id="tabLeitores" class="surface p-4 sm:p-6 hidden">
+      <div class="flex items-center justify-between gap-3 mb-4">
+        <div>
+          <h2 class="text-lg font-extrabold">Leitores — Horrores Ocultos: Volume 1</h2>
+          <p class="text-sm muted2">Quem entrou para ler no site, quando e até onde foi.</p>
+        </div>
+        <button id="btnRefreshReaders" class="btn btn-ghost !px-3 !py-1.5 text-sm">Atualizar</button>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+        <div class="stat"><p class="stat-n" id="statLeitores">—</p><p class="stat-l">Leitores</p></div>
+        <div class="stat"><p class="stat-n" id="statVisitas">—</p><p class="stat-l">Entradas</p></div>
+        <div class="stat"><p class="stat-n" id="statHoje">—</p><p class="stat-l">Ativos nas últimas 24h</p></div>
+        <div class="stat"><p class="stat-n" id="statConcluiram">—</p><p class="stat-l">Terminaram o livro</p></div>
+      </div>
+
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>E-mail</th>
+              <th>Primeiro acesso</th>
+              <th>Último acesso</th>
+              <th>Entradas</th>
+              <th>Atos</th>
+              <th>Contos</th>
+            </tr>
+          </thead>
+          <tbody id="readersBody"></tbody>
+        </table>
+      </div>
+      <p id="readersEmpty" class="empty-state hidden">Ninguém entrou ainda.</p>
+    </section>
   </div>
 
 <script src="../assets/js/api-base.js"></script>
@@ -182,6 +234,22 @@
     concluido: 'Concluído',
   };
   const STATUS_ORDER = Object.keys(STATUS_LABELS);
+
+  const OBRAS_NOMES = {
+    'horrores-ocultos-1': 'Horrores Ocultos: Vol. 1',
+    'sangue-divino': 'Sangue Divino',
+    'adc-t1': 'Além dos Céus: Temporada 1',
+    'adc-spf': 'Além dos Céus: Echos',
+  };
+  // como chamar o "cap" de cada obra
+  const OBRAS_UNIDADE = {
+    'horrores-ocultos-1': 'Conto',
+    'sangue-divino': 'Cap.',
+    'adc-t1': 'Ep.',
+    'adc-spf': 'Ato',
+  };
+  const nomeObra = (obra) => OBRAS_NOMES[obra] || obra;
+  const ondeComentario = (c) => nomeObra(c.obra) + ' · ' + (OBRAS_UNIDADE[c.obra] || 'Cap.') + ' ' + c.cap;
 
   function brl(v) {
     return Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -243,6 +311,7 @@
     document.getElementById('painel').classList.remove('hidden');
     loadOrders();
     loadComments();
+    loadReaders();
   }
 
   /* ===== Login ===== */
@@ -288,6 +357,7 @@
       const tab = btn.dataset.tab;
       document.getElementById('tabPedidos').classList.toggle('hidden', tab !== 'pedidos');
       document.getElementById('tabComentarios').classList.toggle('hidden', tab !== 'comentarios');
+      document.getElementById('tabLeitores').classList.toggle('hidden', tab !== 'leitores');
     });
   });
 
@@ -382,21 +452,27 @@
     return `<span class="badge ${cls}">${label}</span>`;
   }
 
-  async function loadComments() {
-    const { ok, data } = await apiFetch('/admin/comments');
+  let todosComentarios = [];
+
+  function renderComments() {
+    const obraSel = document.getElementById('filtroObra').value;
+    const statusSel = document.getElementById('filtroStatus').value;
     const body = document.getElementById('commentsBody');
     const empty = document.getElementById('commentsEmpty');
-    if (!ok || !data.ok) { body.innerHTML = ''; empty.classList.remove('hidden'); return; }
 
-    const comments = data.comments || [];
-    empty.classList.toggle('hidden', comments.length > 0);
+    const lista = todosComentarios.filter((c) =>
+      (!obraSel || c.obra === obraSel) && (!statusSel || c.status === statusSel));
 
-    body.innerHTML = comments.map((c) => `
+    empty.classList.toggle('hidden', lista.length > 0);
+    document.getElementById('filtroContagem').textContent =
+      lista.length + ' de ' + todosComentarios.length + ' comentário(s)';
+
+    body.innerHTML = lista.map((c) => `
       <tr data-row-comment="${c.id}">
         <td>${escapeHtml(c.nome)}</td>
         <td>${escapeHtml(c.email)}</td>
         <td class="wrap">${escapeHtml(c.texto)}</td>
-        <td>${escapeHtml(c.obra)} · cap. ${escapeHtml(c.cap)}</td>
+        <td>${escapeHtml(ondeComentario(c))}</td>
         <td>${escapeHtml(c.nota)}</td>
         <td>${commentBadge(c.status)}</td>
         <td>
@@ -409,6 +485,32 @@
       </tr>
     `).join('');
   }
+
+  // as obras do filtro vêm dos próprios comentários, com a contagem de pendentes
+  function montarFiltroObras() {
+    const select = document.getElementById('filtroObra');
+    const atual = select.value;
+    const obras = [...new Set(todosComentarios.map((c) => c.obra))];
+    select.innerHTML = '<option value="">Todas</option>' + obras.map((o) => {
+      const pend = todosComentarios.filter((c) => c.obra === o && c.status === 'pending').length;
+      return '<option value="' + escapeHtml(o) + '">' + escapeHtml(nomeObra(o)) + (pend ? ' (' + pend + ' pendente' + (pend > 1 ? 's' : '') + ')' : '') + '</option>';
+    }).join('');
+    select.value = obras.includes(atual) ? atual : '';
+  }
+
+  async function loadComments() {
+    const { ok, data } = await apiFetch('/admin/comments');
+    if (!ok || !data.ok) {
+      todosComentarios = [];
+    } else {
+      todosComentarios = data.comments || [];
+    }
+    montarFiltroObras();
+    renderComments();
+  }
+
+  document.getElementById('filtroObra').addEventListener('change', renderComments);
+  document.getElementById('filtroStatus').addEventListener('change', renderComments);
 
   document.getElementById('commentsBody').addEventListener('click', async (ev) => {
     const approveBtn = ev.target.closest('button[data-approve]');
@@ -431,6 +533,37 @@
   });
 
   document.getElementById('btnRefreshComments').addEventListener('click', loadComments);
+
+  /* ===== Leitores ===== */
+  async function loadReaders() {
+    const { ok, data } = await apiFetch('/admin/readers');
+    const body = document.getElementById('readersBody');
+    const empty = document.getElementById('readersEmpty');
+    const obra = ok && data.ok ? data.obras['horrores-ocultos-1'] : null;
+    const readers = obra ? obra.readers : [];
+
+    empty.classList.toggle('hidden', readers.length > 0);
+    const dia = Date.now() - 24 * 60 * 60 * 1000;
+    document.getElementById('statLeitores').textContent = obra ? readers.length : '—';
+    document.getElementById('statVisitas').textContent = obra ? readers.reduce((s, r) => s + r.visits, 0) : '—';
+    document.getElementById('statHoje').textContent = obra ? readers.filter((r) => r.lastAt >= dia).length : '—';
+    document.getElementById('statConcluiram').textContent = obra
+      ? readers.filter((r) => r.contosConcluidos === obra.totalContos).length
+      : '—';
+
+    body.innerHTML = readers.map((r) => `
+      <tr>
+        <td>${escapeHtml(r.email)}</td>
+        <td>${formatDate(r.firstAt)}</td>
+        <td>${formatDate(r.lastAt)}</td>
+        <td>${r.visits}</td>
+        <td>${r.atosConcluidos} de ${obra.totalAtos}</td>
+        <td>${r.contosConcluidos} de ${obra.totalContos}</td>
+      </tr>
+    `).join('');
+  }
+
+  document.getElementById('btnRefreshReaders').addEventListener('click', loadReaders);
 
   /* init */
   if (getToken()) {

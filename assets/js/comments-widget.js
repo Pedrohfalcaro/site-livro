@@ -107,7 +107,16 @@
     buildForm(container, obra, cap, apiBase);
   }
 
-  function buildHTML(sectionTitle) {
+  // opts.email: e-mail já conhecido (ex.: leitor logado) — o campo some e o valor vai oculto.
+  function buildHTML(sectionTitle, opts) {
+    const knownEmail = opts && opts.email ? String(opts.email) : '';
+    const emailField = knownEmail
+      ? `<input name="email" type="hidden" value="${escapeHTML(knownEmail)}" />`
+      : `<div>
+        <label class="text-xs font-extrabold muted2 block mb-1" for="cwEmail">E-mail * <span style="font-weight:400;opacity:.6">(não aparece)</span></label>
+        <input id="cwEmail" name="email" type="email" maxlength="160" required
+               class="cw-input w-full" placeholder="seu@email.com" />
+      </div>`;
     return `
 <div class="surface p-5 sm:p-6 mt-6">
   <h3 class="text-lg font-extrabold">${escapeHTML(sectionTitle || 'Comentários')}</h3>
@@ -120,17 +129,13 @@
   <form class="cw-form mt-6 flex flex-col gap-3" novalidate>
     <input name="website" type="text" autocomplete="off" style="display:none" tabindex="-1" />
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+    <div class="grid grid-cols-1 ${knownEmail ? '' : 'sm:grid-cols-2'} gap-3">
       <div>
         <label class="text-xs font-extrabold muted2 block mb-1" for="cwNome">Nome *</label>
         <input id="cwNome" name="nome" type="text" maxlength="80" required
                class="cw-input w-full" placeholder="Seu nome" />
       </div>
-      <div>
-        <label class="text-xs font-extrabold muted2 block mb-1" for="cwEmail">E-mail * <span style="font-weight:400;opacity:.6">(não aparece)</span></label>
-        <input id="cwEmail" name="email" type="email" maxlength="160" required
-               class="cw-input w-full" placeholder="seu@email.com" />
-      </div>
+      ${emailField}
     </div>
 
     <div>
@@ -163,5 +168,5 @@
 </div>`;
   }
 
-  global.CommentsWidget = { init, buildHTML };
+  window.CommentsWidget = { init, buildHTML };
 })();

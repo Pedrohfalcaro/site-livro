@@ -1,0 +1,310 @@
+/**
+ * Tema de evento: Halloween — "Horrores Ocultos"
+ * Paleta da capa: preto, rosa neon e verde ácido.
+ *
+ * Vale em dois casos:
+ *  - /assets/js/evento.js marca <html data-evento="halloween"> (25/10 a 07/11): site inteiro + faixa no topo;
+ *  - <html data-tema="horrores-ocultos"> (BaseLayout, só na página do livro): permanente, sem faixa.
+ * Fora disso este arquivo não tem nenhum efeito.
+ *
+ * Os seletores têm especificidade maior que `body.dark-mode:not(.reader-page)`,
+ * então o tema vale igual no modo claro e no escuro, e também sobre os tokens
+ * por obra ([data-obra]). Páginas de leitura (.reader-page) têm tema próprio por
+ * história e ficam de fora de propósito.
+ */
+
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) {
+  --hw-black: #050507;
+  --hw-ink: #0d0a12;
+  --hw-pink: #ff2d95;
+  --hw-pink-soft: #ff7ac0;
+  --hw-green: #39ff6a;
+  --hw-green-deep: #14c24a;
+  background: var(--hw-black);
+  color-scheme: dark;
+}
+
+/* ===== Tokens ===== */
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) body:not(.reader-page) {
+  --bg: var(--hw-black);
+  --card: #0f0b14;
+  --text: #f6f1f8;
+  --muted: #d6c8dc;
+  --muted2: #a99bb2;
+  --border: #3a1830;
+  --shadow: 0 18px 40px rgba(0, 0, 0, 0.6);
+  --shadow2: 0 10px 24px rgba(0, 0, 0, 0.55);
+  --accent: var(--hw-pink);
+  --accent2: var(--hw-green);
+  --glow: rgba(255, 45, 149, 0.28);
+  --on-accent: #0a0409;
+
+  background:
+    radial-gradient(900px 520px at 8% -6%, rgba(255, 45, 149, 0.16), transparent 60%),
+    radial-gradient(820px 560px at 96% 104%, rgba(57, 255, 106, 0.12), transparent 60%),
+    var(--hw-black);
+  background-attachment: fixed;
+  color: var(--text);
+}
+
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) ::selection {
+  background: var(--hw-pink);
+  color: #0a0409;
+}
+
+/* ===== Navegação ===== */
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) .glass,
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) body.dark-mode .glass {
+  background: rgba(5, 5, 7, 0.9);
+  border-bottom: 1px solid transparent;
+  border-image: linear-gradient(90deg, var(--hw-pink), var(--hw-green)) 1;
+}
+
+/* O tema vem do evento: alternar claro/escuro não faz sentido durante ele */
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) .theme-dot,
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) #temaClaro,
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) #temaEscuro,
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) #temaClaroM,
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) #temaEscuroM {
+  display: none;
+}
+
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) body img.nav-logo.nav-logo--claro { display: none; }
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) body img.nav-logo.nav-logo--escuro { display: inline-block; }
+
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) body .brand-seal-img--claro { display: none; }
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) body .brand-seal-img--escuro { display: block; }
+
+/* ===== Botões ===== */
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) .btn-primary,
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) [data-obra] .btn-primary {
+  background: var(--hw-pink);
+  color: #0a0409;
+  box-shadow: 0 0 0 1px rgba(255, 45, 149, 0.55), 0 8px 26px rgba(255, 45, 149, 0.35);
+}
+
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) .btn-primary:hover {
+  opacity: 1;
+  background: var(--hw-pink-soft);
+}
+
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) .btn-secondary,
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) body.dark-mode .btn-secondary {
+  background: var(--hw-green);
+  color: #04100a;
+  border: 0;
+  box-shadow: 0 0 0 1px rgba(57, 255, 106, 0.5), 0 8px 24px rgba(57, 255, 106, 0.22);
+}
+
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) .btn-ghost {
+  border-color: rgba(255, 45, 149, 0.45);
+  color: var(--text);
+}
+
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) .btn-ghost:hover,
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) body.dark-mode .btn-ghost:hover {
+  background: rgba(255, 45, 149, 0.14);
+}
+
+/* ===== Superfícies, chips, pills, campos ===== */
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) .surface {
+  border-color: rgba(255, 45, 149, 0.22);
+  background: linear-gradient(180deg, rgba(255, 45, 149, 0.04), transparent 40%), var(--card);
+}
+
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) .chip {
+  border-color: rgba(57, 255, 106, 0.4);
+  color: var(--hw-green);
+}
+
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) .pill:hover,
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) body.dark-mode .pill:hover {
+  background: rgba(255, 45, 149, 0.12);
+}
+
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) .pill.active {
+  background: rgba(255, 45, 149, 0.16);
+  border-color: rgba(255, 45, 149, 0.6);
+  color: var(--hw-pink-soft);
+}
+
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) .field:focus {
+  border-color: rgba(255, 45, 149, 0.7);
+  box-shadow: 0 0 0 4px rgba(255, 45, 149, 0.18);
+}
+
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) .soft-grid,
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) body.dark-mode .soft-grid {
+  background:
+    radial-gradient(circle at 22% 12%, rgba(255, 45, 149, 0.28), transparent 55%),
+    radial-gradient(circle at 80% 80%, rgba(57, 255, 106, 0.2), transparent 55%);
+}
+
+/* ===== Modais ===== */
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) .modal-header,
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) body.dark-mode .modal-header {
+  background:
+    radial-gradient(circle at 20% 0%, rgba(255, 45, 149, 0.22), transparent 55%),
+    radial-gradient(circle at 80% 20%, rgba(57, 255, 106, 0.14), transparent 55%);
+}
+
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) .modal-item:hover,
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) body.dark-mode .modal-item:hover {
+  background: rgba(255, 45, 149, 0.08);
+}
+
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) .modal-badge.ok {
+  background: rgba(57, 255, 106, 0.12);
+  border-color: rgba(57, 255, 106, 0.4);
+  color: var(--hw-green);
+}
+
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) .modal-hint,
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) body.dark-mode .modal-hint,
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) .hint,
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) body.dark-mode .hint {
+  background: rgba(255, 45, 149, 0.08);
+}
+
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) .hint-dot {
+  background: var(--hw-green);
+  box-shadow: 0 0 0 4px rgba(57, 255, 106, 0.18);
+}
+
+/* ===== Cores escritas direto no HTML (inline style) ===== */
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) [style*="rgba(20,184,166"],
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) [style*="rgba(240,184,74"] {
+  background: rgba(255, 45, 149, 0.14) !important;
+  border-color: rgba(255, 45, 149, 0.5) !important;
+  color: var(--hw-pink-soft) !important;
+}
+
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) [style*="rgba(217,154,30"],
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) [style*="rgba(52,211,153"] {
+  background: rgba(57, 255, 106, 0.12) !important;
+  border-color: rgba(57, 255, 106, 0.45) !important;
+  color: var(--hw-green) !important;
+}
+
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) [style*="rgba(148,163,184"] {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* moldura clara das capas na home */
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) [style*="rgba(255,255,255,.55)"] {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-color: rgba(255, 45, 149, 0.3) !important;
+}
+
+/* ===== Faixa de evento (topo de todas as páginas) ===== */
+.evento-faixa {
+  display: none;
+}
+
+html[data-evento="halloween"] .evento-faixa {
+  display: block;
+  background: linear-gradient(90deg, #14001a, var(--hw-black) 30%, var(--hw-black) 70%, #021a0b);
+  border-bottom: 1px solid rgba(255, 45, 149, 0.35);
+  color: var(--text);
+  text-align: center;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  padding: 0.5rem 1rem;
+}
+
+html[data-evento="halloween"] .evento-faixa a {
+  color: var(--hw-green);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+html[data-evento="halloween"] .evento-faixa b {
+  color: var(--hw-pink-soft);
+}
+
+/* ===== Neon (usado nas seções do livro) ===== */
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) .hw-neon-pink {
+  color: var(--hw-pink);
+  text-shadow: 0 0 14px rgba(255, 45, 149, 0.55);
+}
+
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) .hw-neon-green {
+  color: var(--hw-green);
+  text-shadow: 0 0 14px rgba(57, 255, 106, 0.45);
+}
+
+@keyframes hw-flicker {
+  0%, 100% { opacity: 1; }
+  45% { opacity: 1; }
+  48% { opacity: 0.55; }
+  52% { opacity: 1; }
+  78% { opacity: 0.8; }
+  80% { opacity: 1; }
+}
+
+:is(html[data-evento="halloween"], html[data-tema="horrores-ocultos"]) .hw-flicker {
+  animation: hw-flicker 4.5s infinite;
+}
+
+/* ===== Contagem regressiva do lançamento (só durante o evento) ===== */
+.ho-contagem { display: none; }
+
+html[data-evento="halloween"] .ho-contagem {
+  display: block;
+  max-width: 28rem;
+}
+
+.ho-contagem__titulo {
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--hw-green, #39ff6a);
+}
+
+.ho-contagem__grid {
+  margin-top: 0.5rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.ho-contagem__grid > div {
+  text-align: center;
+  padding: 0.7rem 0.4rem;
+  border-radius: 0.9rem;
+  background: rgba(255, 45, 149, 0.1);
+  border: 1px solid rgba(255, 45, 149, 0.5);
+  box-shadow: 0 0 18px rgba(255, 45, 149, 0.22);
+}
+
+.ho-contagem__grid b {
+  display: block;
+  font-family: "Special Elite", "Courier New", monospace;
+  font-size: clamp(1.6rem, 6vw, 2.3rem);
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  color: var(--hw-pink-soft, #ff7ac0);
+  text-shadow: 0 0 14px rgba(255, 45, 149, 0.6);
+}
+
+.ho-contagem__grid span {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(246, 241, 248, 0.7);
+}
+
+.ho-contagem.contagem-fim {
+  font-weight: 900;
+  color: var(--hw-green, #39ff6a);
+}
+
+/* o atributo hidden deve vencer o display dos botões */
+.btn[hidden] { display: none !important; }

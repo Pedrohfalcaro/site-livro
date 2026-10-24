@@ -79,6 +79,14 @@
   --on-accent: #ffffff;
 }
 
+/* Horrores Ocultos — Volume 1 (horrores-ocultos-1) */
+[data-obra="horrores-ocultos-1"] {
+  --accent: #ff2d95;
+  --accent2: #39ff6a;
+  --glow: rgba(255, 45, 149, 0.28);
+  --on-accent: #0a0409;
+}
+
 /* Utilidades compartilhadas nas landings */
 [data-obra] .btn-primary {
   background: var(--accent);
