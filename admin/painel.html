@@ -109,15 +109,19 @@
     <div class="flex items-center justify-between gap-3 mb-6">
       <div>
         <h1 class="text-xl font-extrabold">Painel</h1>
-        <p class="text-sm muted2">Pedidos, comentários e leitores do site.</p>
+        <p class="text-sm muted2">Pedidos, comentários, leitores e gravações do site.</p>
       </div>
-      <button id="btnLogout" class="btn btn-ghost !px-3 !py-2 text-sm">Sair</button>
+      <div class="flex items-center gap-2">
+        <a href="../gravacoes" class="btn btn-ghost !px-3 !py-2 text-sm">Área de gravações →</a>
+        <button id="btnLogout" class="btn btn-ghost !px-3 !py-2 text-sm">Sair</button>
+      </div>
     </div>
 
     <div class="tabs">
       <button type="button" class="tab-btn active" data-tab="pedidos">Pedidos</button>
       <button type="button" class="tab-btn" data-tab="comentarios">Comentários</button>
       <button type="button" class="tab-btn" data-tab="leitores">Leitores</button>
+      <button type="button" class="tab-btn" data-tab="gravacoes">Gravações</button>
     </div>
 
     <!-- PEDIDOS -->
@@ -217,6 +221,58 @@
       </div>
       <p id="readersEmpty" class="empty-state hidden">Ninguém entrou ainda.</p>
     </section>
+      <!-- GRAVAÇÕES (vozes de Além dos Céus) -->
+    <section id="tabGravacoes" class="surface p-4 sm:p-6 hidden">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+        <div>
+          <h2 class="text-lg font-extrabold">Gravações — <span id="gravNome">Além dos Céus</span></h2>
+          <p class="text-sm muted2">Quem entrou, quantos diálogos cada voz já finalizou e o que ainda falta.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <a href="../gravacoes" class="btn btn-ghost !px-3 !py-1.5 text-sm">Abrir área de gravações →</a>
+          <button id="btnRefreshGrav" class="btn btn-ghost !px-3 !py-1.5 text-sm">Atualizar</button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-5">
+        <div class="stat"><p class="stat-n" id="gStatEntraram">—</p><p class="stat-l">Vozes que entraram</p></div>
+        <div class="stat"><p class="stat-n" id="gStatGravados">—</p><p class="stat-l">Diálogos finalizados</p></div>
+        <div class="stat"><p class="stat-n" id="gStatPendentes">—</p><p class="stat-l">Diálogos pendentes</p></div>
+        <div class="stat"><p class="stat-n" id="gStatReprovados">—</p><p class="stat-l">Reprovados (aguardando)</p></div>
+        <div class="stat"><p class="stat-n" id="gStatPct">—</p><p class="stat-l">Concluído no total</p></div>
+      </div>
+
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Voz</th>
+              <th>E-mail</th>
+              <th>Primeiro acesso</th>
+              <th>Último acesso</th>
+              <th>Entradas</th>
+              <th>Diálogos</th>
+              <th>Progresso</th>
+              <th>Reprov.</th>
+              <th>Eps enviados</th>
+              <th>Lembrete</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="gravBody"></tbody>
+        </table>
+      </div>
+      <p id="gravEmpty" class="empty-state hidden">Sem dados de gravações ainda.</p>
+
+      <h3 class="text-base font-extrabold mt-8 mb-3">Atividade recente</h3>
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead><tr><th>Quando</th><th>Voz</th><th>Personagem</th><th>Episódio</th><th>Diálogo</th></tr></thead>
+          <tbody id="gravAtividade"></tbody>
+        </table>
+      </div>
+      <p id="gravAtividadeEmpty" class="empty-state hidden">Nenhuma gravação concluída ainda.</p>
+    </section>
   </div>
 
 <script src="../assets/js/api-base.js"></script>
@@ -312,6 +368,7 @@
     loadOrders();
     loadComments();
     loadReaders();
+    loadGravacoes();
   }
 
   /* ===== Login ===== */
@@ -358,6 +415,7 @@
       document.getElementById('tabPedidos').classList.toggle('hidden', tab !== 'pedidos');
       document.getElementById('tabComentarios').classList.toggle('hidden', tab !== 'comentarios');
       document.getElementById('tabLeitores').classList.toggle('hidden', tab !== 'leitores');
+      document.getElementById('tabGravacoes').classList.toggle('hidden', tab !== 'gravacoes');
     });
   });
 
@@ -533,6 +591,91 @@
   });
 
   document.getElementById('btnRefreshComments').addEventListener('click', loadComments);
+
+  /* ===== Gravações ===== */
+  function barraGrav(p) {
+    return '<div style="height:6px;border-radius:999px;background:var(--border);overflow:hidden;min-width:80px"><div style="height:100%;width:' + p + '%;background:var(--accent)"></div></div>';
+  }
+
+  function detalheVoz(v) {
+    const pers = v.personagens.map((p) => {
+      const eps = p.eps.map((e) => {
+        const ok = e.gravados === e.total;
+        return '<li>Ep. ' + e.ep + ' — ' + escapeHtml(String(e.titulo || '').toLowerCase()) + ': <b>' + e.gravados + ' de ' + e.total + '</b> diálogos ' + (ok ? '✅' : '') + '</li>';
+      }).join('');
+      return '<p class="font-extrabold mt-3">' + escapeHtml(p.nome) + '</p><ul class="list-disc pl-5 text-sm">' + eps + '</ul>';
+    }).join('');
+    const reps = v.reprovados.length
+      ? '<p class="font-extrabold mt-3">Reprovados (aguardando regravar)</p><ul class="list-disc pl-5 text-sm">' +
+        v.reprovados.map((r) => '<li>' + escapeHtml(r.personagem) + ' · Ep. ' + r.ep + ' · Diálogo ' + r.bloco + ' (' + formatDate(r.at) + '): ' + escapeHtml(r.motivo) + '</li>').join('') + '</ul>'
+      : '';
+    const envs = v.enviados.length
+      ? '<p class="font-extrabold mt-3">Episódios enviados</p><ul class="list-disc pl-5 text-sm">' +
+        v.enviados.map((e) => '<li>' + escapeHtml(e.personagem) + ' · Ep. ' + e.ep + ' — ' + formatDate(e.at) + '</li>').join('') + '</ul>'
+      : '';
+    return pers + reps + envs;
+  }
+
+  async function loadGravacoes() {
+    const { ok, data } = await apiFetch('/admin/gravacoes');
+    const body = document.getElementById('gravBody');
+    const empty = document.getElementById('gravEmpty');
+    const ativ = document.getElementById('gravAtividade');
+    const ativVazio = document.getElementById('gravAtividadeEmpty');
+    const ids = ['gStatEntraram', 'gStatGravados', 'gStatPendentes', 'gStatReprovados', 'gStatPct'];
+    if (!ok || !data.ok) {
+      body.innerHTML = ''; ativ.innerHTML = '';
+      empty.classList.remove('hidden'); ativVazio.classList.add('hidden');
+      ids.forEach((id) => { document.getElementById(id).textContent = '—'; });
+      return;
+    }
+
+    const r = data.resumo;
+    document.getElementById('gravNome').textContent = data.nome || 'Além dos Céus';
+    document.getElementById('gStatEntraram').textContent = r.entraram + ' de ' + r.vozes;
+    document.getElementById('gStatGravados').textContent = r.gravados + ' de ' + r.total;
+    document.getElementById('gStatPendentes').textContent = r.pendentes;
+    document.getElementById('gStatReprovados').textContent = r.reprovados;
+    document.getElementById('gStatPct').textContent = (r.total ? Math.round((r.gravados / r.total) * 100) : 0) + '%';
+    empty.classList.add('hidden');
+
+    body.innerHTML = data.vozes.map((v) => `
+      <tr>
+        <td class="font-extrabold">${escapeHtml(v.nome)}</td>
+        <td>${v.email ? escapeHtml(v.email) : '<span class="muted2">ainda não entrou</span>'}</td>
+        <td>${formatDate(v.primeiroAcesso)}</td>
+        <td>${formatDate(v.ultimoAcesso)}</td>
+        <td>${v.entradas}</td>
+        <td>${v.gravados} de ${v.total}</td>
+        <td>${barraGrav(v.pct)}<span class="text-xs muted2">${v.pct}%</span></td>
+        <td>${v.reprovados.length || '—'}</td>
+        <td>${v.enviados.length || '—'}</td>
+        <td>${v.ultimoLembrete ? formatDate(v.ultimoLembrete) + ' (' + v.totalLembretes + ')' : '—'}</td>
+        <td><button class="btn btn-ghost !px-3 !py-1.5 text-xs" data-voz="${escapeHtml(v.ator)}">Detalhes</button></td>
+      </tr>
+      <tr class="hidden" data-detalhe="${escapeHtml(v.ator)}"><td colspan="11">${detalheVoz(v)}</td></tr>
+    `).join('');
+
+    ativVazio.classList.toggle('hidden', data.atividade.length > 0);
+    ativ.innerHTML = data.atividade.map((a) => `
+      <tr>
+        <td>${formatDate(a.at)}</td>
+        <td>${escapeHtml(a.voz)}</td>
+        <td>${escapeHtml(a.personagem)}</td>
+        <td>Ep. ${a.ep}</td>
+        <td>Diálogo ${a.bloco}</td>
+      </tr>
+    `).join('');
+  }
+
+  document.getElementById('gravBody').addEventListener('click', (ev) => {
+    const btn = ev.target.closest('button[data-voz]');
+    if (!btn) return;
+    const linha = document.querySelector('[data-detalhe="' + btn.dataset.voz + '"]');
+    linha.classList.toggle('hidden');
+    btn.textContent = linha.classList.contains('hidden') ? 'Detalhes' : 'Fechar';
+  });
+  document.getElementById('btnRefreshGrav').addEventListener('click', loadGravacoes);
 
   /* ===== Leitores ===== */
   async function loadReaders() {

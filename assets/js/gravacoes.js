@@ -301,6 +301,7 @@
   function cabecalhoConta() {
     var a = atorAtual();
     document.getElementById('gravConta').hidden = false;
+    document.getElementById('gravAdminLink').hidden = !ehAdmin();
     document.getElementById('gravContaNome').textContent = ehAdmin() ? 'Criador' : (a ? a.nome : sessao.ator);
   }
 
