@@ -126,6 +126,11 @@
   function gravado(persId, ep, bloco) {
     return estado.takes.filter(function (t) { return t.personagem === persId && t.ep === ep && t.bloco === bloco; })[0] || null;
   }
+  function reprov(persId, ep, bloco) {
+    return (estado.reprovados || []).filter(function (r) {
+      return r.personagem === persId && r.ep === ep && r.bloco === bloco;
+    })[0] || null;
+  }
   function foiEnviado(persId, ep) {
     return estado.enviados.filter(function (e) { return e.personagem === persId && e.ep === ep; })[0] || null;
   }
@@ -267,7 +272,7 @@
 
   function loginSenha(corpo, msg) {
     formulario(corpo, {
-      dica: 'Digite a senha que o Pedro te enviou. Ela só vale uma vez: depois você entra com o seu e-mail.',
+      dica: 'Digite a senha que você recebeu. Ela só vale uma vez: depois você entra com o seu e-mail.',
       rotulo: 'Senha', tipo: 'password', placeholder: 'Sua senha', auto: 'one-time-code',
       botao: 'Continuar', vazio: 'Digite a senha.', msg: msg,
       enviar: function (senha) {
@@ -326,7 +331,7 @@
     if (estadoDe === temp) return Promise.resolve();
     var rota = ehAdmin() ? '/gravacoes/criador/resumo' : '/gravacoes/estado';
     return post(rota, { temporada: temp }).then(function (r) {
-      estado = { takes: r.takes || [], enviados: r.enviados || [] };
+      estado = { takes: r.takes || [], enviados: r.enviados || [], reprovados: r.reprovados || [] };
       contas = r.contas || [];
       estadoDe = temp;
     });
@@ -461,13 +466,25 @@
   /* ---------------- roteiro ---------------- */
   function chaveArquivo(persId, ep, bloco) { return persId + '|' + ep + '|' + bloco; }
 
-  function acaoCriador(take, id) {
-    if (!take) return '<div class="grav-feito"><span class="grav-feito__pend">○ Pendente</span></div>';
+  function acaoCriador(take, id, rep) {
+    if (!take) {
+      return '<div class="grav-feito"><span class="grav-feito__pend">○ Pendente</span>' +
+        (rep ? '<span class="grav-feito__arq">Reprovado em ' + quando(rep.at) + ': ' + esc(rep.motivo) + '</span>' : '') + '</div>';
+    }
     return '<div class="grav-feito"><span class="grav-feito__marca">✓ Concluído</span>' +
       '<span class="grav-feito__arq">' + esc(take.filename) + ' · ' + tamanho(take.size) + ' · ' + quando(take.at) + '</span>' +
       '<button type="button" class="grav-link" data-ouvir="' + id + '">▶ Ouvir</button>' +
-      '<button type="button" class="grav-link grav-link--perigo" data-desconcluir="' + id + '">Desconcluir</button></div>' +
-      '<div class="grav-player" data-player="' + id + '"></div>';
+      '<button type="button" class="grav-link grav-link--perigo" data-reprovar="' + id + '">Reprovar</button>' +
+      '<button type="button" class="grav-link" data-desconcluir="' + id + '">Só desconcluir</button></div>' +
+      '<div class="grav-player" data-player="' + id + '"></div>' +
+      '<div class="grav-reprova" data-reprova-form="' + id + '" hidden>' +
+        '<label class="grav-label" for="motivo-' + id + '">Motivo do ajuste (a pessoa recebe por e-mail, com carinho)</label>' +
+        '<textarea id="motivo-' + id + '" class="grav-campo grav-campo--area" maxlength="1000" rows="4" data-motivo="' + id + '" ' +
+          'placeholder="Ex.: A fala ficou ótima, só queria um pouco mais de emoção no final. Pode regravar quando der?"></textarea>' +
+        '<div class="grav-reprova__acoes">' +
+          '<button type="button" class="grav-btn grav-btn--mini" data-reprova-enviar="' + id + '">Reprovar e avisar</button>' +
+          '<button type="button" class="grav-link" data-reprova-cancelar="' + id + '">Cancelar</button>' +
+        '</div></div>';
   }
 
   function cartaoDialogo(temp, p, ep, item) {
@@ -497,12 +514,16 @@
           '<button type="button" class="grav-btn grav-btn--mini" data-concluir="' + b.id + '"' + (escolhido ? '' : ' disabled') + '>Concluir</button>' +
         '</div>';
 
-    if (ehAdmin()) acao = acaoCriador(take, b.id);
+    var rep = take ? null : reprov(p.id, ep, b.id);
+    if (ehAdmin()) acao = acaoCriador(take, b.id, rep);
+    var aviso = rep && !ehAdmin()
+      ? '<div class="grav-reprovado"><b>Um pequeno ajuste foi pedido</b><p>' + esc(rep.motivo) + '</p></div>'
+      : '';
 
     return '<article class="grav-dialogo' + (take ? ' grav-dialogo--ok' : '') + '" id="dlg-' + b.id + '">' +
       '<header class="grav-dialogo__topo"><span class="grav-dialogo__n">' + (take ? '✓' : b.id) + '</span>' +
         '<div><h3>Diálogo ' + b.id + '</h3><span class="grav-dialogo__cena">' + esc((b.parte ? b.parte.toLowerCase() + ' · ' : '') + cena) + '</span></div></header>' +
-      '<div class="grav-falas">' + falas + '</div>' +
+      '<div class="grav-falas">' + falas + '</div>' + aviso +
       '<p class="grav-msg" data-msg="' + b.id + '" role="status"></p>' + acao +
     '</article>';
   }
@@ -573,7 +594,7 @@
     box.innerHTML =
       '<h2 class="grav-h2">Enviar episódio</h2>' +
       '<p class="grav-sub">' + (completo
-        ? 'Tudo gravado! Ao enviar, o Pedro recebe os arquivos por e-mail.' + (enviado ? ' Último envio: ' + new Date(enviado.at).toLocaleString('pt-BR') + '.' : '')
+        ? 'Tudo gravado! Ao enviar, nós recebemos os arquivos por e-mail.' + (enviado ? ' Último envio: ' + new Date(enviado.at).toLocaleString('pt-BR') + '.' : '')
         : 'Conclua os diálogos para liberar o envio. Faltam ' + (total - feitos) + '.') + '</p>' +
       '<button id="gravEnviar" type="button" class="grav-btn"' + (completo ? '' : ' disabled') + '>' + (enviado ? 'Enviar de novo' : 'Enviar gravações') + '</button>' +
       '<p id="gravEnviarMsg" class="grav-msg grav-msg--ok" role="status"></p>';
@@ -589,7 +610,7 @@
         estado.enviados = estado.enviados.filter(function (e) { return !(e.personagem === persId && e.ep === ep); });
         estado.enviados.push({ personagem: persId, ep: ep, at: Date.now() });
         atualizarProgressoEp(temp, persId, ep, blocos);
-        document.getElementById('gravEnviarMsg').textContent = '✓ Enviado! ' + plural(r.arquivos, 'arquivo chegou', 'arquivos chegaram') + ' ao Pedro. Obrigado!';
+        document.getElementById('gravEnviarMsg').textContent = '✓ Enviado! ' + plural(r.arquivos, 'arquivo chegou', 'arquivos chegaram') + ' até nós. Obrigado!';
       }).catch(function (e) {
         btn.disabled = false; btn.textContent = 'Enviar gravações';
         var m = document.getElementById('gravEnviarMsg');
@@ -628,6 +649,37 @@
     raiz.addEventListener('click', function (ev) {
       var alvo = ev.target.closest && ev.target.closest('button');
       if (!alvo) return;
+
+      var idRp = alvo.getAttribute('data-reprovar');
+      if (idRp) {
+        var f1 = raiz.querySelector('[data-reprova-form="' + idRp + '"]');
+        f1.hidden = !f1.hidden;
+        if (!f1.hidden) f1.querySelector('textarea').focus();
+        return;
+      }
+      var idRc = alvo.getAttribute('data-reprova-cancelar');
+      if (idRc) { raiz.querySelector('[data-reprova-form="' + idRc + '"]').hidden = true; return; }
+      var idRe = alvo.getAttribute('data-reprova-enviar');
+      if (idRe) {
+        var rid2 = Number(idRe), motivo = raiz.querySelector('[data-motivo="' + rid2 + '"]').value.trim();
+        if (motivo.length < 3) return msg(rid2, 'Escreva o motivo para a pessoa entender o ajuste.');
+        var takeR = gravado(p.id, ep, rid2);
+        if (!takeR) return;
+        alvo.disabled = true; alvo.textContent = 'Enviando…'; msg(rid2, '');
+        var atorR = atorAtual(), tR = temporada(temp);
+        post('/gravacoes/criador/reprovar', {
+          emailAlvo: takeR.email, temporada: temp, personagem: p.id, ep: ep, bloco: rid2, motivo: motivo,
+          nomes: { ator: atorR.nome, personagem: p.nome, temporada: tR.nome + ' — ' + tR.subtitulo, epTitulo: roteiro(temp, ep).titulo },
+        }).then(function (r) {
+          estado.takes = estado.takes.filter(function (t) { return !(t.personagem === p.id && t.ep === ep && t.bloco === rid2); });
+          estado.enviados = estado.enviados.filter(function (e) { return !(e.personagem === p.id && e.ep === ep); });
+          estado.reprovados = (estado.reprovados || []).filter(function (x) { return !(x.personagem === p.id && x.ep === ep && x.bloco === rid2); });
+          estado.reprovados.push({ email: takeR.email, personagem: p.id, ep: ep, bloco: rid2, motivo: motivo, at: Date.now() });
+          repintar(rid2);
+          msg(rid2, r.emailEnviado ? 'Reprovado. A pessoa foi avisada por e-mail.' : 'Reprovado, mas o e-mail não saiu. O recado aparece para a pessoa na tela dela.');
+        }).catch(function (e) { alvo.disabled = false; alvo.textContent = 'Reprovar e avisar'; msg(rid2, semConexao(e)); });
+        return;
+      }
 
       var idO = alvo.getAttribute('data-ouvir');
       if (idO) {
