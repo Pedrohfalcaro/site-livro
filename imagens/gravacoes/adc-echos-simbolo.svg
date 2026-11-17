@@ -1,0 +1,3 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100"><title>Além dos Céus — foguete</title><g transform="rotate(-24 50 52)"><path fill="none" stroke="#7DD3FC" stroke-width="3" d="M6,52 A44,15 0 0 1 94,52"/></g>
+    <path fill="#FFFFFF" fill-rule="evenodd" d="M50,6 L61,28 V66 L72,88 H58 L50,74 L42,88 H28 L39,66 V28 Z M50,30 l5,5 v7 l-5,5 l-5,-5 v-7 Z"/>
+    <g transform="rotate(-24 50 52)"><path fill="none" stroke="#7DD3FC" stroke-width="3" d="M94,52 A44,15 0 0 1 6,52"/><circle fill="#7DD3FC" cx="86" cy="42" r="5.5"/></g></svg>
