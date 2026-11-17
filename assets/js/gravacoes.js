@@ -424,6 +424,7 @@
           barra(geral) +
         '</div>' +
       '</section>' +
+      (admin ? '' : '<p class="grav-meta"><span aria-hidden="true">📅</span> Meta: tudo gravado até o fim de julho de 2027. Quanto antes, melhor para a edição, e a gente vai te lembrar por e-mail, com carinho.</p>') +
       '<h2 class="grav-h2">' + (admin ? 'Personagens de ' + esc(a.nome) : 'Seus personagens') + '</h2>' +
       '<div class="grav-lista-pers" style="' + cores(t) + '">' + cards + '</div>';
   }
