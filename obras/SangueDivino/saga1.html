@@ -328,6 +328,14 @@ body{
     <button class="cap-btn w-full mb-2" onclick="abrirCap(27)">Cap 27</button>
     <button class="cap-btn w-full mb-2" onclick="abrirCap(28)">Cap 28</button>
     <button class="cap-btn w-full mb-2" onclick="abrirCap(29)">Cap 29</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(30)">Cap 30</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(31)">Cap 31</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(32)">Cap 32</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(33)">Cap 33</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(34)">Cap 34</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(35)">Cap 35</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(36)">Cap 36</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(37)">Cap 37</button>
   </div>
 </div>
 
@@ -364,6 +372,14 @@ body{
     <button class="cap-btn w-full mb-2" onclick="abrirCap(27)">Capítulo 27</button>
     <button class="cap-btn w-full mb-2" onclick="abrirCap(28)">Capítulo 28</button>
     <button class="cap-btn w-full mb-2" onclick="abrirCap(29)">Capítulo 29</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(30)">Capítulo 30</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(31)">Capítulo 31</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(32)">Capítulo 32</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(33)">Capítulo 33</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(34)">Capítulo 34</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(35)">Capítulo 35</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(36)">Capítulo 36</button>
+    <button class="cap-btn w-full mb-2" onclick="abrirCap(37)">Capítulo 37</button>
   </aside>
 
   
@@ -460,7 +476,7 @@ function capLiberado(n){
 }
 
 function aplicarEstadoCaps(){
-  for (let n = 1; n <= 29; n++) {
+  for (let n = 1; n <= 37; n++) {
     document.querySelectorAll(`button[onclick="abrirCap(${n})"]`).forEach((btn) => {
       if (capLiberado(n)) {
         btn.classList.remove('bloqueado');
